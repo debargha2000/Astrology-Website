@@ -18,6 +18,7 @@ import BusinessOperationsCMS from './components/BusinessOperationsCMS';
 import PranayamaCalmGuide from './components/PranayamaCalmGuide';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star, Flame, Eye, ShoppingBag, ShieldCheck, HelpCircle, Send, Check, Heart, Sparkles, MessageSquarePlus, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   // Dynamic website state loaded from backend database sync
@@ -1263,6 +1264,8 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Vercel Web Analytics */}
+      <Analytics />
     </div>
   );
 }
