@@ -1,0 +1,126 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global safety net (default deny catch-all)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. High-integrity primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() 
+        && request.auth.token.email_verified == true 
+        && request.auth.token.email == 'debarghapakhira@gmail.com';
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 3. Validation Helpers
+    function isValidInvoice(data) {
+      return data.keys().hasAll(['id', 'client', 'date', 'item', 'amount', 'status', 'alignment'])
+        && data.keys().size() == 7
+        && data.id is string && data.id.size() <= 128
+        && data.client is string && data.client.size() <= 200
+        && data.date is string && data.date.size() <= 100
+        && data.item is string && data.item.size() <= 500
+        && data.amount is number && data.amount > 0
+        && data.status is string && (data.status == 'Paid' || data.status == 'Sent' || data.status == 'Overdue' || data.status == 'Draft')
+        && data.alignment is string && data.alignment.size() <= 500;
+    }
+
+    function isValidVendor(data) {
+      return data.keys().hasAll(['id', 'name', 'contact', 'origin', 'rating', 'category', 'leadTime', 'leadGems', 'status'])
+        && data.keys().size() == 9
+        && data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() <= 200
+        && data.contact is string && data.contact.size() <= 200
+        && data.origin is string && data.origin.size() <= 200
+        && data.rating is number && data.rating >= 1 && data.rating <= 5
+        && data.category is string && data.category.size() <= 200
+        && data.leadTime is string && data.leadTime.size() <= 100
+        && data.leadGems is string && data.leadGems.size() <= 200
+        && data.status is string && (data.status == 'Approved' || data.status == 'Under Review' || data.status == 'Suspended');
+    }
+
+    function isValidExpense(data) {
+      return data.keys().hasAll(['id', 'title', 'category', 'amount', 'date', 'notes'])
+        && data.keys().size() == 6
+        && data.id is string && data.id.size() <= 128
+        && data.title is string && data.title.size() <= 500
+        && data.category is string && data.category.size() <= 200
+        && data.amount is number && data.amount > 0
+        && data.date is string && data.date.size() <= 100
+        && data.notes is string && data.notes.size() <= 2000;
+    }
+
+    function isValidTask(data) {
+      return data.keys().hasAll(['id', 'title', 'status', 'priority', 'assignee', 'daysLeft'])
+        && data.keys().size() == 6
+        && data.id is string && data.id.size() <= 128
+        && data.title is string && data.title.size() <= 500
+        && data.status is string && (data.status == 'Backlog' || data.status == 'Water Cleanse' || data.status == 'Moon Bath Bathing' || data.status == 'Sealed / Composed')
+        && data.priority is string && (data.priority == 'Low' || data.priority == 'Medium' || data.priority == 'High')
+        && data.assignee is string && data.assignee.size() <= 200
+        && data.daysLeft is number && data.daysLeft >= 0;
+    }
+
+    function isValidLog(data) {
+      return data.keys().hasAll(['id', 'timestamp', 'message'])
+        && data.keys().size() == 3
+        && data.id is string && data.id.size() <= 128
+        && data.timestamp is string && data.timestamp.size() <= 100
+        && data.message is string && data.message.size() <= 2000;
+    }
+
+    // 4. Matches & Path Configurations
+    match /invoices/{invoiceId} {
+      allow read: if isVerified();
+      allow create: if isVerified() && isValidId(invoiceId) && isValidInvoice(incoming()) && incoming().id == invoiceId;
+      allow update: if false; // Invoices are immutable ledger events
+      allow delete: if isVerified() && isValidId(invoiceId);
+    }
+
+    match /vendors/{vendorId} {
+      allow read: if isVerified();
+      allow create: if isVerified() && isValidId(vendorId) && isValidVendor(incoming()) && incoming().id == vendorId;
+      allow update: if isVerified() && isValidId(vendorId) && isValidVendor(incoming()) && incoming().id == vendorId;
+      allow delete: if isVerified() && isValidId(vendorId);
+    }
+
+    match /expenses/{expenseId} {
+      allow read: if isVerified();
+      allow create: if isVerified() && isValidId(expenseId) && isValidExpense(incoming()) && incoming().id == expenseId;
+      allow update: if false; // Expenses are immutable operational entries
+      allow delete: if isVerified() && isValidId(expenseId);
+    }
+
+    match /tasks/{taskId} {
+      allow read: if isVerified();
+      allow create: if isVerified() && isValidId(taskId) && isValidTask(incoming()) && incoming().id == taskId;
+      allow update: if isVerified() && isValidId(taskId) && isValidTask(incoming()) && incoming().id == taskId
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status']);
+      allow delete: if isVerified() && isValidId(taskId);
+    }
+
+    match /logs/{logId} {
+      allow read: if isVerified();
+      allow create: if isVerified() && isValidId(logId) && isValidLog(incoming()) && incoming().id == logId;
+      allow update, delete: if false; // Logs are write-once audit events
+    }
+  }
+}

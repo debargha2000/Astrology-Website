@@ -1,0 +1,97 @@
+{
+  "entities": {
+    "Invoice": {
+      "title": "Invoice",
+      "description": "Commercial invoices for astrological gem and crystal consultations.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "client": { "type": "string" },
+        "date": { "type": "string" },
+        "item": { "type": "string" },
+        "amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["Paid", "Sent", "Overdue", "Draft"] },
+        "alignment": { "type": "string" }
+      },
+      "required": ["id", "client", "date", "item", "amount", "status", "alignment"]
+    },
+    "Vendor": {
+      "title": "Vendor",
+      "description": "Onboarded crystal artisans and geode miners.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "contact": { "type": "string" },
+        "origin": { "type": "string" },
+        "rating": { "type": "number" },
+        "category": { "type": "string" },
+        "leadTime": { "type": "string" },
+        "leadGems": { "type": "string" },
+        "status": { "type": "string", "enum": ["Approved", "Under Review", "Suspended"] }
+      },
+      "required": ["id", "name", "contact", "origin", "rating", "category", "leadTime", "leadGems", "status"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Operations and sourcing expenses for sacred rites.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "amount": { "type": "number" },
+        "date": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "title", "category", "amount", "date", "notes"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "Autonomic and planetary purification schedules.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "status": { "type": "string", "enum": ["Backlog", "Water Cleanse", "Moon Bath Bathing", "Sealed / Composed"] },
+        "priority": { "type": "string", "enum": ["Low", "Medium", "High"] },
+        "assignee": { "type": "string" },
+        "daysLeft": { "type": "number" }
+      },
+      "required": ["id", "title", "status", "priority", "assignee", "daysLeft"]
+    },
+    "TerminalLog": {
+      "title": "TerminalLog",
+      "description": "Secured operation logs auditing astrological state progression.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "message": { "type": "string" }
+      },
+      "required": ["id", "timestamp", "message"]
+    }
+  },
+  "firestore": {
+    "/invoices/{invoiceId}": {
+      "schema": "Invoice",
+      "description": "Collection of invoices."
+    },
+    "/vendors/{vendorId}": {
+      "schema": "Vendor",
+      "description": "Collection of on-boarded artisan vendors."
+    },
+    "/expenses/{expenseId}": {
+      "schema": "Expense",
+      "description": "Collection of ritual operational expenditures."
+    },
+    "/tasks/{taskId}": {
+      "schema": "Task",
+      "description": "Interactive planetary purifications tasks pipeline."
+    },
+    "/logs/{logId}": {
+      "schema": "TerminalLog",
+      "description": "Interactive ledger logs monitoring operations."
+    }
+  }
+}

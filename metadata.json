@@ -1,0 +1,6 @@
+{
+  "name": "Aura & Stone",
+  "description": "The premium science of signs, fine crystal jewelry, and zodiac-energetical charges, curated with 75 years of astrological expertise.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
