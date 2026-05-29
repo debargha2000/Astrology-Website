@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=/Astrology-Website/?redirected=true" />
+    <script>
+      // Redirect all 404 paths to the SPA root, preserving the path as a query param
+      (function() {
+        var path = window.location.pathname;
+        var search = window.location.search || '';
+        // Store the original path so the SPA can recover it if needed
+        window.sessionStorage.setItem('ghp-redirect-path', path);
+        window.location.replace('/Astrology-Website/?redirected=true');
+      })();
+    </script>
+    <title>Aura & Stone | Redirecting...</title>
+  </head>
+  <body>
+    <p>Redirecting to <a href="/Astrology-Website/">Aura & Stone</a>...</p>
+  </body>
+</html>

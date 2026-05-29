@@ -1,0 +1,606 @@
+{
+  "invoices": [
+    {
+      "id": "INV-2026-601",
+      "client": "Aarav Mehta",
+      "date": "2026-05-24",
+      "item": "Astral Prosperity Bracelet Combo",
+      "amount": 8400,
+      "status": "Paid",
+      "alignment": "Money Magnet (Citrine + Pyrite)"
+    },
+    {
+      "id": "INV-2026-602",
+      "client": "Priya Sharma",
+      "date": "2026-05-25",
+      "item": "Evil Eye Armour Ring Set",
+      "amount": 5900,
+      "status": "Sent",
+      "alignment": "Protection (Black Tourmaline)"
+    },
+    {
+      "id": "INV-2026-603",
+      "client": "Devas Astrographics",
+      "date": "2026-05-21",
+      "item": "Mass Calibration (12 Sacred Geodes)",
+      "amount": 48000,
+      "status": "Paid",
+      "alignment": "Vedic Grid Alignment"
+    },
+    {
+      "id": "INV-2026-604",
+      "client": "Rohit Khandelwal",
+      "date": "2026-05-18",
+      "item": "Crown Clarity Amethyst Special",
+      "amount": 9500,
+      "status": "Overdue",
+      "alignment": "Saturn Node Alignment"
+    },
+    {
+      "id": "INV-2026-605",
+      "client": "Kiran Desai",
+      "date": "2026-05-26",
+      "item": "Chakra Awakening Gilded Bead Set",
+      "amount": 12500,
+      "status": "Draft",
+      "alignment": "Full Alignment"
+    }
+  ],
+  "vendors": [
+    {
+      "id": "VND-301",
+      "name": "Himalayan Fine Quartz Co.",
+      "contact": "Harish Rawat",
+      "origin": "Uttarakhand, India",
+      "rating": 5,
+      "category": "Raw Geodes",
+      "leadTime": "3 Days",
+      "leadGems": "Clear Quartz & Citrine",
+      "status": "Approved"
+    },
+    {
+      "id": "VND-302",
+      "name": "Uruguayan Amethyst Miner's Guild",
+      "contact": "Lucas Silveira",
+      "origin": "Artigas, Uruguay",
+      "rating": 5,
+      "category": "Crystalline Clusters",
+      "leadTime": "14 Days",
+      "leadGems": "Deep Amethyst",
+      "status": "Approved"
+    },
+    {
+      "id": "VND-303",
+      "name": "Gilded Silver & Thread Artisans",
+      "contact": "Kavita Jewellers",
+      "origin": "Jaipur, India",
+      "rating": 4,
+      "category": "Mountings & Elastic Conductors",
+      "leadTime": "5 Days",
+      "leadGems": "925 Silver Links",
+      "status": "Under Review"
+    },
+    {
+      "id": "VND-304",
+      "name": "Ganges Water Sanctify Source",
+      "contact": "Pandit Shastri Ji",
+      "origin": "Rishikesh, India",
+      "rating": 5,
+      "category": "Sanctifying Liquids",
+      "leadTime": "2 Days",
+      "leadGems": "Panchamrut & Ganga Jal",
+      "status": "Approved"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "EXP-101",
+      "title": "Lunar Cleansing Sandalwood Paste",
+      "category": "Ritual Consecration",
+      "amount": 4200,
+      "date": "2026-05-20",
+      "notes": "Grown on organic farms in Mysore"
+    },
+    {
+      "id": "EXP-102",
+      "title": "Custom Velvet Protection Pouches",
+      "category": "Packaging",
+      "amount": 8500,
+      "date": "2026-05-22",
+      "notes": "Saffron-dyed lining for energetic insulation"
+    },
+    {
+      "id": "EXP-103",
+      "title": "Laboratory Geological Verification Fees",
+      "category": "Quality Inspection",
+      "amount": 12000,
+      "date": "2026-05-24",
+      "notes": "Refractive Index and Mohs Hardness certification batch #411"
+    },
+    {
+      "id": "EXP-104",
+      "title": "Temple Astro-Scholars Commision",
+      "category": "Ritual Consecration",
+      "amount": 25000,
+      "date": "2026-05-25",
+      "notes": "Bathing chant leaders over moon cycles"
+    },
+    {
+      "id": "EXP-105",
+      "title": "Ganga Jal Sacred Liquid Logistic Refills",
+      "category": "Sourcing & Shipping",
+      "amount": 6200,
+      "date": "2026-05-18",
+      "notes": "Pure glass canisters from Himalayan descent coordinates"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TSK-501",
+      "title": "Wash Batch #409 Clear Quartz in Panchamrut",
+      "status": "Water Cleanse",
+      "priority": "High",
+      "assignee": "Pandit Sharma",
+      "daysLeft": 1
+    },
+    {
+      "id": "TSK-502",
+      "title": "Calibrate Amethyst beads with 432Hz Saturn frequencies",
+      "status": "Moon Bath Bathing",
+      "priority": "High",
+      "assignee": "Shastry Ji",
+      "daysLeft": 2
+    },
+    {
+      "id": "TSK-503",
+      "title": "Review laboratory hardness scores for Green Aventirine arrival",
+      "status": "Backlog",
+      "priority": "Medium",
+      "assignee": "Dr. Vivek Soni",
+      "daysLeft": 5
+    },
+    {
+      "id": "TSK-504",
+      "title": "Seal and pack Aarav Mehta Certified Prosperity Combo",
+      "status": "Sealed / Composed",
+      "priority": "Low",
+      "assignee": "Meera Patel",
+      "daysLeft": 0
+    },
+    {
+      "id": "TSK-505",
+      "title": "Program Solar Warmth on Carnelian material locks",
+      "status": "Moon Bath Bathing",
+      "priority": "Medium",
+      "assignee": "Shastry Ji",
+      "daysLeft": 1
+    },
+    {
+      "id": "TSK-506",
+      "title": "Verify signature holographic seals of Vedic certificate series 900",
+      "status": "Backlog",
+      "priority": "High",
+      "assignee": "Meera Patel",
+      "daysLeft": 3
+    }
+  ],
+  "terminalLog": [
+    {
+      "id": "log-1780056826119",
+      "timestamp": "05:43:46 pm",
+      "message": "SYSTEM INITIALIZATION: Connect successfully to Firebase Firestore Instance."
+    },
+    {
+      "id": "log-1780056050586",
+      "timestamp": "05:30:50 pm",
+      "message": "SYSTEM INITIALIZATION: Connect successfully to Firebase Firestore Instance."
+    },
+    {
+      "id": "log-1780055991592",
+      "timestamp": "05:29:51 pm",
+      "message": "SYSTEM INITIALIZATION: Connect successfully to Firebase Firestore Instance."
+    },
+    {
+      "id": "log-1780055932368",
+      "timestamp": "05:28:52 pm",
+      "message": "SYSTEM INITIALIZATION: Connect successfully to Firebase Firestore Instance."
+    },
+    {
+      "id": "log-1780054953902",
+      "timestamp": "05:12:33 pm",
+      "message": "SYSTEM INITIALIZATION: Connect successfully to Firebase Firestore Instance."
+    },
+    {
+      "id": "log-1780054496672",
+      "timestamp": "05:04:56 pm",
+      "message": "SYSTEM INITIALIZATION: Connect successfully to Firebase Firestore Instance."
+    },
+    {
+      "id": "log-1",
+      "timestamp": "10:32 AM",
+      "message": "SECURE COGNITIVE LEDGER INITIALIZED: Welcome to Aura & Stone Central Operations."
+    },
+    {
+      "id": "log-2",
+      "timestamp": "10:45 AM",
+      "message": "RITUAL BATCH UPDATE COMPLETED: 12 Pure Citrine conductors advanced to lunar purification stage."
+    },
+    {
+      "id": "log-3",
+      "timestamp": "11:15 AM",
+      "message": "QUALITY CHECK SYSTEM VERIFICATION: Geologist verified Mohs index 7 on raw amethyst crystal bulk VND-302."
+    }
+  ],
+  "products": [
+    {
+      "id": "money-magnet",
+      "name": "The Aura & Stone Money Magnet Bracelet",
+      "originalPrice": 1499,
+      "salePrice": 1199,
+      "rating": 4.9,
+      "reviewsCount": 1642,
+      "shortDescription": "Attract immense wealth, new career breakthroughs, positive cash flows and acute financial focus.",
+      "description": "Our signature jewelry masterwork, engineered from grade-A wealth crystals. This alignment formula targets the flow of material energy to attract massive opportunities, sound investment mindset, and unlock frozen finances. Specifically tuned to the wearer’s birth chart, each bead works in harmony to bring positive financial vibrations.",
+      "benefits": [
+        "Attracts wealth, luxury, and professional recognition.",
+        "Calibrates logical judgment to prevent unwise financial spending.",
+        "Assists in establishing healthy habits for investing and saving.",
+        "Clears mental blockages surrounding personal abundance and low self-worth."
+      ],
+      "crystalsUsed": [
+        "Citrine",
+        "Pyrite",
+        "Green Aventurine",
+        "Tiger Eye",
+        "Clear Quartz"
+      ],
+      "imageUrl": "/src/assets/images/money_magnet_bracelet_1779793792641.png",
+      "category": "bracelet",
+      "stockStatus": "in-stock",
+      "isBestSeller": true,
+      "zodiacConnection": [
+        "Leo",
+        "Taurus",
+        "Gemini",
+        "Virgo",
+        "Sagittarius",
+        "Capricorn"
+      ],
+      "specifications": {
+        "beadSize": "8mm Grade A+ Spheres",
+        "beadCount": 24,
+        "threadMaterial": "Vedic Double Elastic Chord",
+        "origin": "Finely Sourced (Brazil, Madagascar)",
+        "chargeTime": "3 Nights / 48 Astrological Hours"
+      }
+    },
+    {
+      "id": "evil-eye",
+      "name": "The No Nazar Grounding Armor - Black Tourmaline & Hematite Shield",
+      "originalPrice": 1199,
+      "salePrice": 899,
+      "rating": 4.8,
+      "reviewsCount": 948,
+      "shortDescription": "Ward off negative energies, protect from the malicious look of envy (nazar), and anchor your inner zen.",
+      "description": "Designed as a personal energy-deflecting sanctuary. This piece pairs premium Obsidian, matte Black Tourmaline, and magnetic silver Hematite. It serves as an invisible shield against negative gazes, workplace jealousy, and heavy-hearted environments, absorbing and neutralizing malicious intent.",
+      "benefits": [
+        "Absorbs and neutralizes malicious intentions, envy, and the evil eye.",
+        "Provides structural energetic grounding to calm hyperactive and anxious minds.",
+        "Acts as a defensive aura barrier when walking into cluttered spaces.",
+        "Facilitates high-speed energetic recovery from physical exhaustion."
+      ],
+      "crystalsUsed": [
+        "Black Tourmaline",
+        "Obsidian",
+        "Magnetic Hematite"
+      ],
+      "imageUrl": "/src/assets/images/evil_eye_bracelet_1779793810222.png",
+      "category": "bracelet",
+      "stockStatus": "in-stock",
+      "zodiacConnection": [
+        "Scorpio",
+        "Capricorn",
+        "Aries",
+        "Pisces",
+        "Cancer"
+      ],
+      "specifications": {
+        "beadSize": "8mm Matted & Polished Spheres",
+        "beadCount": 23,
+        "threadMaterial": "Double-woven Resilient Core",
+        "origin": "Himalayan Foothills & Peruvian Andes",
+        "chargeTime": "2 Nights Lunar Absorption"
+      }
+    },
+    {
+      "id": "super-combo",
+      "name": "The Master Healer - Pure Clear Quartz Balance Bracelet",
+      "originalPrice": 2499,
+      "salePrice": 1899,
+      "rating": 4.97,
+      "reviewsCount": 3104,
+      "shortDescription": "The ultimate cosmic balancing light: Amplify your direct manifest waves, block psychic drains, and align all chakra nodes.",
+      "description": "Our premium crystal selection featuring raw, laser-aligned, diamond-cut Pure Clear Quartz. Known globally as the \"Master Healer,\" it absorbs, stores, releases, and regulates energy. It double-focuses the power of any adjacent crystals you wear, bringing mental precision and neutralizing background electrical radiation.",
+      "benefits": [
+        "The supreme crystalline amplifier for alignment, focus, and energy.",
+        "Dismantles energy stagnation to open continuous positive motivation.",
+        "Comes with a complimentary raw Selenite cleansing slab in the box.",
+        "Charged during coinciding solar rise and full moon peak alignments."
+      ],
+      "crystalsUsed": [
+        "Pure Faceted Clear Quartz",
+        "Laser-Aligned Crystal Spheres"
+      ],
+      "imageUrl": "/src/assets/images/super_balanced_combo_1779793830531.png",
+      "category": "combo",
+      "stockStatus": "low-stock",
+      "isBestSeller": true,
+      "zodiacConnection": [
+        "Aries",
+        "Taurus",
+        "Gemini",
+        "Cancer",
+        "Leo",
+        "Virgo",
+        "Libra",
+        "Scorpio",
+        "Sagittarius",
+        "Capricorn",
+        "Aquarius",
+        "Pisces"
+      ],
+      "specifications": {
+        "beadSize": "8mm Faceted Brilliant Spheres",
+        "beadCount": 24,
+        "threadMaterial": "Heavy-duty Elastic Suture",
+        "origin": "Premium Sourced Brazilian Earth Crystals",
+        "chargeTime": "3 Nights Triple Energizing Sequence"
+      }
+    },
+    {
+      "id": "stress-killer",
+      "name": "The Stress Killer - Royal Lavender Amethyst Bracelet",
+      "originalPrice": 1299,
+      "salePrice": 999,
+      "rating": 4.85,
+      "reviewsCount": 521,
+      "shortDescription": "Soothe the nervous system, end bedtime overthinking, unlock profound deep sleep waves, and reset stress cycles.",
+      "description": "A masterpiece of absolute serenity. Deep lavender spheres of high-grade Amethyst operate on the Crown and Third Eye chakras to dismantle modern cognitive anxiety. Perfect for engineers, designers, business owners, and students dealing with chronic mental fatigue and burnout.",
+      "benefits": [
+        "Induces calming wave signatures in the brain to reduce overthinking.",
+        "Stills internal chatter and speeds up transition to deep, restorative REM sleep.",
+        "Soothes skin frequencies and cellular inflammation induced by continuous stress.",
+        "Enhances spiritual intuition and meditative focus."
+      ],
+      "crystalsUsed": [
+        "Royal Amethyst",
+        "Lavender Quartz",
+        "Pure Mountain Quartz"
+      ],
+      "imageUrl": "/src/assets/images/stress_killer_amethyst_1779998973130.png",
+      "category": "bracelet",
+      "stockStatus": "in-stock",
+      "zodiacConnection": [
+        "Pisces",
+        "Aquarius",
+        "Sagittarius",
+        "Virgo"
+      ],
+      "specifications": {
+        "beadSize": "10mm Organic High Polish Spheres",
+        "beadCount": 20,
+        "threadMaterial": "Premium Silk Stretch Core",
+        "origin": "Uruguayan Deep Crystals & Himalayan Quartz",
+        "chargeTime": "3 Nights Sacred Sound Bathing"
+      }
+    },
+    {
+      "id": "love-harmony",
+      "name": "The Divine Harmony - Rose Quartz & Peach Sunstone Bracelet",
+      "originalPrice": 1299,
+      "salePrice": 949,
+      "rating": 4.92,
+      "reviewsCount": 264,
+      "shortDescription": "Open your heart chakra to attract pure love, foster harmonious relationships, absolute empathy, and heal old emotional bruises.",
+      "description": "This ultra-exclusive jewelry pairing combines the tender pink hues of first-grade Rose Quartz alongside energetic peach Sunstone beads. Designed to unlock boundaries, welcome new healthy friendships, and stabilize your cardiac meridian center with unmatched emotional warmth and safety.",
+      "benefits": [
+        "Sparks mutual affection, trust, and deep, honest relationship connections.",
+        "Melts old, cold emotional armor or trauma blocks around your core.",
+        "Releases beautiful radiant aura markers that draw high-vibrational people near.",
+        "Perfect for deep emotional healing and high self-esteem calibration."
+      ],
+      "crystalsUsed": [
+        "Premium Rose Quartz",
+        "Natural Peach Sunstone",
+        "White Jade"
+      ],
+      "imageUrl": "/src/assets/images/love_harmony_rose_quartz_1779998954650.png",
+      "category": "bracelet",
+      "stockStatus": "in-stock",
+      "zodiacConnection": [
+        "Taurus",
+        "Libra",
+        "Cancer",
+        "Pisces"
+      ],
+      "specifications": {
+        "beadSize": "8mm Fine Polished Spheres",
+        "beadCount": 22,
+        "threadMaterial": "Soft Pink Silk Elastic core",
+        "origin": "Premium Madagascan Rose Mines",
+        "chargeTime": "2 Nights Lunar Bath Singing Bowls"
+      }
+    },
+    {
+      "id": "student-crystal",
+      "name": "The Students Crystal - Lapis Lazuli Concentration Bracelet",
+      "originalPrice": 1199,
+      "salePrice": 899,
+      "rating": 4.78,
+      "reviewsCount": 388,
+      "shortDescription": "Deepen academic focus, enhance memory recall, open the throat chakra for vocal eloquence and exam confidence.",
+      "description": "Dappled with golden specks of pyrite, our royal blue Lapis Lazuli bracelet is highly tuned for intellect, cognitive endurance, and communication channels. Designed specifically for academic scholars, creative writers, and public speakers seeking truth, wisdom, and pristine clarity.",
+      "benefits": [
+        "Catalyzes logical analysis and rapid problem-solving execution.",
+        "Bolsters long-term text retention and sharpens visual spatial intellect.",
+        "Clears the throat chakra to eliminate stuttering blocks and nervous speaking draft.",
+        "Instills a tranquil confidence during competitive tests and stressful evaluations."
+      ],
+      "crystalsUsed": [
+        "Lapis Lazuli",
+        "Blue Sodalite",
+        "Hematite"
+      ],
+      "imageUrl": "/src/assets/images/student_crystal_lapis_1779998989153.png",
+      "category": "bracelet",
+      "stockStatus": "in-stock",
+      "zodiacConnection": [
+        "Sagittarius",
+        "Libra",
+        "Aquarius",
+        "Taurus"
+      ],
+      "specifications": {
+        "beadSize": "8mm Laser-aligned Spheres",
+        "beadCount": 24,
+        "threadMaterial": "Premium Blue Elastic Filament",
+        "origin": "Badakhshan Royal Mines",
+        "chargeTime": "2 Nights Astro Alignment"
+      }
+    },
+    {
+      "id": "seven-chakra",
+      "name": "The Real 7 Chakra Healing & Lava Stone Grounding",
+      "originalPrice": 1399,
+      "salePrice": 1099,
+      "rating": 4.88,
+      "reviewsCount": 712,
+      "shortDescription": "Regulate your seven core chakra nodes simultaneously while serving as a natural organic essential oil diffuser.",
+      "description": "A beautiful thermodynamic compass for your energy body. It features seven distinct premium crystals aligning precisely to your seven operational chakras, combined with porous basalt Lava Stones. You can place a single drop of continuous essential oil (like sandalwood or lavender) onto the lava stones to experience all-day therapeutic aromatherapy.",
+      "benefits": [
+        "Secures spiritual and thermodynamic grounding against energy spikes.",
+        "Resets and unblocks all seven key meridian centers along the spinal energy pillar.",
+        "Diffuses favorite functional essential wellness oils passively across 24 hours.",
+        "Restores raw vital energy to clear inexplicable fatigue."
+      ],
+      "crystalsUsed": [
+        "Amethyst",
+        "Lapis Lazuli",
+        "Sodalite",
+        "Green Aventurine",
+        "Tiger Eye",
+        "Carnelian",
+        "Red Jasper",
+        "Porous Lava Basalt"
+      ],
+      "imageUrl": "/src/assets/images/seven_chakra_lava_1779999005612.png",
+      "category": "bracelet",
+      "stockStatus": "in-stock",
+      "zodiacConnection": [
+        "Aries",
+        "Taurus",
+        "Gemini",
+        "Cancer",
+        "Leo",
+        "Virgo",
+        "Libra",
+        "Scorpio",
+        "Sagittarius",
+        "Capricorn",
+        "Aquarius",
+        "Pisces"
+      ],
+      "specifications": {
+        "beadSize": "8mm Matched Gems + 10mm Lava",
+        "beadCount": 22,
+        "threadMaterial": "Resilient Hypoallergenic Core",
+        "origin": "Global Sourced Crystals & Icelandic Lava",
+        "chargeTime": "3 Nights Sacred Sound & Full Moon Charge"
+      }
+    },
+    {
+      "id": "pyrite-luxury-ring",
+      "name": "Aura & Stone Luxury Pyrite Resin-Ring (Silver Band)",
+      "originalPrice": 1199,
+      "salePrice": 799,
+      "rating": 4.8,
+      "reviewsCount": 245,
+      "shortDescription": "Attract gold, wealth, and solid focus in a modern polished sterling silver adjustable frame.",
+      "description": "An elegant, luxury ring encasing real, raw crystalline Pyrite flakes in a high-clarity resin cabochon. Tailored specifically for modern minimalists who wish to keep their financial manifestation keys extremely close, serving as a silent luxury standard piece.",
+      "benefits": [
+        "Continuous energetic link through principal hand tactile feedback.",
+        "Sterling silver premium adjustable band fits all ring fingers perfectly.",
+        "Encourages a continuous flow of creative entrepreneurial ideas."
+      ],
+      "crystalsUsed": [
+        "Pyrite",
+        "Clear Resonance Resin"
+      ],
+      "imageUrl": "/src/assets/images/pyrite_luxury_silver_1779999025465.png",
+      "category": "ring",
+      "stockStatus": "in-stock",
+      "zodiacConnection": [
+        "Leo",
+        "Taurus",
+        "Gemini",
+        "Capricorn"
+      ],
+      "specifications": {
+        "beadSize": "12mm Resin Cabochon",
+        "beadCount": 1,
+        "threadMaterial": "Adjustable S925 Silver Band",
+        "origin": "Peruvian Pyrite",
+        "chargeTime": "3 Nights Astral Gilded Charge"
+      }
+    },
+    {
+      "id": "citrine-luxury-ring",
+      "name": "Aura & Stone Luxury Citrine Solar-Ring (Gold Band)",
+      "originalPrice": 1199,
+      "salePrice": 799,
+      "rating": 4.82,
+      "reviewsCount": 194,
+      "shortDescription": "Channel the warmth and solar success magnet of pure Brazilian Citrine in a premium 18k gold-plated mount.",
+      "description": "Imbued with the solar power of the ruling planet Jupiter. This beautiful gold-plated adjustable ring features a raw crystal of golden Citrine carefully encapsulated in glass-smooth protective matrixes. Bring light, joy, and positive customer conversions to your business.",
+      "benefits": [
+        "Empowers Jupiter planetary rays inside your hand chart.",
+        "18K gold-plated adjustable brass band for luxurious day-long wear.",
+        "Disperses pessimistic energies, bad dreams, and workspace friction."
+      ],
+      "crystalsUsed": [
+        "Citrine",
+        "18K Gold Plated Brass Frame"
+      ],
+      "imageUrl": "/src/assets/images/citrine_luxury_gold_1779999055408.png",
+      "category": "ring",
+      "stockStatus": "in-stock",
+      "zodiacConnection": [
+        "Leo",
+        "Sagittarius",
+        "Aries",
+        "Virgo"
+      ],
+      "specifications": {
+        "beadSize": "14mm Solar matrix Cabochon",
+        "beadCount": 1,
+        "threadMaterial": "18K Gold-Plated Adjustable Band",
+        "origin": "Brazilian Citrine Mines",
+        "chargeTime": "3 Nights solar rise & Mantra Charge"
+      }
+    }
+  ],
+  "websiteContent": {
+    "brandName": "Aura & Stone",
+    "brandSubtitle": "Crystalline Astrology",
+    "heroHeadline": "The Indian",
+    "heroHighlight": "Science of Signs",
+    "heroParagraph": "Fine crystal jewelry engineered from verified planetary minerals. Cleansed, moon bathed, and programmed to your birth chart parameters to create an unshakeable energetic shield.",
+    "founderQuote": "In today’s fast-paced corporate and creative grids, we are continuously bombarded by negative gazes, digital noise, and heavy financial doubt. Aura & Stone was co-conceived because I wanted authentic, laboratory-tested crystal jewelry that looks incredibly sharp and high-fashion while offering robust spiritual protection. We took 75 years of my family's ancestral alignment wisdom and made it sleek, minimalistic, and absolute.",
+    "founderQuoteSubtitle": "Co-Founder & Chief Vedic Architect, Aura & Stone",
+    "historyHeadline": "Ancient Sceptred Science Met Minimalist Form",
+    "historyParagraph1": "Aura & Stone was pioneered in the foothills of Jammu, Kashmir, with a deep, uncompromising mission: to de-mystify ancient Indian gemologies and elevate them to modern standards of luxury, precision, and physical authenticity. Led by three generations of Astro-scholars, we isolate specific minerals (such as green aventurine or Uruguayan amethyst clusters) that possess corresponding atomic frequencies to planetary transit nodes.",
+    "historyParagraph2": "By merging deep Vedic practices with laboratory testing (refractive indexes, geological hardness, chemical matrix formulas), we construct exquisite jewelry talismans that serve as protective and prosperous energy shields for daily corporate movers.",
+    "bannerImage": "/src/assets/images/signtific_hero_banner_1779793774735.png"
+  },
+  "checkpoints": []
+}

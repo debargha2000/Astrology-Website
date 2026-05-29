@@ -33,7 +33,7 @@ export default function App() {
     historyHeadline: 'Ancient Sceptred Science Met Minimalist Form',
     historyParagraph1: 'Aura & Stone was pioneered in the foothills of Jammu, Kashmir, with a deep, uncompromising mission: to de-mystify ancient Indian gemologies and elevate them to modern standards of luxury, precision, and physical authenticity. Led by three generations of Astro-scholars, we isolate specific minerals (such as green aventurine or Uruguayan amethyst clusters) that possess corresponding atomic frequencies to planetary transit nodes.',
     historyParagraph2: 'By merging deep Vedic practices with laboratory testing (refractive indexes, geological hardness, chemical matrix formulas), we construct exquisite jewelry talismans that serve as protective and prosperous energy shields for daily corporate movers.',
-    bannerImage: '/src/assets/images/signtific_hero_banner_1779793774735.png'
+    bannerImage: `${import.meta.env.BASE_URL}src/assets/images/signtific_hero_banner_1779793774735.png`
   });
 
   const fetchDynamicData = async () => {
@@ -111,13 +111,20 @@ export default function App() {
 
   // Synchronize route paths /admin or hash #/admin or #admin to load the CMS page
   useEffect(() => {
+    const BASE_PATH = import.meta.env.BASE_URL || '/';
+
     const handleRouteCheck = () => {
       const path = window.location.pathname;
       const hash = window.location.hash;
       
+      // Strip base path prefix for comparison
+      const normalizedPath = path.startsWith(BASE_PATH) ? path.slice(BASE_PATH.length) : path;
+      
       if (
-        path === '/admin' || 
-        path === '/admin/' || 
+        normalizedPath === 'admin' || 
+        normalizedPath === 'admin/' || 
+        normalizedPath === '/admin' || 
+        normalizedPath === '/admin/' ||
         hash === '#/admin' || 
         hash === '#admin' || 
         hash === '#/cms' || 
@@ -144,16 +151,18 @@ export default function App() {
 
   // Sync URL bar history when currentPage change, showing /admin or reverting to /
   useEffect(() => {
+    const BASE_PATH = import.meta.env.BASE_URL || '/';
     const path = window.location.pathname;
     const hash = window.location.hash;
+    const normalizedPath = path.startsWith(BASE_PATH) ? path.slice(BASE_PATH.length) : path;
 
     if (currentPage === 'cms') {
-      if (path !== '/admin' && path !== '/admin/' && hash !== '#/admin' && hash !== '#admin' && hash !== '#/cms' && hash !== '#cms') {
-        window.history.pushState({ page: 'cms' }, '', '/admin');
+      if (normalizedPath !== 'admin' && normalizedPath !== 'admin/' && normalizedPath !== '/admin' && normalizedPath !== '/admin/' && hash !== '#/admin' && hash !== '#admin' && hash !== '#/cms' && hash !== '#cms') {
+        window.history.pushState({ page: 'cms' }, '', BASE_PATH + 'admin');
       }
     } else {
-      if (path === '/admin' || path === '/admin/') {
-        window.history.pushState({ page: currentPage }, '', '/');
+      if (normalizedPath === 'admin' || normalizedPath === 'admin/' || normalizedPath === '/admin' || normalizedPath === '/admin/') {
+        window.history.pushState({ page: currentPage }, '', BASE_PATH);
       }
     }
   }, [currentPage]);

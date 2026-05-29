@@ -2430,7 +2430,7 @@ export default function BusinessOperationsCMS({ onDataChange, currentProducts, c
                     >
                       <div className="flex gap-3">
                         <img
-                          src={prod.imageUrl || '/src/assets/images/signtific_hero_banner_1779793774735.png'}
+                          src={prod.imageUrl || `${import.meta.env.BASE_URL}src/assets/images/signtific_hero_banner_1779793774735.png`}
                           alt={prod.name}
                           referrerPolicy="no-referrer"
                           className="h-12 w-12 rounded-lg object-cover shrink-0 border border-[#FAF7F2]"

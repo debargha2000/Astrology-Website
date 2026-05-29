@@ -5,34 +5,36 @@
 
 import { Product, Review, ZodiacInfo, CrystalDetails } from './types';
 
+const IMG = `${import.meta.env.BASE_URL}src/assets/images`;
+
 // Let's use the actual generated images with timestamps
-export const HERO_IMAGE = '/src/assets/images/signtific_hero_banner_1779793774735.png';
-export const MONEY_MAGNET_IMAGE = '/src/assets/images/money_magnet_bracelet_1779793792641.png';
-export const EVIL_EYE_IMAGE = '/src/assets/images/evil_eye_bracelet_1779793810222.png';
-export const COMBO_IMAGE = '/src/assets/images/super_balanced_combo_1779793830531.png';
-export const RITUAL_IMAGE = '/src/assets/images/vedic_charging_1779793852967.png';
+export const HERO_IMAGE = `${IMG}/signtific_hero_banner_1779793774735.png`;
+export const MONEY_MAGNET_IMAGE = `${IMG}/money_magnet_bracelet_1779793792641.png`;
+export const EVIL_EYE_IMAGE = `${IMG}/evil_eye_bracelet_1779793810222.png`;
+export const COMBO_IMAGE = `${IMG}/super_balanced_combo_1779793830531.png`;
+export const RITUAL_IMAGE = `${IMG}/vedic_charging_1779793852967.png`;
 
-export const LOVE_HARMONY_IMAGE = '/src/assets/images/love_harmony_rose_quartz_1779998954650.png';
-export const STRESS_KILLER_IMAGE = '/src/assets/images/stress_killer_amethyst_1779998973130.png';
-export const STUDENT_CRYSTAL_IMAGE = '/src/assets/images/student_crystal_lapis_1779998989153.png';
-export const SEVEN_CHAKRA_IMAGE = '/src/assets/images/seven_chakra_lava_1779999005612.png';
-export const PYRITE_RING_IMAGE = '/src/assets/images/pyrite_luxury_silver_1779999025465.png';
-export const CITRINE_RING_IMAGE = '/src/assets/images/citrine_luxury_gold_1779999055408.png';
-export const VEDIC_EXPERT_IMAGE = '/src/assets/images/vedic_expert_portrait_1779999076620.png';
-export const POLISHED_GEMSTONES_LOOM_IMAGE = '/src/assets/images/polished_gemstones_loom_1779999095722.png';
+export const LOVE_HARMONY_IMAGE = `${IMG}/love_harmony_rose_quartz_1779998954650.png`;
+export const STRESS_KILLER_IMAGE = `${IMG}/stress_killer_amethyst_1779998973130.png`;
+export const STUDENT_CRYSTAL_IMAGE = `${IMG}/student_crystal_lapis_1779998989153.png`;
+export const SEVEN_CHAKRA_IMAGE = `${IMG}/seven_chakra_lava_1779999005612.png`;
+export const PYRITE_RING_IMAGE = `${IMG}/pyrite_luxury_silver_1779999025465.png`;
+export const CITRINE_RING_IMAGE = `${IMG}/citrine_luxury_gold_1779999055408.png`;
+export const VEDIC_EXPERT_IMAGE = `${IMG}/vedic_expert_portrait_1779999076620.png`;
+export const POLISHED_GEMSTONES_LOOM_IMAGE = `${IMG}/polished_gemstones_loom_1779999095722.png`;
 
-export const ZODIAC_ARIES_IMAGE = '/src/assets/images/zodiac_aries_1779999813981.png';
-export const ZODIAC_TAURUS_IMAGE = '/src/assets/images/zodiac_taurus_1779999832338.png';
-export const ZODIAC_GEMINI_IMAGE = '/src/assets/images/zodiac_gemini_1779999846623.png';
-export const ZODIAC_CANCER_IMAGE = '/src/assets/images/zodiac_cancer_1779999861997.png';
-export const ZODIAC_LEO_IMAGE = '/src/assets/images/zodiac_leo_1779999878981.png';
-export const ZODIAC_VIRGO_IMAGE = '/src/assets/images/zodiac_virgo_1779999897818.png';
-export const ZODIAC_LIBRA_IMAGE = '/src/assets/images/zodiac_libra_1779999916880.png';
-export const ZODIAC_SCORPIO_IMAGE = '/src/assets/images/zodiac_scorpio_1779999934063.png';
-export const ZODIAC_SAGITTARIUS_IMAGE = '/src/assets/images/zodiac_sagittarius_1779999950620.png';
-export const ZODIAC_CAPRICORN_IMAGE = '/src/assets/images/zodiac_capricorn_1779999980872.png';
-export const ZODIAC_AQUARIUS_IMAGE = '/src/assets/images/zodiac_aquarius_1780000002499.png';
-export const ZODIAC_PISCES_IMAGE = '/src/assets/images/zodiac_pisces_1780000023031.png';
+export const ZODIAC_ARIES_IMAGE = `${IMG}/zodiac_aries_1779999813981.png`;
+export const ZODIAC_TAURUS_IMAGE = `${IMG}/zodiac_taurus_1779999832338.png`;
+export const ZODIAC_GEMINI_IMAGE = `${IMG}/zodiac_gemini_1779999846623.png`;
+export const ZODIAC_CANCER_IMAGE = `${IMG}/zodiac_cancer_1779999861997.png`;
+export const ZODIAC_LEO_IMAGE = `${IMG}/zodiac_leo_1779999878981.png`;
+export const ZODIAC_VIRGO_IMAGE = `${IMG}/zodiac_virgo_1779999897818.png`;
+export const ZODIAC_LIBRA_IMAGE = `${IMG}/zodiac_libra_1779999916880.png`;
+export const ZODIAC_SCORPIO_IMAGE = `${IMG}/zodiac_scoprio_1779999934063.png`;
+export const ZODIAC_SAGITTARIUS_IMAGE = `${IMG}/zodiac_sagittarius_1779999950620.png`;
+export const ZODIAC_CAPRICORN_IMAGE = `${IMG}/zodiac_capricorn_1779999980872.png`;
+export const ZODIAC_AQUARIUS_IMAGE = `${IMG}/zodiac_aquarius_1780000002499.png`;
+export const ZODIAC_PISCES_IMAGE = `${IMG}/zodiac_pisces_1780000023031.png`;
 
 export const PRODUCTS: Product[] = [
   {

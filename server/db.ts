@@ -15,7 +15,7 @@ try {
     }
   }
 } catch (err) {
-  console.error("Error reading firebase config file", err);
+  // Firebase config not found, using defaults
 }
 
 let firestoreDb: admin.firestore.Firestore | null = null;
@@ -220,7 +220,7 @@ export class DB {
         await fdb.collection('logs').doc(logId).set(newLogPayload);
         return newLogPayload;
       } catch (e) {
-        console.error('Firebase Firestore log write error, falling back', e);
+        // Silently fall back to local storage
       }
     }
 
@@ -238,7 +238,7 @@ export class DB {
         const snapshot = await fdb.collection('logs').orderBy('id', 'desc').limit(10).get();
         return snapshot.docs.map(doc => doc.data() as TerminalLog);
       } catch (e) {
-        console.error('Firebase Firestore find logs failure, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
     return this.load().terminalLog;
@@ -252,7 +252,7 @@ export class DB {
         const snapshot = await fdb.collection('invoices').get();
         return snapshot.docs.map(doc => doc.data() as Invoice);
       } catch (e) {
-        console.error('Firebase Firestore find invoices error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
     return this.load().invoices;
@@ -272,7 +272,7 @@ export class DB {
         await this.addLog(`Created High-Precision Invoice ${newInvoice.id} for ${newInvoice.client} (₹${newInvoice.amount})`);
         return newInvoice;
       } catch (e) {
-        console.error('Firebase Firestore create invoice error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
 
@@ -291,7 +291,7 @@ export class DB {
         await this.addLog(`Cleared Invoice ${id} from operational ledger.`);
         return true;
       } catch (e) {
-        console.error('Firebase Firestore delete invoice error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
 
@@ -314,7 +314,7 @@ export class DB {
         const snapshot = await fdb.collection('vendors').get();
         return snapshot.docs.map(doc => doc.data() as Vendor);
       } catch (e) {
-        console.error('Firebase Firestore find vendors error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
     return this.load().vendors;
@@ -336,7 +336,7 @@ export class DB {
         await this.addLog(`Onboarded newly registered artisan and geode vendor: ${newVendor.name}`);
         return newVendor;
       } catch (e) {
-        console.error('Firebase Firestore create vendor error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
 
@@ -355,7 +355,7 @@ export class DB {
         await this.addLog(`Suspended/deleted vendor registration: ${id}`);
         return true;
       } catch (e) {
-        console.error('Firebase Firestore delete vendor error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
 
@@ -379,7 +379,7 @@ export class DB {
         const snapshot = await fdb.collection('expenses').get();
         return snapshot.docs.map(doc => doc.data() as Expense);
       } catch (e) {
-        console.error('Firebase Firestore find expenses error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
     return this.load().expenses;
@@ -400,7 +400,7 @@ export class DB {
         await this.addLog(`Logged operations expense: ${newExpense.title} (₹${newExpense.amount})`);
         return newExpense;
       } catch (e) {
-        console.error('Firebase Firestore create expense error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
 
@@ -419,7 +419,7 @@ export class DB {
         await this.addLog(`Removed operational expense log record ID: ${id}`);
         return true;
       } catch (e) {
-        console.error('Firebase Firestore delete expense error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
 
@@ -442,7 +442,7 @@ export class DB {
         const snapshot = await fdb.collection('tasks').get();
         return snapshot.docs.map(doc => doc.data() as Task);
       } catch (e) {
-        console.error('Firebase Firestore find tasks error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
     return this.load().tasks;
@@ -462,7 +462,7 @@ export class DB {
         await this.addLog(`Created astrological task: ${newTask.title} for ${newTask.assignee}`);
         return newTask;
       } catch (e) {
-        console.error('Firebase Firestore create task error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
 
@@ -488,7 +488,7 @@ export class DB {
         }
         return null;
       } catch (e) {
-        console.error('Firebase Firestore update task status error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
 
@@ -511,7 +511,7 @@ export class DB {
         await this.addLog(`Cleared astrological task reference ID: ${id}`);
         return true;
       } catch (e) {
-        console.error('Firebase Firestore delete task error, falling back to local storage', e);
+        // Silently fall back to local storage
       }
     }
 
