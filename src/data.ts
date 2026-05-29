@@ -5,7 +5,8 @@
 
 import { Product, Review, ZodiacInfo, CrystalDetails } from './types';
 
-const IMG = `${import.meta.env.BASE_URL}src/assets/images`;
+const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.BASE_URL : '/';
+const IMG = `${BASE_URL}src/assets/images`;
 
 // Let's use the actual generated images with timestamps
 export const HERO_IMAGE = `${IMG}/signtific_hero_banner_1779793774735.png`;
