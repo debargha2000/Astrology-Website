@@ -6,21 +6,26 @@
   --font-serif: "Cormorant Garamond", "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  /* Custom Editorial Theme Colors mapped under Tailwind v4 */
-  --color-[#F8F6F1]: #F8F6F1;
-  --color-[#1A1A1A]: #1A1A1A;
-  --color-[#D1CEBF]: #D1CEBF;
-  --color-[#E8E6E1]: #E8E6E1;
-  --color-[#F0EEE7]: #F0EEE7;
-  --color-[#C5A880]: #A6A18F; /* Muted architectural gold */
-  --color-[#D4AF37]: #1A1A1A; /* Classic Ink/Dark accent for strong editorial buttons */
+  /* Custom Editorial Theme Colors — Tailwind v4 generates utilities from bare names.
+     Use as `bg-cream`, `text-ink`, `border-stone`, `bg-gold-muted`, etc. */
+  --color-cream: #F8F6F1;
+  --color-ink: #1A1A1A;
+  --color-stone: #D1CEBF;
+  --color-mist: #E8E6E1;
+  --color-fog: #F0EEE7;
+  --color-gold-muted: #A6A18F; /* Muted architectural gold */
+  --color-gold: #D4AF37;
+  --color-paper: #FAF7F2;
+  --color-sand: #E8E4D9;
+  --color-clay: #857F75;
+  --color-shadow: #322D2C;
 }
 
 /* Global body overrides to stick to page guidelines */
 :root {
-  --bg: #F8F6F1;
-  --ink: #1A1A1A;
-  --accent: #D1CEBF;
+  --bg: var(--color-cream);
+  --ink: var(--color-ink);
+  --accent: var(--color-stone);
   --serif: 'Playfair Display', serif;
   --sans: 'Inter', sans-serif;
 }

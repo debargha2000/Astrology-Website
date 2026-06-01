@@ -17,14 +17,17 @@ interface HeaderProps {
   brandSubtitle?: string;
 }
 
-export default function Header({ 
-  currentPage, 
-  setCurrentPage, 
-  cartCount, 
-  onOpenCart, 
-  brandName = 'Aura & Stone', 
-  brandSubtitle = 'Crystalline Astrology' 
+export default function Header({
+  currentPage,
+  setCurrentPage,
+  cartCount,
+  onOpenCart,
+  brandName,
+  brandSubtitle,
 }: HeaderProps) {
+  const resolvedBrandName = brandName && brandName.trim().length > 0 ? brandName : 'Aura & Stone';
+  const resolvedBrandSubtitle =
+    brandSubtitle && brandSubtitle.trim().length > 0 ? brandSubtitle : 'Crystalline Astrology';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [muhurtaTime, setMuhurtaTime] = useState('Shubh Hora (Auspicious Wealth Focus)');
   const [astronomicalCycle, setAstronomicalCycle] = useState('Sun in Gemini • Moon Waxing');
@@ -85,15 +88,15 @@ export default function Header({
           </div>
 
           {/* Branded Centered Logo */}
-          <div 
-            className="flex flex-col items-center justify-center cursor-pointer select-none flex-1 text-center" 
+          <div
+            className="flex flex-col items-center justify-center cursor-pointer select-none flex-1 text-center"
             onClick={() => setCurrentPage('home')}
           >
             <span className="font-serif text-xl sm:text-2xl font-light tracking-[0.2em] uppercase text-[#1A1A1A] leading-none">
-              {brandName}
+              {resolvedBrandName}
             </span>
             <span className="text-[8px] sm:text-[9px] tracking-[0.35em] uppercase text-[#A6A18F] mt-1 sm:mt-0.5 ml-[0.2em] font-mono font-medium leading-none">
-              {brandSubtitle}
+              {resolvedBrandSubtitle}
             </span>
           </div>
 

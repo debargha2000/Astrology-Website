@@ -1,28 +1,51 @@
-import { initializeApp } from 'firebase/app';
-import { 
-  getAuth, 
-  signInWithPopup, 
-  GoogleAuthProvider, 
-  onAuthStateChanged, 
-  User 
+import { initializeApp, FirebaseApp } from 'firebase/app';
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  User
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import firebaseConfig from '../../firebase-applet-config.json';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, AppCheck } from 'firebase/app-check';
 
-// Initialize core Firebase services
-const app = initializeApp(firebaseConfig);
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCkSsR__nlhgCci-X9dbBQ5ARUmy8YUUTk",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "gen-lang-client-0811246245.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "gen-lang-client-0811246245",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "gen-lang-client-0811246245.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "874684942832",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:874684942832:web:b6594b8b563ed1d812f535",
+};
+
+const app: FirebaseApp = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
-// Configure Google OAuth Provider for Gmail read/send capability
-export const provider = new GoogleAuthProvider();
-provider.addScope('https://www.googleapis.com/auth/gmail.send');
+let appCheckInstance: AppCheck | null = null;
+const appCheckSiteKey = import.meta.env.VITE_FIREBASE_APPCHECK_SITE_KEY as string | undefined;
 
-// In-memory token cache (never stored in localStorage/sessionStorage)
+if (appCheckSiteKey) {
+  try {
+    appCheckInstance = initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(appCheckSiteKey),
+      isTokenAutoRefreshEnabled: true,
+    });
+  } catch (e) {
+    console.warn('Firebase App Check failed to initialize. Continuing without attestation.', e);
+  }
+} else if (import.meta.env.PROD) {
+  console.warn(
+    'VITE_FIREBASE_APPCHECK_SITE_KEY is unset. ' +
+    'Firebase services will run without App Check attestation in production.'
+  );
+}
+
+export const appCheck = appCheckInstance;
+
 let cachedAccessToken: string | null = null;
 let isSigningIn = false;
 
-// Initialize auth state listener. Call this on app load.
 export const initAuth = (
   onAuthSuccess?: (user: User, token: string) => void,
   onAuthFailure?: () => void
@@ -32,7 +55,6 @@ export const initAuth = (
       if (cachedAccessToken) {
         if (onAuthSuccess) onAuthSuccess(user, cachedAccessToken);
       } else if (!isSigningIn) {
-        // If we have a user but no key in memory, clear or require login
         cachedAccessToken = null;
         if (onAuthFailure) onAuthFailure();
       }
@@ -43,36 +65,48 @@ export const initAuth = (
   });
 };
 
-// Must be called from a button click or user interaction
-export const googleSignIn = async (): Promise<{ user: User; accessToken: string } | null> => {
+function buildProvider(scopes: string[] = []): GoogleAuthProvider {
+  const provider = new GoogleAuthProvider();
+  for (const scope of scopes) {
+    provider.addScope(scope);
+  }
+  return provider;
+}
+
+export async function googleSignIn(
+  scopes: string[] = []
+): Promise<{ user: User; accessToken: string } | null> {
   try {
     isSigningIn = true;
+    const provider = buildProvider(scopes);
     const result = await signInWithPopup(auth, provider);
     const credential = GoogleAuthProvider.credentialFromResult(result);
     if (!credential?.accessToken) {
-      throw new Error('Failed to obtain verified Gmail OAuth access token from Google identity provider.');
+      throw new Error('Failed to obtain verified Google OAuth access token.');
     }
 
     cachedAccessToken = credential.accessToken;
     return { user: result.user, accessToken: cachedAccessToken };
   } catch (error: any) {
-    console.error('Google Gmail OAuth Handshake Error:', error);
+    console.error('Google OAuth Handshake Error:', error);
     throw error;
   } finally {
     isSigningIn = false;
   }
-};
+}
 
-export const getAccessToken = async (): Promise<string | null> => {
-  return cachedAccessToken;
-};
+export const GMAIL_SEND_SCOPE = 'https://www.googleapis.com/auth/gmail.send';
+
+export const signInForGmail = (): Promise<{ user: User; accessToken: string } | null> =>
+  googleSignIn([GMAIL_SEND_SCOPE]);
+
+export const getAccessToken = async (): Promise<string | null> => cachedAccessToken;
 
 export const logout = async () => {
   await auth.signOut();
   cachedAccessToken = null;
 };
 
-// --- Strict Error Handling Requirements Block ---
 export enum OperationType {
   CREATE = 'create',
   UPDATE = 'update',

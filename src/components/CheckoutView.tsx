@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { CartItem, Product } from '../types';
 import { ShieldCheck, Calendar, MapPin, CreditCard, Sparkles, CheckCircle, Download, ArrowLeft, Send, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { apiFetch } from '../services/apiFetch';
 
 interface CheckoutViewProps {
   cartItems: CartItem[];
@@ -79,18 +80,15 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
       }
 
       // 2. Transmit order parameters to create order tunnel on Backend
-      const orderResponse = await fetch('/api/payments/razorpay/order', {
+      const orderResponse = await apiFetch('/api/payments/razorpay/order', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           amount: subtotal,
           currency: 'INR',
-          receiptEmail: email || 'operations@signtific.in',
+          receiptEmail: email || 'operations@aurastone.in',
           clientName: name || 'Universal Voyager',
           cartItems: itemsDescription,
-        })
+        }
       });
 
       if (!orderResponse.ok) {
@@ -124,13 +122,13 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
         handler: async function (response: any) {
           try {
             // Reconcile and secure signature capture details with backend databases
-            const syncResponse = await fetch('/api/payments/razorpay/webhook', {
+            const syncResponse = await apiFetch('/api/payments/razorpay/webhook', {
               method: 'POST',
+              skipCsrf: true,
               headers: {
-                'Content-Type': 'application/json',
                 'X-Razorpay-Signature': response.razorpay_signature || 'bypass_test_mode'
               },
-              body: JSON.stringify({
+              body: {
                 event: 'payment.captured',
                 amount: orderData.amount,
                 clientName: name,
@@ -150,7 +148,7 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                     }
                   }
                 }
-              })
+              }
             });
 
             if (syncResponse.ok) {
@@ -185,19 +183,19 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
       // Failover elegant simulator logic (useful in sandbox/iframe restrictions or if offline)
       setTimeout(async () => {
         try {
-          await fetch('/api/payments/razorpay/webhook', {
+          await apiFetch('/api/payments/razorpay/webhook', {
             method: 'POST',
+            skipCsrf: true,
             headers: {
-              'Content-Type': 'application/json',
               'X-Razorpay-Signature': 'bypass_test_mode'
             },
-            body: JSON.stringify({
+            body: {
               event: 'payment.captured',
               amount: subtotal * 100,
               clientName: name || 'Universal Voyager',
-              receiptEmail: email || 'operations@signtific.in',
+          receiptEmail: email || 'operations@aurastone.in',
               cartItems: itemsDescription,
-            })
+            }
           });
         } catch (err) {
           console.error('Simulated webhook sync skipped', err);
@@ -483,7 +481,7 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
 
                     <div className="space-y-1 font-mono text-[10px] text-[#A6A18F] tracking-wide">
                       <div className="animate-pulse font-bold">
-                        UPI: signtificindia@paytm • Expiring in: {formatTimer(timeLeft)}
+                        UPI: aurastone@paytm • Expiring in: {formatTimer(timeLeft)}
                       </div>
                       <p className="text-[9px] text-[#1A1A1A]/50">
                         Once aligned, our portal auto-recognizes transactions instantaneously using direct block traces.

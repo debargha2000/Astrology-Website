@@ -7,11 +7,16 @@ import { PRODUCTS } from '../src/data';
 // Read config for lazy initialization
 const CONFIG_PATH = path.join(process.cwd(), 'firebase-applet-config.json');
 let projectId = 'gen-lang-client-0811246245'; // default fallback
+let firestoreDatabaseId: string | undefined = undefined;
+
 try {
   if (fs.existsSync(CONFIG_PATH)) {
     const config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
     if (config.projectId) {
       projectId = config.projectId;
+    }
+    if (config.firestoreDatabaseId && config.firestoreDatabaseId !== '(default)') {
+      firestoreDatabaseId = config.firestoreDatabaseId;
     }
   }
 } catch (err) {
@@ -34,10 +39,13 @@ export function getFirestoreDB() {
         projectId: projectId,
       });
     }
-    firestoreDb = admin.firestore();
+    firestoreDb = firestoreDatabaseId
+      ? (admin as any).firestore(firestoreDatabaseId)
+      : admin.firestore();
     return firestoreDb;
   } catch (err) {
-    console.warn("⚠️ Failed to initialize Firebase Firestore Admin. Falling back to local flat-file storage.", err);
+    const reason = err instanceof Error ? err.message : String(err);
+    console.warn(`⚠️ Firestore unavailable (${reason}). Falling back to local flat-file storage at database.json.`);
     useLocalFallback = true;
     return null;
   }
@@ -144,7 +152,7 @@ const INITIAL_WEBSITE_CONTENT: WebsiteContent = {
   historyHeadline: 'Ancient Sceptred Science Met Minimalist Form',
   historyParagraph1: 'Aura & Stone was pioneered in the foothills of Jammu, Kashmir, with a deep, uncompromising mission: to de-mystify ancient Indian gemologies and elevate them to modern standards of luxury, precision, and physical authenticity. Led by three generations of Astro-scholars, we isolate specific minerals (such as green aventurine or Uruguayan amethyst clusters) that possess corresponding atomic frequencies to planetary transit nodes.',
   historyParagraph2: 'By merging deep Vedic practices with laboratory testing (refractive indexes, geological hardness, chemical matrix formulas), we construct exquisite jewelry talismans that serve as protective and prosperous energy shields for daily corporate movers.',
-  bannerImage: '/src/assets/images/signtific_hero_banner_1779793774735.png'
+  bannerImage: '/src/assets/images/aura_stone_hero_banner_1779793774735.png'
 };
 
 interface DatabaseStructure {

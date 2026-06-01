@@ -1,0 +1,173 @@
+import React, { useState, useMemo } from 'react';
+import { Search, Plus, Trash2 } from 'lucide-react';
+import { EXPENSE_CATEGORIES } from './seedData';
+import type { CmsState } from './useCmsState';
+import type { CmsHandlers } from './useCmsHandlers';
+import { AddExpenseModal } from './AddExpenseModal';
+
+interface Props {
+  state: CmsState;
+  handlers: CmsHandlers;
+}
+
+export function ExpensesTab({ state, handlers }: Props) {
+  const { expenses } = state;
+  const { createExpense, deleteExpense } = handlers;
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('All');
+  const [showAdd, setShowAdd] = useState(false);
+
+  const searched = useMemo(
+    () =>
+      expenses.filter((e) => {
+        const q = search.toLowerCase();
+        const matchesSearch =
+          e.title.toLowerCase().includes(q) || e.notes.toLowerCase().includes(q) || e.category.toLowerCase().includes(q);
+        const matchesFilter = filter === 'All' ? true : e.category === filter;
+        return matchesSearch && matchesFilter;
+      }),
+    [expenses, search, filter]
+  );
+
+  const totalOpex = expenses.reduce((a, c) => a + c.amount, 0);
+  const categoryTotals: Record<string, number> = expenses.reduce<Record<string, number>>((acc, c) => {
+    const prev = acc[c.category] ?? 0;
+    acc[c.category] = prev + c.amount;
+    return acc;
+  }, {});
+
+  return (
+    <div className="space-y-6 animate-fadeIn">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+        <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-64 max-w-xs">
+            <Search className="absolute left-3 top-2.5 h-4.5 w-4.5 text-gold-muted" />
+            <input
+              type="text"
+              placeholder="Filter expenses list..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-9 bg-white border border-stone rounded-xl py-2 px-3 text-xs outline-none focus:border-ink"
+            />
+          </div>
+          <div className="flex bg-cream border border-stone p-1 rounded-xl text-[10.5px] font-mono font-bold uppercase tracking-wider">
+            {['All', ...EXPENSE_CATEGORIES].map((c) => (
+              <button
+                key={c}
+                onClick={() => setFilter(c)}
+                className={`cursor-pointer px-3 py-1.5 rounded-lg transition-all ${
+                  filter === c ? 'bg-white text-ink shadow-sm' : 'text-clay hover:text-ink hover:bg-mist/30'
+                }`}
+              >
+                {c === 'All' ? 'All' : c.split(' ')[0]}
+              </button>
+            ))}
+          </div>
+        </div>
+        <button
+          onClick={() => setShowAdd(true)}
+          className="cursor-pointer w-full sm:w-auto bg-ink hover:bg-shadow text-white px-5 py-2.5 rounded-xl text-xs font-mono font-medium uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-md border border-stone/20 transition-transform active:scale-98"
+        >
+          <Plus className="h-4 w-4 text-gold-muted" /> Log Attunement Costs
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="lg:col-span-8 bg-white border border-stone rounded-3xl overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left font-sans text-xs border-collapse">
+              <thead className="bg-cream/80 border-b border-stone text-[9.5px] font-mono text-gold-muted uppercase tracking-widest">
+                <tr>
+                  <th className="p-4 md:p-5 font-bold">SERIAL ID</th>
+                  <th className="p-4 md:p-5 font-bold">PURIFYING WORK DESCRIPTOR</th>
+                  <th className="p-4 md:p-5 font-bold">CATEGORY</th>
+                  <th className="p-4 md:p-5 font-bold text-right">COST (INR)</th>
+                  <th className="p-4 md:p-5 font-bold text-center">ACTION</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-cream">
+                {searched.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide">
+                      No logged consecration charges found.
+                    </td>
+                  </tr>
+                ) : (
+                  searched.map((exp) => (
+                    <tr key={exp.id} className="hover:bg-cream/10 transition-all">
+                      <td className="p-4 md:p-5 font-mono text-gold-muted font-bold">{exp.id}</td>
+                      <td className="p-4 md:p-5 space-y-0.5">
+                        <span className="block font-medium text-ink">{exp.title}</span>
+                        <span className="text-[10px] text-clay font-light leading-snug">{exp.notes}</span>
+                      </td>
+                      <td className="p-4 md:p-5">
+                        <span className="inline-block bg-cream text-clay border border-stone/45 font-mono text-[10px] tracking-wide px-2.5 py-0.5 rounded leading-normal">
+                          {exp.category}
+                        </span>
+                      </td>
+                      <td className="p-4 md:p-5 text-right font-mono font-bold text-ink">₹{exp.amount.toLocaleString('en-IN')}</td>
+                      <td className="p-4 md:p-5 text-center">
+                        <button
+                          onClick={() => deleteExpense(exp.id)}
+                          className="cursor-pointer p-2 rounded-full text-clay hover:text-red-700 hover:bg-red-50 transition-colors"
+                          title="Delete log permanently"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="lg:col-span-4 bg-white border border-stone rounded-3xl p-6 space-y-6 shadow-sm self-start">
+          <div className="border-b border-cream pb-4">
+            <span className="text-[8px] font-mono tracking-[0.25em] text-gold-muted uppercase font-bold block">Integrity checks stats</span>
+            <h3 className="font-serif text-base text-ink">Operational Allocations</h3>
+          </div>
+
+          <div className="space-y-4">
+            {Object.entries(categoryTotals).map(([cat, amount]) => {
+              const pct = totalOpex > 0 ? Math.round((amount / totalOpex) * 100) : 0;
+              return (
+                <div key={cat} className="space-y-1.5">
+                  <div className="flex items-center justify-between font-mono text-[10px]">
+                    <span className="text-ink font-medium uppercase font-sans tracking-wide leading-none">{cat}</span>
+                    <span className="text-gold-muted font-bold">{pct}%</span>
+                  </div>
+                  <div className="h-2 w-full bg-cream rounded-full overflow-hidden border border-stone/10">
+                    <div className="h-full bg-ink rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                  </div>
+                  <span className="block text-[10px] text-gold-muted font-mono text-left">
+                    ₹{amount.toLocaleString('en-IN')} logged in aggregate
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="pt-4 border-t border-cream/60 bg-cream/25 p-4 rounded-xl border border-dashed border-stone/50 text-center space-y-1">
+            <span className="block text-[8px] font-mono text-gold-muted uppercase tracking-widest font-bold">Operating Budget lock</span>
+            <p className="text-[10px] text-ink/75 leading-relaxed font-sans font-light">
+              Aura purity investments are fully programmed within monthly profit constraints, ensuring robust high-fashion
+              manufacturing success.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {showAdd && (
+        <AddExpenseModal
+          onClose={() => setShowAdd(false)}
+          onSubmit={async (form) => {
+            await createExpense(form);
+            setShowAdd(false);
+          }}
+        />
+      )}
+    </div>
+  );
+}

@@ -3,13 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Product, Review, ZodiacInfo, CrystalDetails } from './types';
+import { Product, Review, ZodiacInfo, CrystalDetails, WebsiteContent } from './types';
 
-const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env.BASE_URL : '/';
+// Determine base URL for assets - works with both ESM and CJS
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    // Browser environment
+    return window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+  }
+  // Fallback for SSR or non-browser environments
+  return '/';
+};
+
+const BASE_URL = getBaseUrl();
 const IMG = `${BASE_URL}src/assets/images`;
 
 // Let's use the actual generated images with timestamps
-export const HERO_IMAGE = `${IMG}/signtific_hero_banner_1779793774735.png`;
+export const HERO_IMAGE = `${IMG}/aura_stone_hero_banner_1779793774735.png`;
 export const MONEY_MAGNET_IMAGE = `${IMG}/money_magnet_bracelet_1779793792641.png`;
 export const EVIL_EYE_IMAGE = `${IMG}/evil_eye_bracelet_1779793810222.png`;
 export const COMBO_IMAGE = `${IMG}/super_balanced_combo_1779793830531.png`;
@@ -583,4 +593,28 @@ export const CRYSTAL_ENCYCLOPEDIA: Record<string, CrystalDetails> = {
     scientificFacts: 'Lapis Lazuli is not a single mineral; it is a metamorphic rock. Its deep blue color derives from sulfur radical ions in the Lazurite complex, sparkling with real gold inclusions of Iron Pyrite.',
     hexColor: '#112255'
   }
+};
+
+/**
+ * Default website content used as the initial state for the store and
+ * as the safe fallback when the CMS content fetch fails. Mirrors the
+ * `INITIAL_WEBSITE_CONTENT` in `server/db.ts` so the site renders
+ * coherently on first paint even without network connectivity.
+ */
+export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
+  brandName: 'Aura & Stone',
+  brandSubtitle: 'Crystalline Astrology',
+  heroHeadline: 'The Indian',
+  heroHighlight: 'Science of Signs',
+  heroParagraph:
+    'Fine crystal jewelry engineered from verified planetary minerals. Cleansed, moon bathed, and programmed to your birth chart parameters to create an unshakeable energetic shield.',
+  founderQuote:
+    'In today\u2019s fast-paced corporate and creative grids, we are continuously bombarded by negative gazes, digital noise, and heavy financial doubt. Aura & Stone was co-conceived because I wanted authentic, laboratory-tested crystal jewelry that looks incredibly sharp and high-fashion while offering robust spiritual protection. We took 75 years of my family\u2019s ancestral alignment wisdom and made it sleek, minimalistic, and absolute.',
+  founderQuoteSubtitle: 'Co-Founder & Chief Vedic Architect, Aura & Stone',
+  historyHeadline: 'Ancient Sceptred Science Met Minimalist Form',
+  historyParagraph1:
+    'Aura & Stone was pioneered in the foothills of Jammu, Kashmir, with a deep, uncompromising mission: to de-mystify ancient Indian gemologies and elevate them to modern standards of luxury, precision, and physical authenticity. Led by three generations of Astro-scholars, we isolate specific minerals (such as green aventurine or Uruguayan amethyst clusters) that possess corresponding atomic frequencies to planetary transit nodes.',
+  historyParagraph2:
+    'By merging deep Vedic practices with laboratory testing (refractive indexes, geological hardness, chemical matrix formulas), we construct exquisite jewelry talismans that serve as protective and prosperous energy shields for daily corporate movers.',
+  bannerImage: `${IMG}/aura_stone_hero_banner_1779793774735.png`,
 };

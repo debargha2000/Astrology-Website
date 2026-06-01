@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PageId, Product, CartItem, Review, WebsiteContent, Checkpoint } from './types';
 import { PRODUCTS, REVIEWS, HERO_IMAGE, COMBO_IMAGE, RITUAL_IMAGE, VEDIC_EXPERT_IMAGE, POLISHED_GEMSTONES_LOOM_IMAGE, MONEY_MAGNET_IMAGE, EVIL_EYE_IMAGE, STRESS_KILLER_IMAGE, LOVE_HARMONY_IMAGE } from './data';
 import Header from './components/Header';
@@ -18,55 +18,56 @@ import BusinessOperationsCMS from './components/BusinessOperationsCMS';
 import PranayamaCalmGuide from './components/PranayamaCalmGuide';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star, Flame, Eye, ShoppingBag, ShieldCheck, HelpCircle, Send, Check, Heart, Sparkles, MessageSquarePlus, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { useAppStore } from './store';
+import { apiService } from './services/api';
 
 export default function App() {
-  // Dynamic website state loaded from backend database sync
-  const [products, setProducts] = useState<Product[]>(PRODUCTS);
-  const [websiteContent, setWebsiteContent] = useState<WebsiteContent>({
-    brandName: 'Aura & Stone',
-    brandSubtitle: 'Crystalline Astrology',
-    heroHeadline: 'The Indian',
-    heroHighlight: 'Science of Signs',
-    heroParagraph: 'Fine crystal jewelry engineered from verified planetary minerals. Cleansed, moon bathed, and programmed to your birth chart parameters to create an unshakeable energetic shield.',
-    founderQuote: 'In today’s fast-paced corporate and creative grids, we are continuously bombarded by negative gazes, digital noise, and heavy financial doubt. Aura & Stone was co-conceived because I wanted authentic, laboratory-tested crystal jewelry that looks incredibly sharp and high-fashion while offering robust spiritual protection. We took 75 years of my family\'s ancestral alignment wisdom and made it sleek, minimalistic, and absolute.',
-    founderQuoteSubtitle: 'Co-Founder & Chief Vedic Architect, Aura & Stone',
-    historyHeadline: 'Ancient Sceptred Science Met Minimalist Form',
-    historyParagraph1: 'Aura & Stone was pioneered in the foothills of Jammu, Kashmir, with a deep, uncompromising mission: to de-mystify ancient Indian gemologies and elevate them to modern standards of luxury, precision, and physical authenticity. Led by three generations of Astro-scholars, we isolate specific minerals (such as green aventurine or Uruguayan amethyst clusters) that possess corresponding atomic frequencies to planetary transit nodes.',
-    historyParagraph2: 'By merging deep Vedic practices with laboratory testing (refractive indexes, geological hardness, chemical matrix formulas), we construct exquisite jewelry talismans that serve as protective and prosperous energy shields for daily corporate movers.',
-    bannerImage: `${import.meta.env.BASE_URL}src/assets/images/signtific_hero_banner_1779793774735.png`
-  });
+  // Use Zustand store for state management
+  const {
+    products,
+    websiteContent,
+    isCartOpen,
+    selectedProduct,
+    currentPage,
+    cartItems,
+    setProducts: setProductsStore,
+    setWebsiteContent: setWebsiteContentStore,
+    setCartItems: setCartItemsStore,
+    setSelectedProduct: setSelectedProductStore,
+    setCurrentPage: setCurrentPageStore,
+    setIsCartOpen: setIsCartOpenStore,
+  } = useAppStore();
 
-  const fetchDynamicData = async () => {
+  const setCartItems = setCartItemsStore;
+  const setSelectedProduct = setSelectedProductStore;
+  const setCurrentPage = setCurrentPageStore;
+  const setIsCartOpen = setIsCartOpenStore;
+
+  // Fetch dynamic data on initial load and after CMS edits
+  const fetchDynamicData = React.useCallback(async () => {
     try {
-      const prodRes = await fetch('/api/products');
-      if (prodRes.ok) {
-        const prodData = await prodRes.json();
-        if (Array.isArray(prodData) && prodData.length > 0) {
-          setProducts(prodData);
-        }
+      const [productsData, contentData] = await Promise.all([
+        apiService.getProducts(),
+        apiService.getWebsiteContent()
+      ]);
+
+      if (Array.isArray(productsData) && productsData.length > 0) {
+        setProductsStore(productsData as Product[]);
       }
-      
-      const contentRes = await fetch('/api/website/content');
-      if (contentRes.ok) {
-        const contentData = await contentRes.json();
-        if (contentData && contentData.brandName) {
-          setWebsiteContent(contentData);
-        }
+      if (contentData && typeof contentData === 'object') {
+        setWebsiteContentStore(contentData as WebsiteContent);
       }
-    } catch (e) {
-      console.warn("Error fetching dynamic products and website configs.", e);
+    } catch (error) {
+      console.warn("Error fetching dynamic products and website configs.", error);
+      // Fallback to local data is handled by the store initialization
     }
-  };
+  }, [setProductsStore, setWebsiteContentStore]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchDynamicData();
-  }, []);
+  }, [fetchDynamicData]);
 
-  // Navigation & Cart States
-  const [currentPage, setCurrentPage] = useState<PageId>('home');
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  // Navigation & Cart States (from store)
 
   // Circular Slideshow States for Luxury Hero
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -177,57 +178,51 @@ export default function App() {
 
   // Cart operations
   const handleAddToCart = (product: Product) => {
-    setCartItems((prev) => {
-      // Check if item already exists with matching defaults
-      const existingIdx = prev.findIndex((item) => item.product.id === product.id);
-      if (existingIdx > -1) {
-        const updated = [...prev];
-        updated[existingIdx].quantity += 1;
-        return updated;
-      }
-      return [
-        ...prev,
-        {
-          product,
-          quantity: 1,
-          size: 'standard-unisex',
-          personalizedCertification: false
+    setCartItems(
+      (() => {
+        // Check if item already exists with matching defaults
+        const prev = cartItems;
+        const existingIdx = prev.findIndex((item) => item.product.id === product.id);
+        if (existingIdx > -1) {
+          const updated = [...prev];
+          updated[existingIdx] = { ...updated[existingIdx], quantity: updated[existingIdx].quantity + 1 };
+          return updated;
         }
-      ];
-    });
+        return [
+          ...prev,
+          {
+            product,
+            quantity: 1,
+            size: 'standard-unisex',
+            personalizedCertification: false
+          }
+        ];
+      })()
+    );
     // Visual feedback trigger
     setIsCartOpen(true);
   };
 
   const handleUpdateQuantity = (idx: number, quantity: number) => {
-    setCartItems((prev) => {
-      const updated = [...prev];
-      updated[idx].quantity = quantity;
-      return updated;
-    });
+    const updated = [...cartItems];
+    updated[idx] = { ...updated[idx], quantity };
+    setCartItems(updated);
   };
 
   const handleRemoveCartItem = (idx: number) => {
-    setCartItems((prev) => prev.filter((_, i) => i !== idx));
+    setCartItems(cartItems.filter((_, i) => i !== idx));
   };
 
   const handleUpdateSize = (idx: number, size: CartItem['size']) => {
-    setCartItems((prev) => {
-      const updated = [...prev];
-      updated[idx].size = size;
-      return updated;
-    });
+    const updated = [...cartItems];
+    updated[idx] = { ...updated[idx], size };
+    setCartItems(updated);
   };
 
   const handleUpdatePersonalization = (idx: number, val: boolean, details?: CartItem['birthDetails']) => {
-    setCartItems((prev) => {
-      const updated = [...prev];
-      updated[idx].personalizedCertification = val;
-      if (details) {
-        updated[idx].birthDetails = details;
-      }
-      return updated;
-    });
+    const updated = [...cartItems];
+    updated[idx] = { ...updated[idx], personalizedCertification: val, birthDetails: details ?? updated[idx].birthDetails };
+    setCartItems(updated);
   };
 
   const handleAddReview = (e: React.FormEvent) => {
