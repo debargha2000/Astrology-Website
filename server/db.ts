@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import admin from 'firebase-admin';
+import { getFirestore } from 'firebase-admin/firestore';
 import { Product, WebsiteContent, Checkpoint } from '../src/types';
 import { PRODUCTS } from '../src/data';
 
@@ -26,6 +27,8 @@ try {
 let firestoreDb: admin.firestore.Firestore | null = null;
 let useLocalFallback = false;
 
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
 export function getFirestoreDB() {
   if (useLocalFallback) {
     return null;
@@ -39,12 +42,20 @@ export function getFirestoreDB() {
         projectId: projectId,
       });
     }
+    const app = admin.app();
     firestoreDb = firestoreDatabaseId
-      ? (admin as any).firestore(firestoreDatabaseId)
-      : admin.firestore();
+      ? getFirestore(app, firestoreDatabaseId)
+      : getFirestore(app);
     return firestoreDb;
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);
+    if (IS_PRODUCTION) {
+      throw new Error(
+        `FATAL: Firestore is unavailable in production (${reason}). ` +
+        'The local flat-file fallback is disabled because the container filesystem is ephemeral. ' +
+        'Verify that Application Default Credentials are configured for the App Hosting service account.'
+      );
+    }
     console.warn(`⚠️ Firestore unavailable (${reason}). Falling back to local flat-file storage at database.json.`);
     useLocalFallback = true;
     return null;
@@ -168,6 +179,12 @@ interface DatabaseStructure {
 
 export class DB {
   private static load(): DatabaseStructure {
+    if (IS_PRODUCTION) {
+      throw new Error(
+        'Local flat-file storage is disabled in production. ' +
+        'Use Firestore for persistence on Cloud Run / App Hosting.'
+      );
+    }
     try {
       if (fs.existsSync(DB_FILE)) {
         const fileContent = fs.readFileSync(DB_FILE, 'utf-8');
@@ -209,6 +226,12 @@ export class DB {
   }
 
   private static save(data: DatabaseStructure) {
+    if (IS_PRODUCTION) {
+      throw new Error(
+        'Local flat-file storage is disabled in production. ' +
+        'Use Firestore for persistence on Cloud Run / App Hosting.'
+      );
+    }
     try {
       fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
     } catch (e) {

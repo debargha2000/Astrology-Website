@@ -48,11 +48,20 @@ app.use(
 // ==========================================
 // COOKIE PARSER (required for csurf cookie mode)
 // ==========================================
-const cookieSecret =
-  process.env.COOKIE_SECRET ||
-  process.env.JWT_SECRET ||
-  'aurastone-dev-cookie-secret-change-in-production-please';
-app.use(cookieParser(cookieSecret));
+const cookieSecret = process.env.COOKIE_SECRET || process.env.JWT_SECRET;
+if (!cookieSecret) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'COOKIE_SECRET or JWT_SECRET must be set in production. Refusing to start with a default cookie secret.'
+    );
+  }
+  console.warn(
+    '⚠️  COOKIE_SECRET/JWT_SECRET not set. Falling back to insecure development cookie secret.'
+  );
+}
+const finalCookieSecret =
+  cookieSecret || 'aurastone-dev-cookie-secret-change-in-production-please';
+app.use(cookieParser(finalCookieSecret));
 
 // ==========================================
 // CSRF PROTECTION
@@ -66,7 +75,7 @@ const CSRF_EXEMPT_PATHS = new Set<string>([
 ]);
 
 const csrfProtection = createCsrfProtection({
-  cookieSecret,
+  cookieSecret: finalCookieSecret,
   exemptPaths: CSRF_EXEMPT_PATHS,
 });
 app.use(csrfProtection);

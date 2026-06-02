@@ -1,4 +1,16 @@
 {
+  "apphosting": {
+    "backendId": "auraandstone",
+    "rootDir": "/",
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "dist",
+      "api"
+    ]
+  },
   "firestore": {
     "database": "ai-studio-70b34b45-a628-42ce-83f2-4904c086c0c5",
     "location": "asia-south1",
