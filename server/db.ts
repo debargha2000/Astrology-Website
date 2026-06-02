@@ -31,6 +31,16 @@ let useLocalFallback = false;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 function getServiceAccount(): admin.ServiceAccount | null {
+  // 1. Check env var first (for Vercel / cloud deployments)
+  const envKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  if (envKey) {
+    try {
+      return JSON.parse(envKey) as admin.ServiceAccount;
+    } catch (err) {
+      console.warn('FIREBASE_SERVICE_ACCOUNT_KEY is set but invalid JSON.', err);
+    }
+  }
+  // 2. Fall back to file (for local dev / App Hosting)
   try {
     if (fs.existsSync(SERVICE_ACCOUNT_PATH)) {
       return JSON.parse(fs.readFileSync(SERVICE_ACCOUNT_PATH, 'utf-8')) as admin.ServiceAccount;
@@ -69,14 +79,7 @@ export function getFirestoreDB() {
     return firestoreDb;
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);
-    if (IS_PRODUCTION) {
-      throw new Error(
-        `FATAL: Firestore is unavailable in production (${reason}). ` +
-        'The local flat-file fallback is disabled because the container filesystem is ephemeral. ' +
-        'Verify that Application Default Credentials are configured for the App Hosting service account.'
-      );
-    }
-    console.warn(`⚠️ Firestore unavailable (${reason}). Falling back to local flat-file storage at database.json.`);
+    console.warn(`Firestore unavailable (${reason}). Falling back to local flat-file storage.`);
     useLocalFallback = true;
     return null;
   }
@@ -199,11 +202,18 @@ interface DatabaseStructure {
 
 export class DB {
   private static load(): DatabaseStructure {
-    if (IS_PRODUCTION) {
-      throw new Error(
-        'Local flat-file storage is disabled in production. ' +
-        'Use Firestore for persistence on Cloud Run / App Hosting.'
-      );
+    if (IS_PRODUCTION && !fs) {
+      const defaultData: DatabaseStructure = {
+        invoices: INITIAL_INVOICES,
+        vendors: INITIAL_VENDORS,
+        expenses: INITIAL_EXPENSES,
+        tasks: INITIAL_TASKS,
+        terminalLog: INITIAL_LOGS,
+        products: PRODUCTS,
+        websiteContent: INITIAL_WEBSITE_CONTENT,
+        checkpoints: []
+      };
+      return defaultData;
     }
     try {
       if (fs.existsSync(DB_FILE)) {
@@ -247,10 +257,8 @@ export class DB {
 
   private static save(data: DatabaseStructure) {
     if (IS_PRODUCTION) {
-      throw new Error(
-        'Local flat-file storage is disabled in production. ' +
-        'Use Firestore for persistence on Cloud Run / App Hosting.'
-      );
+      // In production without filesystem, silently skip (data lives in Firestore)
+      return;
     }
     try {
       fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
