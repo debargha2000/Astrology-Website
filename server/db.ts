@@ -7,7 +7,8 @@ import { PRODUCTS } from '../src/data';
 
 // Read config for lazy initialization
 const CONFIG_PATH = path.join(process.cwd(), 'firebase-applet-config.json');
-let projectId = 'gen-lang-client-0811246245'; // default fallback
+const SERVICE_ACCOUNT_PATH = path.join(process.cwd(), 'serviceAccountKey.json');
+let projectId = 'aura-and-stone'; // default fallback
 let firestoreDatabaseId: string | undefined = undefined;
 
 try {
@@ -29,6 +30,17 @@ let useLocalFallback = false;
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
+function getServiceAccount(): admin.ServiceAccount | null {
+  try {
+    if (fs.existsSync(SERVICE_ACCOUNT_PATH)) {
+      return JSON.parse(fs.readFileSync(SERVICE_ACCOUNT_PATH, 'utf-8')) as admin.ServiceAccount;
+    }
+  } catch (err) {
+    // Service account file not found or invalid
+  }
+  return null;
+}
+
 export function getFirestoreDB() {
   if (useLocalFallback) {
     return null;
@@ -38,9 +50,17 @@ export function getFirestoreDB() {
   }
   try {
     if (admin.apps.length === 0) {
-      admin.initializeApp({
-        projectId: projectId,
-      });
+      const serviceAccount = getServiceAccount();
+      if (serviceAccount) {
+        admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount),
+          projectId: projectId,
+        });
+      } else {
+        admin.initializeApp({
+          projectId: projectId,
+        });
+      }
     }
     const app = admin.app();
     firestoreDb = firestoreDatabaseId
