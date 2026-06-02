@@ -1,9 +1,3 @@
-/**
- * Vercel Serverless Function - Express API Handler
- */
-import dotenv from 'dotenv';
-import app from '../server/app.js';
-
-dotenv.config();
+import app from '../server/app';
 
 export default app;
