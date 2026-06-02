@@ -3,10 +3,12 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import crypto from 'crypto';
+import admin from 'firebase-admin';
 import { DB, isFirebaseActive } from './db.js';
 import { authenticateToken, signToken } from './middleware/auth.js';
 import { sendFulfillmentEmail } from './services/email.js';
 import { createCsrfProtection } from './middleware/csrf.js';
+import { getAdminEmail, getRazorpaySecrets } from './config.js';
 
 const app = express();
 
@@ -35,10 +37,19 @@ app.use(
 );
 
 // ==========================================
+// TRUST PROXY
+// Required when running behind Vercel / Firebase App Hosting so
+// `req.ip` reflects the real client (used by rate limiters) and
+// `req.secure` correctly detects HTTPS for cookie flags.
+// ==========================================
+app.set('trust proxy', 1);
+
+// ==========================================
 // BODY PARSERS
 // ==========================================
 app.use(
   express.json({
+    limit: '100kb',
     verify: (req: Request, _res: Response, buf: Buffer) => {
       (req as Request & { rawBody?: Buffer }).rawBody = buf;
     },
@@ -134,9 +145,9 @@ app.post(
 
     const emailLower = email.toLowerCase();
 
-    if (emailLower !== 'debarghapakhira@gmail.com') {
+    if (emailLower !== getAdminEmail()) {
       await DB.addLog(`SECURITY AUDIT FAILURE: Unauthorized Google login attempt made by "${emailLower}".`);
-      return res.status(403).json({ error: 'Access Denied: Only debarghapakhira@gmail.com is authorized.' });
+      return res.status(403).json({ error: `Access Denied: ${getAdminEmail()} is the only authorized account.` });
     }
 
     const token = signToken({
@@ -595,12 +606,18 @@ app.post('/api/payments/razorpay/webhook', async (req: Request, res: Response) =
 // Express's default HTML error page.
 // ==========================================
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const code = (err as any)?.code;
+  if (code === 'EBADCSRFTOKEN') {
+    return res.status(403).json({ error: 'CSRF validation failed.' });
+  }
   const message = err instanceof Error ? err.message : 'Unknown server error';
+  // Avoid leaking internals in 500 responses
   if (message.toLowerCase().includes('csrf')) {
     return res.status(403).json({ error: 'CSRF validation failed.' });
   }
   console.error('Unhandled server error:', err);
-  return res.status(500).json({ error: message });
+  return res.status(500).json({ error: 'Internal server error.' });
 });
 
 export default app;

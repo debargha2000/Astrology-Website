@@ -10,12 +10,12 @@ import { getFirestore } from 'firebase/firestore';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, AppCheck } from 'firebase/app-check';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCkSsR__nlhgCci-X9dbBQ5ARUmy8YUUTk",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "gen-lang-client-0811246245.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "gen-lang-client-0811246245",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "gen-lang-client-0811246245.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "874684942832",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:874684942832:web:b6594b8b563ed1d812f535",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyC_66UiN2PZIlbGB3N_aL1QkXFbbse8mg8",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "aura-and-stone.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "aura-and-stone",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "aura-and-stone.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "1044154610844",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:1044154610844:web:f1e257ede905c15ad0e959",
 };
 
 const app: FirebaseApp = initializeApp(firebaseConfig);
