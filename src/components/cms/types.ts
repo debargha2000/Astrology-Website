@@ -62,7 +62,7 @@ export interface ProductForm {
   imageUrl: string;
   videoUrl: string;
   category: 'bracelet' | 'ring' | 'combo';
-  stockStatus: 'in-stock' | 'out-of-stock';
+  stockStatus: 'in-stock' | 'low-stock' | 'out-of-stock' | 'pre-order';
   isBestSeller: boolean;
   zodiacConnection: string | string[];
   specifications: {

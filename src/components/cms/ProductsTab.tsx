@@ -236,7 +236,9 @@ export function ProductsTab({ state, handlers }: Props) {
                     className="w-full bg-cream border border-stone p-2.5 rounded-xl font-medium outline-none"
                   >
                     <option value="in-stock">IN STOCK</option>
+                    <option value="low-stock">LOW STOCK</option>
                     <option value="out-of-stock">OUT OF STOCK</option>
+                    <option value="pre-order">PRE-ORDER</option>
                   </select>
                 </div>
                 <div className="space-y-1">
