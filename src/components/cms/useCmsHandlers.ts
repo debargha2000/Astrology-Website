@@ -108,7 +108,6 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
 
   const deleteProduct = useCallback(
     async (id: string, name: string) => {
-      if (!confirm(`Delete product "${name}"? An auto-backup checkpoint will be captured.`)) return;
       try {
         setIsLoading(true);
         const res = await authedFetch(`/api/products/${id}`, { method: 'DELETE' });
@@ -176,12 +175,6 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
 
   const rollbackTo = useCallback(
     async (id: string, title: string) => {
-      if (
-        !confirm(
-          `WARNING: Rollback to "${title}"? This overwrites current live website content AND products with the values stored in this backup.`
-        )
-      )
-        return;
       try {
         setIsLoading(true);
         const res = await authedFetch(`/api/website/checkpoints/${id}/rollback`, { method: 'POST' });
@@ -465,7 +458,6 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
 
   const deleteTask = useCallback(
     async (id: string) => {
-      if (!confirm('Delete this task permanently?')) return;
       try {
         setIsLoading(true);
         const res = await authedFetch(`/api/tasks/${id}`, { method: 'DELETE' });

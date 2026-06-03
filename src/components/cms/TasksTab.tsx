@@ -5,6 +5,7 @@ import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddTaskModal } from './AddTaskModal';
 import { EditTaskModal } from './EditTaskModal';
+import { ConfirmDialog } from './ConfirmDialog';
 import type { Task } from './types';
 
 interface Props {
@@ -24,6 +25,7 @@ export function TasksTab({ state, handlers }: Props) {
   const { createTask, moveTask, updateTask, deleteTask } = handlers;
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<Task | null>(null);
+  const [deleting, setDeleting] = useState<Task | null>(null);
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -112,7 +114,7 @@ export function TasksTab({ state, handlers }: Props) {
                             <Pencil className="h-3 w-3" />
                           </button>
                           <button
-                            onClick={() => deleteTask(task.id)}
+                            onClick={() => setDeleting(task)}
                             className="cursor-pointer text-clay hover:text-red-700 p-1 rounded transition-colors"
                             title="Delete task"
                           >
@@ -160,6 +162,20 @@ export function TasksTab({ state, handlers }: Props) {
           }}
         />
       )}
+      <ConfirmDialog
+        open={!!deleting}
+        title="Delete Task"
+        message={`Permanently delete "${deleting?.title}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={async () => {
+          if (deleting) {
+            await deleteTask(deleting.id);
+            setDeleting(null);
+          }
+        }}
+        onCancel={() => setDeleting(null)}
+      />
     </div>
   );
 }

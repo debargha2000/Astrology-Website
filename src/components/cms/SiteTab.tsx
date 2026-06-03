@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sparkles, Clock, Plus, RefreshCw } from 'lucide-react';
 import { ImageUpload } from './ImageUpload';
+import { ConfirmDialog } from './ConfirmDialog';
 import type { Checkpoint, SiteForm } from './types';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
@@ -15,6 +16,7 @@ export function SiteTab({ state, handlers }: Props) {
   const { updateWebsite, createManualCheckpoint, rollbackTo } = handlers;
 
   const handle = (key: keyof SiteForm, value: string) => setSiteForm({ ...siteForm, [key]: value });
+  const [rollingBack, setRollingBack] = useState<Checkpoint | null>(null);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -236,7 +238,7 @@ export function SiteTab({ state, handlers }: Props) {
                           </div>
                         </div>
                         <button
-                          onClick={() => rollbackTo(chk.id, chk.title)}
+                          onClick={() => setRollingBack(chk)}
                           className="cursor-pointer w-full bg-white hover:bg-ink text-ink hover:text-white border border-stone font-mono text-[9px] font-bold uppercase py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 mt-1"
                         >
                           <RefreshCw className="h-3.5 w-3.5 text-[#C5A880]" />
@@ -251,6 +253,20 @@ export function SiteTab({ state, handlers }: Props) {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={!!rollingBack}
+        title="Rollback Website"
+        message={`WARNING: Rollback to "${rollingBack?.title}"? This overwrites current live website content AND products with the values stored in this backup.`}
+        confirmLabel="Rollback"
+        variant="warning"
+        onConfirm={async () => {
+          if (rollingBack) {
+            await rollbackTo(rollingBack.id, rollingBack.title);
+            setRollingBack(null);
+          }
+        }}
+        onCancel={() => setRollingBack(null)}
+      />
     </div>
   );
 }

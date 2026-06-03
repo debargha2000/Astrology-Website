@@ -6,6 +6,7 @@ import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddExpenseModal } from './AddExpenseModal';
 import { EditExpenseModal } from './EditExpenseModal';
+import { ConfirmDialog } from './ConfirmDialog';
 import type { Expense } from './types';
 
 interface Props {
@@ -21,6 +22,7 @@ export function ExpensesTab({ state, handlers }: Props) {
   const [filter, setFilter] = useState('All');
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
+  const [deleting, setDeleting] = useState<Expense | null>(null);
 
   const searched = useMemo(
     () =>
@@ -129,7 +131,7 @@ export function ExpensesTab({ state, handlers }: Props) {
                             <Pencil className="h-4 w-4" />
                           </button>
                           <button
-                            onClick={() => deleteExpense(exp.id)}
+                            onClick={() => setDeleting(exp)}
                             className="cursor-pointer p-2 rounded-full text-clay hover:text-red-700 hover:bg-red-50 transition-colors"
                             title="Delete log permanently"
                           >
@@ -199,6 +201,20 @@ export function ExpensesTab({ state, handlers }: Props) {
           }}
         />
       )}
+      <ConfirmDialog
+        open={!!deleting}
+        title="Delete Expense"
+        message={`Permanently delete "${deleting?.title}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={async () => {
+          if (deleting) {
+            await deleteExpense(deleting.id);
+            setDeleting(null);
+          }
+        }}
+        onCancel={() => setDeleting(null)}
+      />
     </div>
   );
 }

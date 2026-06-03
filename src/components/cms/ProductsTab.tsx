@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Box, Compass } from 'lucide-react';
 import { DEFAULT_PRODUCT_FORM } from './seedData';
 import { ImageUpload } from './ImageUpload';
+import { ConfirmDialog } from './ConfirmDialog';
 import type { ProductForm } from './types';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
@@ -37,6 +38,7 @@ export function ProductsTab({ state, handlers }: Props) {
   const { saveProduct, deleteProduct } = handlers;
   const [editing, setEditing] = useState<any | null>(null);
   const [adding, setAdding] = useState(false);
+  const [deleting, setDeleting] = useState<any | null>(null);
   const [form, setForm] = useState<ProductForm>(newProductForm());
 
   const startAdd = () => {
@@ -137,7 +139,7 @@ export function ProductsTab({ state, handlers }: Props) {
                       Configure Item Details
                     </button>
                     <button
-                      onClick={() => deleteProduct(prod.id, prod.name)}
+                      onClick={() => setDeleting(prod)}
                       className="cursor-pointer text-[9px] font-mono font-bold uppercase px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200/50 flex items-center gap-1"
                       title="Erase publication record permanently"
                     >
@@ -359,6 +361,20 @@ export function ProductsTab({ state, handlers }: Props) {
           )}
         </div>
       </div>
+      <ConfirmDialog
+        open={!!deleting}
+        title="Delete Product"
+        message={`Delete "${deleting?.name}"? An auto-backup checkpoint will be captured.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={async () => {
+          if (deleting) {
+            await deleteProduct(deleting.id, deleting.name);
+            setDeleting(null);
+          }
+        }}
+        onCancel={() => setDeleting(null)}
+      />
     </div>
   );
 }
