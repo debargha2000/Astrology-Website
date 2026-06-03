@@ -7,6 +7,9 @@ import { useSort } from './useSort';
 import { usePagination } from './usePagination';
 import { Pagination } from './Pagination';
 import { CsvImport } from './CsvImport';
+import { useBulkSelect } from './useBulkSelect';
+import { BulkActions } from './BulkActions';
+import { ConfirmDialog } from './ConfirmDialog';
 import type { Invoice, CmsSubTab } from './types';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
@@ -21,7 +24,7 @@ interface Props {
 
 export function InvoicesTab({ state, handlers }: Props) {
   const { invoices } = state;
-  const { createInvoice, updateInvoice, importInvoices } = handlers;
+  const { createInvoice, updateInvoice, importInvoices, bulkDeleteInvoices } = handlers;
   const { exportInvoices } = useCsvExport();
   const { search, setSearch, filter, setFilter, results: searched } = useSearchFilter(invoices, {
     searchFields: ['client', 'item', 'id'],
@@ -31,9 +34,11 @@ export function InvoicesTab({ state, handlers }: Props) {
   });
   const { sorted, sortKey, sortDir, requestSort } = useSort(searched);
   const { page, setPage, perPage, setPerPage, paginated, totalPages, total } = usePagination(sorted);
+  const { selectedIds, isSelected, toggleSelect, selectAll, clearSelection, hasSelection, count: bulkCount } = useBulkSelect(paginated);
   const [preview, setPreview] = useState<Invoice | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<Invoice | null>(null);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const totals = useMemo(() => {
     const paid = invoices.filter((i) => i.status === 'Paid').reduce((a, c) => a + c.amount, 0);
@@ -131,6 +136,20 @@ export function InvoicesTab({ state, handlers }: Props) {
           <table className="w-full text-left font-sans text-xs border-collapse">
             <thead className="bg-cream/80 border-b border-stone text-[9.5px] font-mono text-gold-muted uppercase tracking-widest">
               <tr>
+                <th className="p-4 md:p-5 w-10">
+                  <input
+                    type="checkbox"
+                    checked={paginated.length > 0 && paginated.every((i) => isSelected(i.id))}
+                    onChange={() => {
+                      if (paginated.every((i) => isSelected(i.id))) {
+                        clearSelection();
+                      } else {
+                        selectAll();
+                      }
+                    }}
+                    className="cursor-pointer accent-ink"
+                  />
+                </th>
                 {([
                   { key: 'id' as const, label: 'SERIAL ID' },
                   { key: 'client' as const, label: 'PATRON VOYAGER' },
@@ -159,13 +178,21 @@ export function InvoicesTab({ state, handlers }: Props) {
             <tbody className="divide-y divide-cream">
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide">
+                  <td colSpan={7} className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide">
                     No invoices logged matching filters or searches.
                   </td>
                 </tr>
               ) : (
                 paginated.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-cream/25 transition-colors">
+                  <tr key={inv.id} className={`hover:bg-cream/25 transition-colors ${isSelected(inv.id) ? 'bg-cream/40' : ''}`}>
+                    <td className="p-4 md:p-5">
+                      <input
+                        type="checkbox"
+                        checked={isSelected(inv.id)}
+                        onChange={() => toggleSelect(inv.id)}
+                        className="cursor-pointer accent-ink"
+                      />
+                    </td>
                     <td className="p-4 md:p-5 font-mono text-gold-muted font-bold">{inv.id}</td>
                     <td className="p-4 md:p-5 font-serif font-medium text-ink">{inv.client}</td>
                     <td className="p-4 md:p-5 space-y-0.5">
@@ -238,6 +265,25 @@ export function InvoicesTab({ state, handlers }: Props) {
           }}
         />
       )}
+      <BulkActions
+        count={bulkCount}
+        onClear={clearSelection}
+        onDelete={() => setBulkDeleting(true)}
+        entityLabel="invoices"
+      />
+      <ConfirmDialog
+        open={bulkDeleting}
+        title="Delete Invoices"
+        message={`Permanently delete ${bulkCount} selected invoices? This action cannot be undone.`}
+        confirmLabel={`Delete ${bulkCount}`}
+        variant="danger"
+        onConfirm={async () => {
+          await bulkDeleteInvoices(Array.from(selectedIds));
+          clearSelection();
+          setBulkDeleting(false);
+        }}
+        onCancel={() => setBulkDeleting(false)}
+      />
     </div>
   );
 }

@@ -625,6 +625,40 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     [loadData, notify]
   );
 
+  const bulkDeleteInvoices = useCallback(
+    async (ids: string[]) => {
+      const res = await authedFetch('/api/invoices/batch', {
+        method: 'DELETE',
+        body: JSON.stringify({ ids }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        notify(`Deleted ${data.deleted} invoices.`);
+        await loadData();
+      } else {
+        notify('Failed to batch delete invoices.', 'error');
+      }
+    },
+    [loadData, notify]
+  );
+
+  const bulkDeleteExpenses = useCallback(
+    async (ids: string[]) => {
+      const res = await authedFetch('/api/expenses/batch', {
+        method: 'DELETE',
+        body: JSON.stringify({ ids }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        notify(`Deleted ${data.deleted} expenses.`);
+        await loadData();
+      } else {
+        notify('Failed to batch delete expenses.', 'error');
+      }
+    },
+    [loadData, notify]
+  );
+
   return {
     addTerminalLog,
     saveProduct,
@@ -646,7 +680,9 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     syncLocalToFirestore,
     importInvoices,
     importExpenses,
-    importVendors
+    importVendors,
+    bulkDeleteInvoices,
+    bulkDeleteExpenses
   };
 }
 

@@ -241,6 +241,15 @@ app.delete('/api/invoices/:id', authenticateToken, async (req: Request, res: Res
   }
 });
 
+app.delete('/api/invoices/batch', authenticateToken, async (req: Request, res: Response) => {
+  const { ids } = req.body as { ids?: string[] };
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: 'ids array is required.' });
+  }
+  const deleted = await DB.bulkDeleteInvoices(ids);
+  res.json({ deleted, total: ids.length });
+});
+
 // ==========================================
 // 3. VENDORS REST API
 // ==========================================
@@ -397,6 +406,15 @@ app.delete('/api/expenses/:id', authenticateToken, async (req: Request, res: Res
   } else {
     res.status(404).json({ error: 'Expense code reference not found.' });
   }
+});
+
+app.delete('/api/expenses/batch', authenticateToken, async (req: Request, res: Response) => {
+  const { ids } = req.body as { ids?: string[] };
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: 'ids array is required.' });
+  }
+  const deleted = await DB.bulkDeleteExpenses(ids);
+  res.json({ deleted, total: ids.length });
 });
 
 // ==========================================

@@ -7,6 +7,9 @@ import { useSort } from './useSort';
 import { usePagination } from './usePagination';
 import { Pagination } from './Pagination';
 import { CsvImport } from './CsvImport';
+import { useBulkSelect } from './useBulkSelect';
+import { BulkActions } from './BulkActions';
+import { ConfirmDialog } from './ConfirmDialog';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddExpenseModal } from './AddExpenseModal';
@@ -21,7 +24,7 @@ interface Props {
 
 export function ExpensesTab({ state, handlers }: Props) {
   const { expenses } = state;
-  const { createExpense, updateExpense, deleteExpense, importExpenses } = handlers;
+  const { createExpense, updateExpense, deleteExpense, importExpenses, bulkDeleteExpenses } = handlers;
   const { exportExpenses } = useCsvExport();
   const { search, setSearch, filter, setFilter, results: searched } = useSearchFilter(expenses, {
     searchFields: ['title', 'notes', 'category'],
@@ -31,9 +34,11 @@ export function ExpensesTab({ state, handlers }: Props) {
   });
   const { sorted, sortKey, sortDir, requestSort } = useSort(searched);
   const { page, setPage, perPage, setPerPage, paginated, totalPages, total } = usePagination(sorted);
+  const { selectedIds, isSelected, toggleSelect, selectAll, clearSelection, hasSelection, count: bulkCount } = useBulkSelect(paginated);
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
   const [deleting, setDeleting] = useState<Expense | null>(null);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const totalOpex = expenses.reduce((a, c) => a + c.amount, 0);
   const categoryTotals: Record<string, number> = expenses.reduce<Record<string, number>>((acc, c) => {
@@ -97,6 +102,20 @@ export function ExpensesTab({ state, handlers }: Props) {
             <table className="w-full text-left font-sans text-xs border-collapse">
               <thead className="bg-cream/80 border-b border-stone text-[9.5px] font-mono text-gold-muted uppercase tracking-widest">
                 <tr>
+                  <th className="p-4 md:p-5 w-10">
+                    <input
+                      type="checkbox"
+                      checked={paginated.length > 0 && paginated.every((e) => isSelected(e.id))}
+                      onChange={() => {
+                        if (paginated.every((e) => isSelected(e.id))) {
+                          clearSelection();
+                        } else {
+                          selectAll();
+                        }
+                      }}
+                      className="cursor-pointer accent-ink"
+                    />
+                  </th>
                   {([
                     { key: 'id' as const, label: 'SERIAL ID' },
                     { key: 'title' as const, label: 'PURIFYING WORK DESCRIPTOR' },
@@ -124,13 +143,21 @@ export function ExpensesTab({ state, handlers }: Props) {
               <tbody className="divide-y divide-cream">
                 {paginated.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide">
+                    <td colSpan={6} className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide">
                       No logged consecration charges found.
                     </td>
                   </tr>
                 ) : (
                   paginated.map((exp) => (
-                    <tr key={exp.id} className="hover:bg-cream/10 transition-all">
+                    <tr key={exp.id} className={`hover:bg-cream/10 transition-all ${isSelected(exp.id) ? 'bg-cream/40' : ''}`}>
+                      <td className="p-4 md:p-5">
+                        <input
+                          type="checkbox"
+                          checked={isSelected(exp.id)}
+                          onChange={() => toggleSelect(exp.id)}
+                          className="cursor-pointer accent-ink"
+                        />
+                      </td>
                       <td className="p-4 md:p-5 font-mono text-gold-muted font-bold">{exp.id}</td>
                       <td className="p-4 md:p-5 space-y-0.5">
                         <span className="block font-medium text-ink">{exp.title}</span>
@@ -245,6 +272,25 @@ export function ExpensesTab({ state, handlers }: Props) {
           }
         }}
         onCancel={() => setDeleting(null)}
+      />
+      <BulkActions
+        count={bulkCount}
+        onClear={clearSelection}
+        onDelete={() => setBulkDeleting(true)}
+        entityLabel="expenses"
+      />
+      <ConfirmDialog
+        open={bulkDeleting}
+        title="Delete Expenses"
+        message={`Permanently delete ${bulkCount} selected expenses? This action cannot be undone.`}
+        confirmLabel={`Delete ${bulkCount}`}
+        variant="danger"
+        onConfirm={async () => {
+          await bulkDeleteExpenses(Array.from(selectedIds));
+          clearSelection();
+          setBulkDeleting(false);
+        }}
+        onCancel={() => setBulkDeleting(false)}
       />
     </div>
   );

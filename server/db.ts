@@ -471,6 +471,24 @@ export class DB {
     return false;
   }
 
+  public static async bulkDeleteInvoices(ids: string[]): Promise<number> {
+    let deleted = 0;
+    for (const id of ids) {
+      const ok = await this.deleteInvoice(id);
+      if (ok) deleted++;
+    }
+    return deleted;
+  }
+
+  public static async bulkDeleteExpenses(ids: string[]): Promise<number> {
+    let deleted = 0;
+    for (const id of ids) {
+      const ok = await this.deleteExpense(id);
+      if (ok) deleted++;
+    }
+    return deleted;
+  }
+
   // VENDORS CRUD
   public static async getVendors(): Promise<Vendor[]> {
     const fdb = getFirestoreDB();
