@@ -6,7 +6,8 @@ export type CmsSubTab =
   | 'tasks'
   | 'gmail'
   | 'products'
-  | 'site';
+  | 'site'
+  | 'logs';
 
 export interface Invoice {
   id: string;

@@ -13,6 +13,7 @@ import { TasksTab } from './cms/TasksTab';
 import { GmailTab } from './cms/GmailTab';
 import { ProductsTab } from './cms/ProductsTab';
 import { SiteTab } from './cms/SiteTab';
+import { LogsTab } from './cms/LogsTab';
 import type { CmsSubTab } from './cms/types';
 
 interface BusinessOperationsCMSProps {
@@ -60,6 +61,7 @@ export default function BusinessOperationsCMS(_props: BusinessOperationsCMSProps
       {activeTab === 'gmail' && <GmailTab state={{ ...auth, ...data }} />}
       {activeTab === 'products' && <ProductsTab state={{ ...auth, ...data }} handlers={handlers} />}
       {activeTab === 'site' && <SiteTab state={{ ...auth, ...data }} handlers={handlers} />}
+      {activeTab === 'logs' && <LogsTab state={{ ...auth, ...data }} />}
     </div>
   );
 }

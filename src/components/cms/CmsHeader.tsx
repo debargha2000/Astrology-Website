@@ -1,5 +1,5 @@
 import React from 'react';
-import { LogOut, Compass, FileText, Users, DollarSign, CheckSquare, Send, Box, Sparkles } from 'lucide-react';
+import { LogOut, Compass, FileText, Users, DollarSign, CheckSquare, Send, Box, Sparkles, Terminal } from 'lucide-react';
 import type { CmsSubTab } from './types';
 
 const TABS: { key: CmsSubTab; label: string; icon: React.ReactNode }[] = [
@@ -10,7 +10,8 @@ const TABS: { key: CmsSubTab; label: string; icon: React.ReactNode }[] = [
   { key: 'tasks', label: 'tasks', icon: <CheckSquare className="h-3.5 w-3.5" /> },
   { key: 'gmail', label: 'Gmail', icon: <Send className="h-3.5 w-3.5 text-gold" /> },
   { key: 'products', label: 'Products', icon: <Box className="h-3.5 w-3.5 text-gold" /> },
-  { key: 'site', label: 'Site builder', icon: <Sparkles className="h-3.5 w-3.5 text-emerald-600" /> }
+  { key: 'site', label: 'Site builder', icon: <Sparkles className="h-3.5 w-3.5 text-emerald-600" /> },
+  { key: 'logs', label: 'Logs', icon: <Terminal className="h-3.5 w-3.5" /> }
 ];
 
 interface Props {
