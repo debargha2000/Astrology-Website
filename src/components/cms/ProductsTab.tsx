@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Box, Compass } from 'lucide-react';
 import { DEFAULT_PRODUCT_FORM } from './seedData';
+import { ImageUpload } from './ImageUpload';
 import type { ProductForm } from './types';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
@@ -277,13 +278,11 @@ export function ProductsTab({ state, handlers }: Props) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-sans text-xs">
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Image URL *</label>
-                  <input
-                    type="text"
-                    required
+                  <ImageUpload
                     value={form.imageUrl}
-                    onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-                    className="w-full bg-cream border border-stone p-2.5 rounded-xl font-medium outline-none focus:border-black"
+                    onChange={(url) => setForm({ ...form, imageUrl: url })}
+                    folder="products"
+                    label="Product Image"
                   />
                 </div>
                 <div className="space-y-1">

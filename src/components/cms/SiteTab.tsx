@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, Clock, Plus, RefreshCw } from 'lucide-react';
+import { ImageUpload } from './ImageUpload';
 import type { Checkpoint, SiteForm } from './types';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
@@ -102,13 +103,11 @@ export function SiteTab({ state, handlers }: Props) {
                 />
               </div>
               <div className="space-y-1">
-                <label className="block text-clay font-mono text-[9px] uppercase font-bold">Banner Image URL *</label>
-                <input
-                  type="text"
-                  required
+                <ImageUpload
                   value={siteForm.bannerImage}
-                  onChange={(e) => handle('bannerImage', e.target.value)}
-                  className="w-full bg-white border border-stone p-2 rounded-lg"
+                  onChange={(url) => handle('bannerImage', url)}
+                  folder="banners"
+                  label="Banner Image"
                 />
               </div>
             </div>

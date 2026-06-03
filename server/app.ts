@@ -441,6 +441,32 @@ app.get('/api/logs', authenticateToken, async (_req: Request, res: Response) => 
 });
 
 // ==========================================
+// 6b. EMAIL RECORDS
+// ==========================================
+app.get('/api/email-records', authenticateToken, async (_req: Request, res: Response) => {
+  const records = await DB.getEmailRecords();
+  res.json(records);
+});
+
+app.post('/api/email-records', authenticateToken, async (req: Request, res: Response) => {
+  const { clientName, email, subject } = req.body as {
+    clientName?: string;
+    email?: string;
+    subject?: string;
+  };
+  if (!email || !subject) {
+    return res.status(400).json({ error: 'Email and subject are required.' });
+  }
+  const record = await DB.addEmailRecord({
+    clientName: clientName || 'Staff Dispatcher',
+    email,
+    subject,
+    dateStr: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+  });
+  res.status(201).json(record);
+});
+
+// ==========================================
 // 7. WEBSITE CONTENT, PRODUCTS, AND ROLLBACK
 // ==========================================
 app.get('/api/products', async (_req: Request, res: Response) => {

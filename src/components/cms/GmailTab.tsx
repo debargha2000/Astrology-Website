@@ -1,20 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, X, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { googleSignIn } from '../../lib/firebase';
 import { getAccessToken } from './useCmsState';
 import { GMAIL_TEMPLATES } from './seedData';
+import { getAdminToken } from './types';
+import { apiFetch } from '../../services/apiFetch';
 import type { MailRecord } from './types';
 import type { CmsState } from './useCmsState';
-import type { CmsHandlers } from './useCmsHandlers';
 
 interface Props {
   state: CmsState;
 }
-
-const SEED_HISTORY: MailRecord[] = [
-  { clientName: 'Aarav Mehta', email: 'aarav.mehta@hotmail.com', subject: 'Astral Prosperity Consecration Certificate Complete', dateStr: 'May 24, 2026' },
-  { clientName: 'Priya Sharma', email: 'priya.sharma2@gmail.com', subject: 'Your Evil Eye Armour Rings Are Attuned', dateStr: 'May 25, 2026' }
-];
 
 const TEMPLATE_LABELS: Record<string, string> = {
   blessing: 'Crystal Blessing',
@@ -28,14 +24,55 @@ export function GmailTab({ state }: Props) {
   const [subject, setSubject] = useState<string>(GMAIL_TEMPLATES.blessing.subject);
   const [body, setBody] = useState<string>(GMAIL_TEMPLATES.blessing.body);
   const [recipient, setRecipient] = useState('');
-  const [history, setHistory] = useState<MailRecord[]>(SEED_HISTORY);
+  const [history, setHistory] = useState<MailRecord[]>([]);
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadHistory = async () => {
+      const token = getAdminToken();
+      if (!token) return;
+      try {
+        const res = await apiFetch('/api/email-records', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setHistory(data || []);
+        }
+      } catch (e) {
+        console.error('Failed to load email history:', e);
+      }
+    };
+    loadHistory();
+  }, []);
 
   const loadTemplate = (key: keyof typeof GMAIL_TEMPLATES) => {
     setTemplate(key);
     setSubject(GMAIL_TEMPLATES[key].subject as string);
     setBody(GMAIL_TEMPLATES[key].body as string);
+  };
+
+  const saveRecord = async (email: string, subjectLine: string) => {
+    const token = getAdminToken();
+    if (!token) return;
+    try {
+      const res = await apiFetch('/api/email-records', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          clientName: 'Staff Dispatcher',
+          email,
+          subject: subjectLine,
+        }),
+      });
+      if (res.ok) {
+        const record = await res.json();
+        setHistory((prev) => [record, ...prev]);
+      }
+    } catch (e) {
+      console.error('Failed to save email record:', e);
+    }
   };
 
   const send = async (e: React.FormEvent) => {
@@ -80,10 +117,7 @@ export function GmailTab({ state }: Props) {
         throw new Error(`Gmail API Gateway rejection: ${errDetails?.error?.message || response.statusText}`);
       }
 
-      setHistory((prev) => [
-        { clientName: 'Staff Dispatcher', email: recipient, subject, dateStr: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) },
-        ...prev
-      ]);
+      await saveRecord(recipient, subject);
       setStatus('success');
       setRecipient('');
       setSubject(GMAIL_TEMPLATES.blessing.subject);
@@ -295,7 +329,7 @@ export function GmailTab({ state }: Props) {
                 <div className="text-center py-12 text-xs font-mono text-clay">No digital correspondence sent during this operational session.</div>
               ) : (
                 history.map((item, idx) => (
-                  <div key={idx} className="py-4 space-y-2 first:pt-0 last:pb-0">
+                  <div key={item.id || idx} className="py-4 space-y-2 first:pt-0 last:pb-0">
                     <div className="flex justify-between items-start gap-2">
                       <div className="space-y-0.5">
                         <span className="text-xs font-sans font-medium text-ink">{item.clientName}</span>

@@ -135,6 +135,14 @@ export interface TerminalLog {
   message: string;
 }
 
+export interface EmailRecord {
+  id: string;
+  clientName: string;
+  email: string;
+  subject: string;
+  dateStr: string;
+}
+
 const DB_FILE = path.join(process.cwd(), 'database.json');
 
 const INITIAL_INVOICES: Invoice[] = [
@@ -195,6 +203,7 @@ interface DatabaseStructure {
   expenses: Expense[];
   tasks: Task[];
   terminalLog: TerminalLog[];
+  emailRecords: EmailRecord[];
   products: Product[];
   websiteContent: WebsiteContent;
   checkpoints: Checkpoint[];
@@ -203,54 +212,60 @@ interface DatabaseStructure {
 export class DB {
   private static load(): DatabaseStructure {
     if (IS_PRODUCTION && !fs) {
-      const defaultData: DatabaseStructure = {
-        invoices: INITIAL_INVOICES,
-        vendors: INITIAL_VENDORS,
-        expenses: INITIAL_EXPENSES,
-        tasks: INITIAL_TASKS,
-        terminalLog: INITIAL_LOGS,
-        products: PRODUCTS,
-        websiteContent: INITIAL_WEBSITE_CONTENT,
-        checkpoints: []
-      };
-      return defaultData;
-    }
-    try {
-      if (fs.existsSync(DB_FILE)) {
-        const fileContent = fs.readFileSync(DB_FILE, 'utf-8');
-        const data = JSON.parse(fileContent) as any;
-        let modified = false;
-        if (!data.products) {
-          data.products = PRODUCTS;
-          modified = true;
-        }
-        if (!data.websiteContent) {
-          data.websiteContent = INITIAL_WEBSITE_CONTENT;
-          modified = true;
-        }
-        if (!data.checkpoints) {
-          data.checkpoints = [];
-          modified = true;
-        }
-        if (modified) {
-          this.save(data);
-        }
-        return data as DatabaseStructure;
-      }
-    } catch (e) {
-      console.error('Error reading index file. Initializing default structures.', e);
-    }
-
     const defaultData: DatabaseStructure = {
       invoices: INITIAL_INVOICES,
       vendors: INITIAL_VENDORS,
       expenses: INITIAL_EXPENSES,
       tasks: INITIAL_TASKS,
       terminalLog: INITIAL_LOGS,
+      emailRecords: [],
       products: PRODUCTS,
       websiteContent: INITIAL_WEBSITE_CONTENT,
       checkpoints: []
     };
+    return defaultData;
+  }
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      const fileContent = fs.readFileSync(DB_FILE, 'utf-8');
+      const data = JSON.parse(fileContent) as any;
+      let modified = false;
+      if (!data.products) {
+        data.products = PRODUCTS;
+        modified = true;
+      }
+      if (!data.websiteContent) {
+        data.websiteContent = INITIAL_WEBSITE_CONTENT;
+        modified = true;
+      }
+      if (!data.checkpoints) {
+        data.checkpoints = [];
+        modified = true;
+      }
+      if (!data.emailRecords) {
+        data.emailRecords = [];
+        modified = true;
+      }
+      if (modified) {
+        this.save(data);
+      }
+      return data as DatabaseStructure;
+    }
+  } catch (e) {
+    console.error('Error reading index file. Initializing default structures.', e);
+  }
+
+  const defaultData: DatabaseStructure = {
+    invoices: INITIAL_INVOICES,
+    vendors: INITIAL_VENDORS,
+    expenses: INITIAL_EXPENSES,
+    tasks: INITIAL_TASKS,
+    terminalLog: INITIAL_LOGS,
+    emailRecords: [],
+    products: PRODUCTS,
+    websiteContent: INITIAL_WEBSITE_CONTENT,
+    checkpoints: []
+  };
     this.save(defaultData);
     return defaultData;
   }
@@ -301,6 +316,40 @@ export class DB {
       }
     }
     return this.load().terminalLog;
+  }
+
+  // EMAIL RECORDS CRUD
+  public static async getEmailRecords(): Promise<EmailRecord[]> {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const snapshot = await fdb.collection('email_records').orderBy('id', 'desc').limit(50).get();
+        return snapshot.docs.map(doc => doc.data() as EmailRecord);
+      } catch (e) {
+        // Silently fall back to local storage
+      }
+    }
+    return this.load().emailRecords || [];
+  }
+
+  public static async addEmailRecord(record: Omit<EmailRecord, 'id'>): Promise<EmailRecord> {
+    const id = `email-${Date.now()}`;
+    const newRecord: EmailRecord = { ...record, id };
+
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        await fdb.collection('email_records').doc(id).set(newRecord);
+        return newRecord;
+      } catch (e) {
+        // Silently fall back to local storage
+      }
+    }
+
+    const data = this.load();
+    data.emailRecords = [newRecord, ...(data.emailRecords || [])].slice(0, 50);
+    this.save(data);
+    return newRecord;
   }
 
   // INVOICES CRUD

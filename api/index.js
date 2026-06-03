@@ -440,6 +440,7 @@ var DB = class {
         expenses: INITIAL_EXPENSES,
         tasks: INITIAL_TASKS,
         terminalLog: INITIAL_LOGS,
+        emailRecords: [],
         products: PRODUCTS,
         websiteContent: INITIAL_WEBSITE_CONTENT,
         checkpoints: []
@@ -463,6 +464,10 @@ var DB = class {
           data.checkpoints = [];
           modified = true;
         }
+        if (!data.emailRecords) {
+          data.emailRecords = [];
+          modified = true;
+        }
         if (modified) {
           this.save(data);
         }
@@ -477,6 +482,7 @@ var DB = class {
       expenses: INITIAL_EXPENSES,
       tasks: INITIAL_TASKS,
       terminalLog: INITIAL_LOGS,
+      emailRecords: [],
       products: PRODUCTS,
       websiteContent: INITIAL_WEBSITE_CONTENT,
       checkpoints: []
@@ -523,6 +529,34 @@ var DB = class {
       }
     }
     return this.load().terminalLog;
+  }
+  // EMAIL RECORDS CRUD
+  static async getEmailRecords() {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const snapshot = await fdb.collection("email_records").orderBy("id", "desc").limit(50).get();
+        return snapshot.docs.map((doc) => doc.data());
+      } catch (e) {
+      }
+    }
+    return this.load().emailRecords || [];
+  }
+  static async addEmailRecord(record) {
+    const id = `email-${Date.now()}`;
+    const newRecord = { ...record, id };
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        await fdb.collection("email_records").doc(id).set(newRecord);
+        return newRecord;
+      } catch (e) {
+      }
+    }
+    const data = this.load();
+    data.emailRecords = [newRecord, ...data.emailRecords || []].slice(0, 50);
+    this.save(data);
+    return newRecord;
   }
   // INVOICES CRUD
   static async getInvoices() {
@@ -1524,6 +1558,23 @@ app.delete("/api/tasks/:id", authenticateToken, async (req, res) => {
 app.get("/api/logs", authenticateToken, async (_req, res) => {
   const logs = await DB.getLogs();
   res.json(logs);
+});
+app.get("/api/email-records", authenticateToken, async (_req, res) => {
+  const records = await DB.getEmailRecords();
+  res.json(records);
+});
+app.post("/api/email-records", authenticateToken, async (req, res) => {
+  const { clientName, email, subject } = req.body;
+  if (!email || !subject) {
+    return res.status(400).json({ error: "Email and subject are required." });
+  }
+  const record = await DB.addEmailRecord({
+    clientName: clientName || "Staff Dispatcher",
+    email,
+    subject,
+    dateStr: (/* @__PURE__ */ new Date()).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+  });
+  res.status(201).json(record);
 });
 app.get("/api/products", async (_req, res) => {
   try {

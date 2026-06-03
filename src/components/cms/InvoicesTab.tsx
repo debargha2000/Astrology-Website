@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, ExternalLink, Pencil } from 'lucide-react';
+import { Search, Plus, ExternalLink, Pencil, Download } from 'lucide-react';
 import { INVOICE_STATUSES } from './seedData';
+import { useCsvExport } from './useCsvExport';
 import type { Invoice, CmsSubTab } from './types';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
@@ -16,6 +17,7 @@ interface Props {
 export function InvoicesTab({ state, handlers }: Props) {
   const { invoices } = state;
   const { createInvoice, updateInvoice } = handlers;
+  const { exportInvoices } = useCsvExport();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<string>('All');
   const [preview, setPreview] = useState<Invoice | null>(null);
@@ -85,12 +87,20 @@ export function InvoicesTab({ state, handlers }: Props) {
             ))}
           </div>
         </div>
-        <button
-          onClick={() => setShowAdd(true)}
-          className="cursor-pointer w-full sm:w-auto bg-ink hover:bg-shadow text-white px-5 py-2.5 rounded-xl text-xs font-mono font-medium uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-md border border-stone/20 transition-transform active:scale-98"
-        >
-          <Plus className="h-4 w-4 text-gold-muted" /> Create Client Invoice
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => exportInvoices(invoices)}
+            className="cursor-pointer w-full sm:w-auto bg-white hover:bg-cream border border-stone text-ink px-4 py-2.5 rounded-xl text-xs font-mono font-medium uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-sm"
+          >
+            <Download className="h-3.5 w-3.5 text-gold-muted" /> Export CSV
+          </button>
+          <button
+            onClick={() => setShowAdd(true)}
+            className="cursor-pointer w-full sm:w-auto bg-ink hover:bg-shadow text-white px-5 py-2.5 rounded-xl text-xs font-mono font-medium uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-md border border-stone/20 transition-transform active:scale-98"
+          >
+            <Plus className="h-4 w-4 text-gold-muted" /> Create Client Invoice
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-cream/40 border border-stone rounded-2xl p-4 text-center">
