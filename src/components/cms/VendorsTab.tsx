@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Plus, Pencil, Download } from 'lucide-react';
 import { useCsvExport } from './useCsvExport';
 import { useSearchFilter } from './useSearchFilter';
+import { CsvImport } from './CsvImport';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddVendorModal } from './AddVendorModal';
@@ -15,7 +16,7 @@ interface Props {
 
 export function VendorsTab({ state, handlers }: Props) {
   const { vendors } = state;
-  const { createVendor, updateVendor, addTerminalLog } = handlers;
+  const { createVendor, updateVendor, addTerminalLog, importVendors } = handlers;
   const { exportVendors } = useCsvExport();
   const { search, setSearch, results: searched } = useSearchFilter(vendors, {
     searchFields: ['name', 'leadGems', 'origin', 'contact', 'category'],
@@ -55,6 +56,11 @@ export function VendorsTab({ state, handlers }: Props) {
           >
             <Download className="h-3.5 w-3.5 text-gold-muted" /> Export CSV
           </button>
+          <CsvImport
+            entityLabel="vendors"
+            requiredFields={['Name', 'Contact']}
+            onImport={importVendors}
+          />
           <button
             onClick={() => setShowAdd(true)}
             className="cursor-pointer w-full sm:w-auto bg-ink hover:bg-shadow text-white px-5 py-2.5 rounded-xl text-xs font-mono font-medium uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-md border border-stone/20 transition-transform active:scale-98"

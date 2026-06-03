@@ -193,6 +193,22 @@ app.post('/api/invoices', authenticateToken, async (req: Request, res: Response)
   res.status(201).json(invoice);
 });
 
+app.post('/api/invoices/batch', authenticateToken, async (req: Request, res: Response) => {
+  const { items } = req.body as { items?: any[] };
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'items array is required.' });
+  }
+  const created = await DB.bulkCreateInvoices(items.map((i) => ({
+    client: i.client || 'Unknown',
+    date: i.date || new Date().toISOString().split('T')[0],
+    item: i.item || 'Planetary Crystal Alignment Package',
+    amount: Number(i.amount) || 0,
+    status: i.status || 'Sent',
+    alignment: i.alignment || 'Universal Alignment',
+  })));
+  res.status(201).json({ count: created.length, items: created });
+});
+
 app.put('/api/invoices/:id', authenticateToken, async (req: Request, res: Response) => {
   const { client, item, amount, status, alignment } = req.body as {
     client?: string;
@@ -255,6 +271,22 @@ app.post('/api/vendors', authenticateToken, async (req: Request, res: Response) 
     leadGems: leadGems || 'Crystalline beads',
   });
   res.status(201).json(vendor);
+});
+
+app.post('/api/vendors/batch', authenticateToken, async (req: Request, res: Response) => {
+  const { items } = req.body as { items?: any[] };
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'items array is required.' });
+  }
+  const created = await DB.bulkCreateVendors(items.map((i) => ({
+    name: i.name || 'Unknown Vendor',
+    contact: i.contact || 'Unknown',
+    origin: i.origin || 'Himalayan Foothills',
+    category: i.category || 'Raw Crystals',
+    leadTime: i.leadTime || '5 Days',
+    leadGems: i.leadGems || 'Crystalline beads',
+  })));
+  res.status(201).json({ count: created.length, items: created });
 });
 
 app.put('/api/vendors/:id', authenticateToken, async (req: Request, res: Response) => {
@@ -321,6 +353,20 @@ app.post('/api/expenses', authenticateToken, async (req: Request, res: Response)
     notes: notes || '',
   });
   res.status(201).json(expense);
+});
+
+app.post('/api/expenses/batch', authenticateToken, async (req: Request, res: Response) => {
+  const { items } = req.body as { items?: any[] };
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'items array is required.' });
+  }
+  const created = await DB.bulkCreateExpenses(items.map((i) => ({
+    title: i.title || 'Unknown Expense',
+    category: i.category || 'Ritual Consecration',
+    amount: Number(i.amount) || 0,
+    notes: i.notes || '',
+  })));
+  res.status(201).json({ count: created.length, items: created });
 });
 
 app.put('/api/expenses/:id', authenticateToken, async (req: Request, res: Response) => {

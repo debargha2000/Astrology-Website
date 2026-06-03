@@ -553,6 +553,78 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     }
   }, [googleUser, loadData, setIsLoading, state, notify]);
 
+  const importInvoices = useCallback(
+    async (rows: Record<string, string>[]) => {
+      const items = rows.map((r) => ({
+        client: r['Client'] || r['client'] || r['PATRON VOYAGER'] || 'Unknown',
+        item: r['Item'] || r['item'] || r['ASTRONOMICAL ALIGNMENT ITEM'] || 'Planetary Crystal Alignment Package',
+        amount: parseFloat(r['Amount'] || r['amount'] || r['LEDGER CHARGE'] || '0') || 0,
+        status: r['Status'] || r['status'] || 'Sent',
+        alignment: r['Alignment'] || r['alignment'] || 'Universal Alignment',
+      }));
+      const res = await authedFetch('/api/invoices/batch', {
+        method: 'POST',
+        body: JSON.stringify({ items }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        notify(`Imported ${data.count} invoices.`);
+        await loadData();
+      } else {
+        notify('Failed to import invoices.', 'error');
+      }
+    },
+    [loadData, notify]
+  );
+
+  const importExpenses = useCallback(
+    async (rows: Record<string, string>[]) => {
+      const items = rows.map((r) => ({
+        title: r['Title'] || r['title'] || r['PURIFYING WORK DESCRIPTOR'] || 'Unknown',
+        category: r['Category'] || r['category'] || 'Ritual Consecration',
+        amount: parseFloat(r['Amount'] || r['amount'] || r['COST (INR)'] || '0') || 0,
+        notes: r['Notes'] || r['notes'] || '',
+      }));
+      const res = await authedFetch('/api/expenses/batch', {
+        method: 'POST',
+        body: JSON.stringify({ items }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        notify(`Imported ${data.count} expenses.`);
+        await loadData();
+      } else {
+        notify('Failed to import expenses.', 'error');
+      }
+    },
+    [loadData, notify]
+  );
+
+  const importVendors = useCallback(
+    async (rows: Record<string, string>[]) => {
+      const items = rows.map((r) => ({
+        name: r['Name'] || r['name'] || 'Unknown',
+        contact: r['Contact'] || r['contact'] || 'Unknown',
+        origin: r['Origin'] || r['origin'] || 'Himalayan Foothills',
+        category: r['Category'] || r['category'] || 'Raw Crystals',
+        leadTime: r['Lead Time'] || r['leadTime'] || '5 Days',
+        leadGems: r['Lead Gems'] || r['leadGems'] || 'Crystalline beads',
+      }));
+      const res = await authedFetch('/api/vendors/batch', {
+        method: 'POST',
+        body: JSON.stringify({ items }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        notify(`Imported ${data.count} vendors.`);
+        await loadData();
+      } else {
+        notify('Failed to import vendors.', 'error');
+      }
+    },
+    [loadData, notify]
+  );
+
   return {
     addTerminalLog,
     saveProduct,
@@ -571,7 +643,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     moveTask,
     deleteTask,
     deleteExpense,
-    syncLocalToFirestore
+    syncLocalToFirestore,
+    importInvoices,
+    importExpenses,
+    importVendors
   };
 }
 

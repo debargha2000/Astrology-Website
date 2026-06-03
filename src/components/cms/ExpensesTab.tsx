@@ -6,6 +6,7 @@ import { useSearchFilter } from './useSearchFilter';
 import { useSort } from './useSort';
 import { usePagination } from './usePagination';
 import { Pagination } from './Pagination';
+import { CsvImport } from './CsvImport';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddExpenseModal } from './AddExpenseModal';
@@ -20,7 +21,7 @@ interface Props {
 
 export function ExpensesTab({ state, handlers }: Props) {
   const { expenses } = state;
-  const { createExpense, updateExpense, deleteExpense } = handlers;
+  const { createExpense, updateExpense, deleteExpense, importExpenses } = handlers;
   const { exportExpenses } = useCsvExport();
   const { search, setSearch, filter, setFilter, results: searched } = useSearchFilter(expenses, {
     searchFields: ['title', 'notes', 'category'],
@@ -76,6 +77,11 @@ export function ExpensesTab({ state, handlers }: Props) {
           >
             <Download className="h-3.5 w-3.5 text-gold-muted" /> Export CSV
           </button>
+          <CsvImport
+            entityLabel="expenses"
+            requiredFields={['Title', 'Amount']}
+            onImport={importExpenses}
+          />
           <button
             onClick={() => setShowAdd(true)}
             className="cursor-pointer w-full sm:w-auto bg-ink hover:bg-shadow text-white px-5 py-2.5 rounded-xl text-xs font-mono font-medium uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-md border border-stone/20 transition-transform active:scale-98"

@@ -391,6 +391,33 @@ export class DB {
     return newInvoice;
   }
 
+  public static async bulkCreateInvoices(items: Omit<Invoice, 'id'>[]): Promise<Invoice[]> {
+    const created: Invoice[] = [];
+    for (const item of items) {
+      const inv = await this.addInvoice(item);
+      created.push(inv);
+    }
+    return created;
+  }
+
+  public static async bulkCreateExpenses(items: Omit<Expense, 'id' | 'date'>[]): Promise<Expense[]> {
+    const created: Expense[] = [];
+    for (const item of items) {
+      const exp = await this.addExpense(item);
+      created.push(exp);
+    }
+    return created;
+  }
+
+  public static async bulkCreateVendors(items: Omit<Vendor, 'id' | 'status' | 'rating'>[]): Promise<Vendor[]> {
+    const created: Vendor[] = [];
+    for (const item of items) {
+      const vnd = await this.addVendor(item);
+      created.push(vnd);
+    }
+    return created;
+  }
+
   public static async updateInvoice(id: string, updates: Partial<Invoice>): Promise<Invoice | null> {
     const fdb = getFirestoreDB();
     if (fdb) {
