@@ -3,6 +3,7 @@ import { Plus, Trash2, Box, Compass } from 'lucide-react';
 import { DEFAULT_PRODUCT_FORM } from './seedData';
 import { ImageUpload } from './ImageUpload';
 import { ConfirmDialog } from './ConfirmDialog';
+import { RichTextEditor } from './RichTextEditor';
 import type { ProductForm } from './types';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
@@ -269,12 +270,11 @@ export function ProductsTab({ state, handlers }: Props) {
 
               <div className="space-y-1 font-sans text-xs">
                 <label className="block text-clay font-mono text-[10px] uppercase font-bold">Full Description *</label>
-                <textarea
-                  required
-                  rows={3}
+                <RichTextEditor
                   value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  className="w-full bg-cream border border-stone p-2.5 rounded-xl font-medium outline-none focus:border-black"
+                  onChange={(html) => setForm({ ...form, description: html })}
+                  placeholder="Describe the product..."
+                  rows={4}
                 />
               </div>
 

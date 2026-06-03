@@ -3,6 +3,7 @@ import { Send, X, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { googleSignIn } from '../../lib/firebase';
 import { getAccessToken } from './useCmsState';
 import { GMAIL_TEMPLATES } from './seedData';
+import { RichTextEditor } from './RichTextEditor';
 import { getAdminToken } from './types';
 import { apiFetch } from '../../services/apiFetch';
 import type { MailRecord } from './types';
@@ -289,13 +290,11 @@ export function GmailTab({ state }: Props) {
 
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-mono text-ink uppercase tracking-wider font-bold">Message Body</label>
-                <textarea
-                  rows={8}
+                <RichTextEditor
                   value={body}
-                  onChange={(e) => setBody(e.target.value)}
+                  onChange={setBody}
                   placeholder="Compose your spiritual cosmic letter details here gracefully..."
-                  className="w-full bg-cream border border-stone rounded-2xl p-4 text-xs font-sans text-ink focus:outline-hidden leading-relaxed"
-                  required
+                  rows={8}
                 />
               </div>
 
