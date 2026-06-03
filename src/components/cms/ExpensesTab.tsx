@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Trash2, Pencil, Download } from 'lucide-react';
+import { Search, Plus, Trash2, Pencil, Download, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { EXPENSE_CATEGORIES } from './seedData';
 import { useCsvExport } from './useCsvExport';
+import { useSearchFilter } from './useSearchFilter';
+import { useSort } from './useSort';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddExpenseModal } from './AddExpenseModal';
@@ -18,23 +20,16 @@ export function ExpensesTab({ state, handlers }: Props) {
   const { expenses } = state;
   const { createExpense, updateExpense, deleteExpense } = handlers;
   const { exportExpenses } = useCsvExport();
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('All');
+  const { search, setSearch, filter, setFilter, results: searched } = useSearchFilter(expenses, {
+    searchFields: ['title', 'notes', 'category'],
+    filterField: 'category',
+    filterOptions: ['All', ...EXPENSE_CATEGORIES],
+    defaultFilter: 'All',
+  });
+  const { sorted, sortKey, sortDir, requestSort } = useSort(searched);
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
   const [deleting, setDeleting] = useState<Expense | null>(null);
-
-  const searched = useMemo(
-    () =>
-      expenses.filter((e) => {
-        const q = search.toLowerCase();
-        const matchesSearch =
-          e.title.toLowerCase().includes(q) || e.notes.toLowerCase().includes(q) || e.category.toLowerCase().includes(q);
-        const matchesFilter = filter === 'All' ? true : e.category === filter;
-        return matchesSearch && matchesFilter;
-      }),
-    [expenses, search, filter]
-  );
 
   const totalOpex = expenses.reduce((a, c) => a + c.amount, 0);
   const categoryTotals: Record<string, number> = expenses.reduce<Record<string, number>>((acc, c) => {
@@ -93,22 +88,39 @@ export function ExpensesTab({ state, handlers }: Props) {
             <table className="w-full text-left font-sans text-xs border-collapse">
               <thead className="bg-cream/80 border-b border-stone text-[9.5px] font-mono text-gold-muted uppercase tracking-widest">
                 <tr>
-                  <th className="p-4 md:p-5 font-bold">SERIAL ID</th>
-                  <th className="p-4 md:p-5 font-bold">PURIFYING WORK DESCRIPTOR</th>
-                  <th className="p-4 md:p-5 font-bold">CATEGORY</th>
-                  <th className="p-4 md:p-5 font-bold text-right">COST (INR)</th>
+                  {([
+                    { key: 'id' as const, label: 'SERIAL ID' },
+                    { key: 'title' as const, label: 'PURIFYING WORK DESCRIPTOR' },
+                    { key: 'category' as const, label: 'CATEGORY' },
+                    { key: 'amount' as const, label: 'COST (INR)', align: 'right' as const },
+                  ]).map((col) => (
+                    <th
+                      key={col.key}
+                      onClick={() => requestSort(col.key)}
+                      className={`p-4 md:p-5 font-bold cursor-pointer hover:text-ink transition-colors select-none ${col.align === 'right' ? 'text-right' : ''}`}
+                    >
+                      <span className="inline-flex items-center gap-1">
+                        {col.label}
+                        {sortKey === col.key ? (
+                          sortDir === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
+                        ) : (
+                          <ChevronsUpDown className="h-3 w-3 opacity-40" />
+                        )}
+                      </span>
+                    </th>
+                  ))}
                   <th className="p-4 md:p-5 font-bold text-center">ACTIONS</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-cream">
-                {searched.length === 0 ? (
+                {sorted.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide">
                       No logged consecration charges found.
                     </td>
                   </tr>
                 ) : (
-                  searched.map((exp) => (
+                  sorted.map((exp) => (
                     <tr key={exp.id} className="hover:bg-cream/10 transition-all">
                       <td className="p-4 md:p-5 font-mono text-gold-muted font-bold">{exp.id}</td>
                       <td className="p-4 md:p-5 space-y-0.5">

@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, ExternalLink, Pencil, Download } from 'lucide-react';
+import { Search, Plus, ExternalLink, Pencil, Download, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { INVOICE_STATUSES } from './seedData';
 import { useCsvExport } from './useCsvExport';
+import { useSearchFilter } from './useSearchFilter';
+import { useSort } from './useSort';
 import type { Invoice, CmsSubTab } from './types';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
@@ -18,23 +20,16 @@ export function InvoicesTab({ state, handlers }: Props) {
   const { invoices } = state;
   const { createInvoice, updateInvoice } = handlers;
   const { exportInvoices } = useCsvExport();
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<string>('All');
+  const { search, setSearch, filter, setFilter, results: searched } = useSearchFilter(invoices, {
+    searchFields: ['client', 'item', 'id'],
+    filterField: 'status',
+    filterOptions: ['All', ...INVOICE_STATUSES],
+    defaultFilter: 'All',
+  });
+  const { sorted, sortKey, sortDir, requestSort } = useSort(searched);
   const [preview, setPreview] = useState<Invoice | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<Invoice | null>(null);
-
-  const searched = useMemo(
-    () =>
-      invoices.filter((i) => {
-        const q = search.toLowerCase();
-        const matchesSearch =
-          i.client.toLowerCase().includes(q) || i.item.toLowerCase().includes(q) || i.id.toLowerCase().includes(q);
-        const matchesFilter = filter === 'All' ? true : i.status === filter;
-        return matchesSearch && matchesFilter;
-      }),
-    [invoices, search, filter]
-  );
 
   const totals = useMemo(() => {
     const paid = invoices.filter((i) => i.status === 'Paid').reduce((a, c) => a + c.amount, 0);
@@ -127,23 +122,40 @@ export function InvoicesTab({ state, handlers }: Props) {
           <table className="w-full text-left font-sans text-xs border-collapse">
             <thead className="bg-cream/80 border-b border-stone text-[9.5px] font-mono text-gold-muted uppercase tracking-widest">
               <tr>
-                <th className="p-4 md:p-5 font-bold">SERIAL ID</th>
-                <th className="p-4 md:p-5 font-bold">PATRON VOYAGER</th>
-                <th className="p-4 md:p-5 font-bold">ASTRONOMICAL ALIGNMENT ITEM</th>
-                <th className="p-4 md:p-5 font-bold text-right">LEDGER CHARGE</th>
+                {([
+                  { key: 'id' as const, label: 'SERIAL ID' },
+                  { key: 'client' as const, label: 'PATRON VOYAGER' },
+                  { key: 'item' as const, label: 'ASTRONOMICAL ALIGNMENT ITEM' },
+                  { key: 'amount' as const, label: 'LEDGER CHARGE', align: 'right' as const },
+                ]).map((col) => (
+                  <th
+                    key={col.key}
+                    onClick={() => requestSort(col.key)}
+                    className={`p-4 md:p-5 font-bold cursor-pointer hover:text-ink transition-colors select-none ${col.align === 'right' ? 'text-right' : ''}`}
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      {col.label}
+                      {sortKey === col.key ? (
+                        sortDir === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
+                      ) : (
+                        <ChevronsUpDown className="h-3 w-3 opacity-40" />
+                      )}
+                    </span>
+                  </th>
+                ))}
                 <th className="p-4 md:p-5 font-bold text-center">STATUS</th>
                 <th className="p-4 md:p-5 font-bold text-right">ACTIONS</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-cream">
-              {searched.length === 0 ? (
+              {sorted.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide">
                     No invoices logged matching filters or searches.
                   </td>
                 </tr>
               ) : (
-                searched.map((inv) => (
+                sorted.map((inv) => (
                   <tr key={inv.id} className="hover:bg-cream/25 transition-colors">
                     <td className="p-4 md:p-5 font-mono text-gold-muted font-bold">{inv.id}</td>
                     <td className="p-4 md:p-5 font-serif font-medium text-ink">{inv.client}</td>

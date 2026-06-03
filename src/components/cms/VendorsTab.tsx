@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Plus, Pencil, Download } from 'lucide-react';
 import { useCsvExport } from './useCsvExport';
+import { useSearchFilter } from './useSearchFilter';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddVendorModal } from './AddVendorModal';
@@ -16,18 +17,11 @@ export function VendorsTab({ state, handlers }: Props) {
   const { vendors } = state;
   const { createVendor, updateVendor, addTerminalLog } = handlers;
   const { exportVendors } = useCsvExport();
-  const [search, setSearch] = useState('');
+  const { search, setSearch, results: searched } = useSearchFilter(vendors, {
+    searchFields: ['name', 'leadGems', 'origin', 'contact', 'category'],
+  });
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<Vendor | null>(null);
-
-  const searched = useMemo(
-    () =>
-      vendors.filter((v) => {
-        const q = search.toLowerCase();
-        return v.name.toLowerCase().includes(q) || v.leadGems.toLowerCase().includes(q) || v.origin.toLowerCase().includes(q);
-      }),
-    [vendors, search]
-  );
 
   const STATUS_STYLES: Record<string, string> = {
     Approved: 'bg-emerald-50 text-emerald-800 border border-emerald-200/25',

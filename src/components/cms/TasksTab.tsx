@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Plus, Clock, Award, Compass, CheckCircle2, Pencil, Trash2 } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Plus, Clock, Award, Compass, CheckCircle2, Pencil, Trash2, Search } from 'lucide-react';
 import { TASK_STATUSES } from './seedData';
+import { useSearchFilter } from './useSearchFilter';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddTaskModal } from './AddTaskModal';
@@ -23,6 +24,9 @@ const STAGE_ICONS: Record<string, React.ReactNode> = {
 export function TasksTab({ state, handlers }: Props) {
   const { tasks } = state;
   const { createTask, moveTask, updateTask, deleteTask } = handlers;
+  const { search, setSearch, results: searchedTasks } = useSearchFilter(tasks, {
+    searchFields: ['title', 'assignee', 'id'],
+  });
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<Task | null>(null);
   const [deleting, setDeleting] = useState<Task | null>(null);
@@ -45,9 +49,20 @@ export function TasksTab({ state, handlers }: Props) {
         </button>
       </div>
 
+      <div className="relative max-w-xs">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-clay" />
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search tasks..."
+          className="w-full pl-10 pr-4 py-2.5 bg-white border border-stone rounded-xl text-xs font-mono outline-none focus:border-ink"
+        />
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {TASK_STATUSES.map((stage) => {
-          const stageTasks = tasks.filter((t) => t.status === stage);
+          const stageTasks = searchedTasks.filter((t) => t.status === stage);
           return (
             <div key={stage} className="bg-cream/50 border border-stone rounded-3xl p-4 flex flex-col min-h-[420px] max-h-[550px] overflow-hidden">
               <div className="flex items-center justify-between pb-3 border-b border-stone/40 mb-4 px-1 shrink-0">
