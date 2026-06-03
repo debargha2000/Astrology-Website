@@ -342,6 +342,36 @@ export class DB {
     return newInvoice;
   }
 
+  public static async updateInvoice(id: string, updates: Partial<Invoice>): Promise<Invoice | null> {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const docRef = fdb.collection('invoices').doc(id);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+          await docRef.update(updates);
+          const updatedSnap = await docRef.get();
+          const invoiceData = updatedSnap.data() as Invoice;
+          await this.addLog(`Updated invoice ${id} for ${invoiceData.client}.`);
+          return invoiceData;
+        }
+        return null;
+      } catch (e) {
+        // Silently fall back to local storage
+      }
+    }
+
+    const data = this.load();
+    const index = data.invoices.findIndex(i => i.id === id);
+    if (index > -1) {
+      data.invoices[index] = { ...data.invoices[index], ...updates };
+      this.save(data);
+      await this.addLog(`Updated invoice ${id} for ${data.invoices[index].client}.`);
+      return data.invoices[index];
+    }
+    return null;
+  }
+
   public static async deleteInvoice(id: string): Promise<boolean> {
     const fdb = getFirestoreDB();
     if (fdb) {
@@ -406,6 +436,36 @@ export class DB {
     return newVendor;
   }
 
+  public static async updateVendor(id: string, updates: Partial<Vendor>): Promise<Vendor | null> {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const docRef = fdb.collection('vendors').doc(id);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+          await docRef.update(updates);
+          const updatedSnap = await docRef.get();
+          const vendorData = updatedSnap.data() as Vendor;
+          await this.addLog(`Updated vendor ${id} (${vendorData.name}).`);
+          return vendorData;
+        }
+        return null;
+      } catch (e) {
+        // Silently fall back to local storage
+      }
+    }
+
+    const data = this.load();
+    const index = data.vendors.findIndex(v => v.id === id);
+    if (index > -1) {
+      data.vendors[index] = { ...data.vendors[index], ...updates };
+      this.save(data);
+      await this.addLog(`Updated vendor ${id} (${data.vendors[index].name}).`);
+      return data.vendors[index];
+    }
+    return null;
+  }
+
   public static async deleteVendor(id: string): Promise<boolean> {
     const fdb = getFirestoreDB();
     if (fdb) {
@@ -468,6 +528,36 @@ export class DB {
     this.save(data);
     await this.addLog(`Logged operations expense: ${newExpense.title} (₹${newExpense.amount})`);
     return newExpense;
+  }
+
+  public static async updateExpense(id: string, updates: Partial<Expense>): Promise<Expense | null> {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const docRef = fdb.collection('expenses').doc(id);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+          await docRef.update(updates);
+          const updatedSnap = await docRef.get();
+          const expenseData = updatedSnap.data() as Expense;
+          await this.addLog(`Updated expense ${id} (${expenseData.title}).`);
+          return expenseData;
+        }
+        return null;
+      } catch (e) {
+        // Silently fall back to local storage
+      }
+    }
+
+    const data = this.load();
+    const index = data.expenses.findIndex(e => e.id === id);
+    if (index > -1) {
+      data.expenses[index] = { ...data.expenses[index], ...updates };
+      this.save(data);
+      await this.addLog(`Updated expense ${id} (${data.expenses[index].title}).`);
+      return data.expenses[index];
+    }
+    return null;
   }
 
   public static async deleteExpense(id: string): Promise<boolean> {
@@ -557,6 +647,36 @@ export class DB {
       data.tasks[index].status = status;
       this.save(data);
       await this.addLog(`Updated task status for ${id} to "${status}"`);
+      return data.tasks[index];
+    }
+    return null;
+  }
+
+  public static async updateTask(id: string, updates: Partial<Task>): Promise<Task | null> {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const docRef = fdb.collection('tasks').doc(id);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+          await docRef.update(updates);
+          const updatedSnap = await docRef.get();
+          const taskData = updatedSnap.data() as Task;
+          await this.addLog(`Updated task ${id} ("${taskData.title}").`);
+          return taskData;
+        }
+        return null;
+      } catch (e) {
+        // Silently fall back to local storage
+      }
+    }
+
+    const data = this.load();
+    const index = data.tasks.findIndex(t => t.id === id);
+    if (index > -1) {
+      data.tasks[index] = { ...data.tasks[index], ...updates };
+      this.save(data);
+      await this.addLog(`Updated task ${id} ("${data.tasks[index].title}").`);
       return data.tasks[index];
     }
     return null;

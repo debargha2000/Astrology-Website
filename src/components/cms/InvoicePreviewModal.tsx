@@ -114,9 +114,7 @@ export function InvoicePreviewModal({ invoice, onClose }: Props) {
 
         <div className="flex gap-3 justify-end font-mono text-[10px] pt-4">
           <button
-            onClick={() =>
-              alert('A complete, high-resolution dispatch document has been formatted and queued on the printing server.')
-            }
+            onClick={() => window.print()}
             className="cursor-pointer bg-cream hover:bg-mist/50 border border-stone text-ink font-bold px-4 py-2.5 rounded-xl uppercase tracking-wider flex items-center justify-center gap-1"
           >
             <Printer className="h-4.5 w-4.5 text-gold-muted" /> Print Certificate

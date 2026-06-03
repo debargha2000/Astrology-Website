@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus } from 'lucide-react';
+import { Search, Plus, Pencil } from 'lucide-react';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddVendorModal } from './AddVendorModal';
+import { EditVendorModal } from './EditVendorModal';
+import type { Vendor } from './types';
 
 interface Props {
   state: CmsState;
@@ -11,9 +13,10 @@ interface Props {
 
 export function VendorsTab({ state, handlers }: Props) {
   const { vendors } = state;
-  const { createVendor, addTerminalLog } = handlers;
+  const { createVendor, updateVendor, addTerminalLog } = handlers;
   const [search, setSearch] = useState('');
   const [showAdd, setShowAdd] = useState(false);
+  const [editing, setEditing] = useState<Vendor | null>(null);
 
   const searched = useMemo(
     () =>
@@ -23,6 +26,18 @@ export function VendorsTab({ state, handlers }: Props) {
       }),
     [vendors, search]
   );
+
+  const STATUS_STYLES: Record<string, string> = {
+    Approved: 'bg-emerald-50 text-emerald-800 border border-emerald-200/25',
+    'Under Review': 'bg-amber-50 text-amber-800 border border-amber-200/25',
+    Suspended: 'bg-red-50 text-red-800 border border-red-200/25',
+  };
+
+  const nextStatus: Record<string, Vendor['status']> = {
+    Approved: 'Under Review',
+    'Under Review': 'Suspended',
+    Suspended: 'Approved',
+  };
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -60,15 +75,13 @@ export function VendorsTab({ state, handlers }: Props) {
                   </span>
                   <h4 className="font-serif text-lg font-light text-ink tracking-normal leading-snug">{vendor.name}</h4>
                 </div>
-                <span
-                  className={`font-mono text-[9.5px] uppercase tracking-wide px-3 py-1 rounded-full font-bold ${
-                    vendor.status === 'Approved'
-                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/25'
-                      : 'bg-amber-50 text-amber-800 border border-amber-200/25'
-                  }`}
+                <button
+                  onClick={() => updateVendor(vendor.id, { status: nextStatus[vendor.status] })}
+                  className={`cursor-pointer font-mono text-[9.5px] uppercase tracking-wide px-3 py-1 rounded-full font-bold transition-all hover:opacity-80 ${STATUS_STYLES[vendor.status] || ''}`}
+                  title={`Click to change to ${nextStatus[vendor.status]}`}
                 >
                   {vendor.status}
-                </span>
+                </button>
               </div>
               <div className="grid grid-cols-2 gap-4 text-xs font-sans text-ink/70">
                 <div>
@@ -99,15 +112,22 @@ export function VendorsTab({ state, handlers }: Props) {
                     ))}
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    addTerminalLog(`Simulated supply chain audit of mineral reserves at: ${vendor.name}`);
-                    alert(`✓ Integrity inspection initiated for ${vendor.name} (${vendor.origin}). All mineral lattices confirmed genuine A+ grade.`);
-                  }}
-                  className="cursor-pointer bg-cream hover:bg-mist/50 border border-stone text-ink text-[9.5px] px-3 py-1.5 rounded-lg uppercase tracking-wider font-bold"
-                >
-                  Audit Supply
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setEditing(vendor)}
+                    className="cursor-pointer bg-cream hover:bg-mist/50 border border-stone text-ink text-[9.5px] px-3 py-1.5 rounded-lg uppercase tracking-wider font-bold flex items-center gap-1"
+                  >
+                    <Pencil className="h-3 w-3" /> Edit
+                  </button>
+                  <button
+                    onClick={() => {
+                      addTerminalLog(`Simulated supply chain audit of mineral reserves at: ${vendor.name}`);
+                    }}
+                    className="cursor-pointer bg-cream hover:bg-mist/50 border border-stone text-ink text-[9.5px] px-3 py-1.5 rounded-lg uppercase tracking-wider font-bold"
+                  >
+                    Audit Supply
+                  </button>
+                </div>
               </div>
             </div>
           ))
@@ -120,6 +140,15 @@ export function VendorsTab({ state, handlers }: Props) {
           onSubmit={async (form) => {
             await createVendor(form);
             setShowAdd(false);
+          }}
+        />
+      )}
+      {editing && (
+        <EditVendorModal
+          vendor={editing}
+          onClose={() => setEditing(null)}
+          onSubmit={async (id, updates) => {
+            await updateVendor(id, updates);
           }}
         />
       )}

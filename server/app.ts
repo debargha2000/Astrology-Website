@@ -193,6 +193,29 @@ app.post('/api/invoices', authenticateToken, async (req: Request, res: Response)
   res.status(201).json(invoice);
 });
 
+app.put('/api/invoices/:id', authenticateToken, async (req: Request, res: Response) => {
+  const { client, item, amount, status, alignment } = req.body as {
+    client?: string;
+    item?: string;
+    amount?: number | string;
+    status?: string;
+    alignment?: string;
+  };
+  const updates: Record<string, unknown> = {};
+  if (client !== undefined) updates.client = client;
+  if (item !== undefined) updates.item = item;
+  if (amount !== undefined) updates.amount = Number(amount);
+  if (status !== undefined) updates.status = status;
+  if (alignment !== undefined) updates.alignment = alignment;
+
+  const updated = await DB.updateInvoice(req.params.id, updates as any);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: 'Invoice signature reference not found.' });
+  }
+});
+
 app.delete('/api/invoices/:id', authenticateToken, async (req: Request, res: Response) => {
   const success = await DB.deleteInvoice(req.params.id);
   if (success) {
@@ -234,6 +257,35 @@ app.post('/api/vendors', authenticateToken, async (req: Request, res: Response) 
   res.status(201).json(vendor);
 });
 
+app.put('/api/vendors/:id', authenticateToken, async (req: Request, res: Response) => {
+  const { name, contact, origin, category, leadTime, leadGems, status, rating } = req.body as {
+    name?: string;
+    contact?: string;
+    origin?: string;
+    category?: string;
+    leadTime?: string;
+    leadGems?: string;
+    status?: string;
+    rating?: number;
+  };
+  const updates: Record<string, unknown> = {};
+  if (name !== undefined) updates.name = name;
+  if (contact !== undefined) updates.contact = contact;
+  if (origin !== undefined) updates.origin = origin;
+  if (category !== undefined) updates.category = category;
+  if (leadTime !== undefined) updates.leadTime = leadTime;
+  if (leadGems !== undefined) updates.leadGems = leadGems;
+  if (status !== undefined) updates.status = status;
+  if (rating !== undefined) updates.rating = rating;
+
+  const updated = await DB.updateVendor(req.params.id, updates as any);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: 'Vendor signature reference not found.' });
+  }
+});
+
 app.delete('/api/vendors/:id', authenticateToken, async (req: Request, res: Response) => {
   const success = await DB.deleteVendor(req.params.id);
   if (success) {
@@ -269,6 +321,27 @@ app.post('/api/expenses', authenticateToken, async (req: Request, res: Response)
     notes: notes || '',
   });
   res.status(201).json(expense);
+});
+
+app.put('/api/expenses/:id', authenticateToken, async (req: Request, res: Response) => {
+  const { title, category, amount, notes } = req.body as {
+    title?: string;
+    category?: string;
+    amount?: number | string;
+    notes?: string;
+  };
+  const updates: Record<string, unknown> = {};
+  if (title !== undefined) updates.title = title;
+  if (category !== undefined) updates.category = category;
+  if (amount !== undefined) updates.amount = Number(amount);
+  if (notes !== undefined) updates.notes = notes;
+
+  const updated = await DB.updateExpense(req.params.id, updates as any);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: 'Expense code reference not found.' });
+  }
 });
 
 app.delete('/api/expenses/:id', authenticateToken, async (req: Request, res: Response) => {
@@ -308,6 +381,29 @@ app.post('/api/tasks', authenticateToken, async (req: Request, res: Response) =>
     daysLeft: Number(daysLeft) || 3,
   });
   res.status(201).json(task);
+});
+
+app.put('/api/tasks/:id', authenticateToken, async (req: Request, res: Response) => {
+  const { title, status, priority, assignee, daysLeft } = req.body as {
+    title?: string;
+    status?: 'Backlog' | 'Water Cleanse' | 'Moon Bath Bathing' | 'Sealed / Composed';
+    priority?: 'Low' | 'Medium' | 'High';
+    assignee?: string;
+    daysLeft?: number | string;
+  };
+  const updates: Record<string, unknown> = {};
+  if (title !== undefined) updates.title = title;
+  if (status !== undefined) updates.status = status;
+  if (priority !== undefined) updates.priority = priority;
+  if (assignee !== undefined) updates.assignee = assignee;
+  if (daysLeft !== undefined) updates.daysLeft = Number(daysLeft);
+
+  const updated = await DB.updateTask(req.params.id, updates as any);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: 'Vedic task identifier not discovered.' });
+  }
 });
 
 app.put('/api/tasks/:id/status', authenticateToken, async (req: Request, res: Response) => {

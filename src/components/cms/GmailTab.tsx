@@ -41,7 +41,7 @@ export function GmailTab({ state }: Props) {
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!recipient || !subject || !body) {
-      alert('Missing required fields: Recipient, Subject, or Body.');
+      setStatus('error: Missing required fields: Recipient, Subject, or Body.');
       return;
     }
     setSending(true);
@@ -170,7 +170,7 @@ export function GmailTab({ state }: Props) {
               try {
                 await requestGmailAuthorization();
               } catch (e) {
-                alert('Handshake denied: Google account workspace session refused.');
+                setStatus('error: Handshake denied: Google account workspace session refused.');
               }
             }}
             disabled={isAuthLoading}

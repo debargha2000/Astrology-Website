@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useCmsAuth, useCmsData } from './cms/useCmsState';
 import { useCmsHandlers } from './cms/useCmsHandlers';
+import { useToast } from './cms/useToast';
+import { ToastContainer } from './cms/Toast';
 import { AuthGate } from './cms/AuthGate';
 import { CmsHeader } from './cms/CmsHeader';
 import { DashboardTab } from './cms/DashboardTab';
@@ -22,7 +24,8 @@ interface BusinessOperationsCMSProps {
 export default function BusinessOperationsCMS(_props: BusinessOperationsCMSProps = {}) {
   const auth = useCmsAuth();
   const data = useCmsData();
-  const handlers = useCmsHandlers({ ...auth, ...data });
+  const { toasts, addToast, removeToast } = useToast();
+  const handlers = useCmsHandlers({ ...auth, ...data }, addToast);
   const [activeTab, setActiveTab] = useState<CmsSubTab>('dashboard');
 
   useEffect(() => {
@@ -37,6 +40,7 @@ export default function BusinessOperationsCMS(_props: BusinessOperationsCMSProps
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-8 select-none">
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
       <CmsHeader
         googleUser={auth.googleUser}
         activeTab={activeTab}

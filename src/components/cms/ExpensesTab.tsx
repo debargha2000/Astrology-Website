@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Trash2 } from 'lucide-react';
+import { Search, Plus, Trash2, Pencil } from 'lucide-react';
 import { EXPENSE_CATEGORIES } from './seedData';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddExpenseModal } from './AddExpenseModal';
+import { EditExpenseModal } from './EditExpenseModal';
+import type { Expense } from './types';
 
 interface Props {
   state: CmsState;
@@ -12,10 +14,11 @@ interface Props {
 
 export function ExpensesTab({ state, handlers }: Props) {
   const { expenses } = state;
-  const { createExpense, deleteExpense } = handlers;
+  const { createExpense, updateExpense, deleteExpense } = handlers;
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
   const [showAdd, setShowAdd] = useState(false);
+  const [editing, setEditing] = useState<Expense | null>(null);
 
   const searched = useMemo(
     () =>
@@ -82,7 +85,7 @@ export function ExpensesTab({ state, handlers }: Props) {
                   <th className="p-4 md:p-5 font-bold">PURIFYING WORK DESCRIPTOR</th>
                   <th className="p-4 md:p-5 font-bold">CATEGORY</th>
                   <th className="p-4 md:p-5 font-bold text-right">COST (INR)</th>
-                  <th className="p-4 md:p-5 font-bold text-center">ACTION</th>
+                  <th className="p-4 md:p-5 font-bold text-center">ACTIONS</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-cream">
@@ -107,13 +110,22 @@ export function ExpensesTab({ state, handlers }: Props) {
                       </td>
                       <td className="p-4 md:p-5 text-right font-mono font-bold text-ink">₹{exp.amount.toLocaleString('en-IN')}</td>
                       <td className="p-4 md:p-5 text-center">
-                        <button
-                          onClick={() => deleteExpense(exp.id)}
-                          className="cursor-pointer p-2 rounded-full text-clay hover:text-red-700 hover:bg-red-50 transition-colors"
-                          title="Delete log permanently"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => setEditing(exp)}
+                            className="cursor-pointer p-2 rounded-full text-clay hover:text-ink hover:bg-cream transition-colors"
+                            title="Edit expense"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => deleteExpense(exp.id)}
+                            className="cursor-pointer p-2 rounded-full text-clay hover:text-red-700 hover:bg-red-50 transition-colors"
+                            title="Delete log permanently"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -165,6 +177,15 @@ export function ExpensesTab({ state, handlers }: Props) {
           onSubmit={async (form) => {
             await createExpense(form);
             setShowAdd(false);
+          }}
+        />
+      )}
+      {editing && (
+        <EditExpenseModal
+          expense={editing}
+          onClose={() => setEditing(null)}
+          onSubmit={async (id, updates) => {
+            await updateExpense(id, updates);
           }}
         />
       )}

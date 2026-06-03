@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Plus, Clock, Award, Compass, CheckCircle2 } from 'lucide-react';
+import { Plus, Clock, Award, Compass, CheckCircle2, Pencil, Trash2 } from 'lucide-react';
 import { TASK_STATUSES } from './seedData';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddTaskModal } from './AddTaskModal';
+import { EditTaskModal } from './EditTaskModal';
+import type { Task } from './types';
 
 interface Props {
   state: CmsState;
@@ -19,8 +21,9 @@ const STAGE_ICONS: Record<string, React.ReactNode> = {
 
 export function TasksTab({ state, handlers }: Props) {
   const { tasks } = state;
-  const { createTask, moveTask } = handlers;
+  const { createTask, moveTask, updateTask, deleteTask } = handlers;
   const [showAdd, setShowAdd] = useState(false);
+  const [editing, setEditing] = useState<Task | null>(null);
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -100,19 +103,35 @@ export function TasksTab({ state, handlers }: Props) {
                         ) : (
                           <div />
                         )}
-                        {stage !== 'Sealed / Composed' ? (
+                        <div className="flex items-center gap-1">
                           <button
-                            onClick={() => moveTask(task.id, 'forward')}
-                            className="cursor-pointer text-emerald-800 hover:text-emerald-700 font-bold p-1 flex items-center gap-0.5 bg-emerald-50 px-2 rounded-md hover:bg-emerald-100 transition-colors"
-                            title="Advance Attunement stage"
+                            onClick={() => setEditing(task)}
+                            className="cursor-pointer text-clay hover:text-ink p-1 rounded transition-colors"
+                            title="Edit task"
                           >
-                            Process →
+                            <Pencil className="h-3 w-3" />
                           </button>
-                        ) : (
-                          <div className="text-emerald-800 font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-md">
-                            ✓ Certified
-                          </div>
-                        )}
+                          <button
+                            onClick={() => deleteTask(task.id)}
+                            className="cursor-pointer text-clay hover:text-red-700 p-1 rounded transition-colors"
+                            title="Delete task"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                          {stage !== 'Sealed / Composed' ? (
+                            <button
+                              onClick={() => moveTask(task.id, 'forward')}
+                              className="cursor-pointer text-emerald-800 hover:text-emerald-700 font-bold p-1 flex items-center gap-0.5 bg-emerald-50 px-2 rounded-md hover:bg-emerald-100 transition-colors"
+                              title="Advance Attunement stage"
+                            >
+                              Process →
+                            </button>
+                          ) : (
+                            <div className="text-emerald-800 font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-md">
+                              ✓ Certified
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))
@@ -129,6 +148,15 @@ export function TasksTab({ state, handlers }: Props) {
           onSubmit={async (form) => {
             await createTask(form);
             setShowAdd(false);
+          }}
+        />
+      )}
+      {editing && (
+        <EditTaskModal
+          task={editing}
+          onClose={() => setEditing(null)}
+          onSubmit={async (id, updates) => {
+            await updateTask(id, updates);
           }}
         />
       )}

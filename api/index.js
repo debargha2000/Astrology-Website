@@ -557,6 +557,33 @@ var DB = class {
     await this.addLog(`Created High-Precision Invoice ${newInvoice.id} for ${newInvoice.client} (\u20B9${newInvoice.amount})`);
     return newInvoice;
   }
+  static async updateInvoice(id, updates) {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const docRef = fdb.collection("invoices").doc(id);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+          await docRef.update(updates);
+          const updatedSnap = await docRef.get();
+          const invoiceData = updatedSnap.data();
+          await this.addLog(`Updated invoice ${id} for ${invoiceData.client}.`);
+          return invoiceData;
+        }
+        return null;
+      } catch (e) {
+      }
+    }
+    const data = this.load();
+    const index = data.invoices.findIndex((i) => i.id === id);
+    if (index > -1) {
+      data.invoices[index] = { ...data.invoices[index], ...updates };
+      this.save(data);
+      await this.addLog(`Updated invoice ${id} for ${data.invoices[index].client}.`);
+      return data.invoices[index];
+    }
+    return null;
+  }
   static async deleteInvoice(id) {
     const fdb = getFirestoreDB();
     if (fdb) {
@@ -612,6 +639,33 @@ var DB = class {
     await this.addLog(`Onboarded newly registered artisan and geode vendor: ${newVendor.name}`);
     return newVendor;
   }
+  static async updateVendor(id, updates) {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const docRef = fdb.collection("vendors").doc(id);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+          await docRef.update(updates);
+          const updatedSnap = await docRef.get();
+          const vendorData = updatedSnap.data();
+          await this.addLog(`Updated vendor ${id} (${vendorData.name}).`);
+          return vendorData;
+        }
+        return null;
+      } catch (e) {
+      }
+    }
+    const data = this.load();
+    const index = data.vendors.findIndex((v) => v.id === id);
+    if (index > -1) {
+      data.vendors[index] = { ...data.vendors[index], ...updates };
+      this.save(data);
+      await this.addLog(`Updated vendor ${id} (${data.vendors[index].name}).`);
+      return data.vendors[index];
+    }
+    return null;
+  }
   static async deleteVendor(id) {
     const fdb = getFirestoreDB();
     if (fdb) {
@@ -666,6 +720,33 @@ var DB = class {
     this.save(data);
     await this.addLog(`Logged operations expense: ${newExpense.title} (\u20B9${newExpense.amount})`);
     return newExpense;
+  }
+  static async updateExpense(id, updates) {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const docRef = fdb.collection("expenses").doc(id);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+          await docRef.update(updates);
+          const updatedSnap = await docRef.get();
+          const expenseData = updatedSnap.data();
+          await this.addLog(`Updated expense ${id} (${expenseData.title}).`);
+          return expenseData;
+        }
+        return null;
+      } catch (e) {
+      }
+    }
+    const data = this.load();
+    const index = data.expenses.findIndex((e) => e.id === id);
+    if (index > -1) {
+      data.expenses[index] = { ...data.expenses[index], ...updates };
+      this.save(data);
+      await this.addLog(`Updated expense ${id} (${data.expenses[index].title}).`);
+      return data.expenses[index];
+    }
+    return null;
   }
   static async deleteExpense(id) {
     const fdb = getFirestoreDB();
@@ -743,6 +824,33 @@ var DB = class {
       data.tasks[index].status = status;
       this.save(data);
       await this.addLog(`Updated task status for ${id} to "${status}"`);
+      return data.tasks[index];
+    }
+    return null;
+  }
+  static async updateTask(id, updates) {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const docRef = fdb.collection("tasks").doc(id);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+          await docRef.update(updates);
+          const updatedSnap = await docRef.get();
+          const taskData = updatedSnap.data();
+          await this.addLog(`Updated task ${id} ("${taskData.title}").`);
+          return taskData;
+        }
+        return null;
+      } catch (e) {
+      }
+    }
+    const data = this.load();
+    const index = data.tasks.findIndex((t) => t.id === id);
+    if (index > -1) {
+      data.tasks[index] = { ...data.tasks[index], ...updates };
+      this.save(data);
+      await this.addLog(`Updated task ${id} ("${data.tasks[index].title}").`);
       return data.tasks[index];
     }
     return null;
@@ -1250,6 +1358,21 @@ app.post("/api/invoices", authenticateToken, async (req, res) => {
   });
   res.status(201).json(invoice);
 });
+app.put("/api/invoices/:id", authenticateToken, async (req, res) => {
+  const { client, item, amount, status, alignment } = req.body;
+  const updates = {};
+  if (client !== void 0) updates.client = client;
+  if (item !== void 0) updates.item = item;
+  if (amount !== void 0) updates.amount = Number(amount);
+  if (status !== void 0) updates.status = status;
+  if (alignment !== void 0) updates.alignment = alignment;
+  const updated = await DB.updateInvoice(req.params.id, updates);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: "Invoice signature reference not found." });
+  }
+});
 app.delete("/api/invoices/:id", authenticateToken, async (req, res) => {
   const success = await DB.deleteInvoice(req.params.id);
   if (success) {
@@ -1277,6 +1400,24 @@ app.post("/api/vendors", authenticateToken, async (req, res) => {
   });
   res.status(201).json(vendor);
 });
+app.put("/api/vendors/:id", authenticateToken, async (req, res) => {
+  const { name, contact, origin, category, leadTime, leadGems, status, rating } = req.body;
+  const updates = {};
+  if (name !== void 0) updates.name = name;
+  if (contact !== void 0) updates.contact = contact;
+  if (origin !== void 0) updates.origin = origin;
+  if (category !== void 0) updates.category = category;
+  if (leadTime !== void 0) updates.leadTime = leadTime;
+  if (leadGems !== void 0) updates.leadGems = leadGems;
+  if (status !== void 0) updates.status = status;
+  if (rating !== void 0) updates.rating = rating;
+  const updated = await DB.updateVendor(req.params.id, updates);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: "Vendor signature reference not found." });
+  }
+});
 app.delete("/api/vendors/:id", authenticateToken, async (req, res) => {
   const success = await DB.deleteVendor(req.params.id);
   if (success) {
@@ -1301,6 +1442,20 @@ app.post("/api/expenses", authenticateToken, async (req, res) => {
     notes: notes || ""
   });
   res.status(201).json(expense);
+});
+app.put("/api/expenses/:id", authenticateToken, async (req, res) => {
+  const { title, category, amount, notes } = req.body;
+  const updates = {};
+  if (title !== void 0) updates.title = title;
+  if (category !== void 0) updates.category = category;
+  if (amount !== void 0) updates.amount = Number(amount);
+  if (notes !== void 0) updates.notes = notes;
+  const updated = await DB.updateExpense(req.params.id, updates);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: "Expense code reference not found." });
+  }
 });
 app.delete("/api/expenses/:id", authenticateToken, async (req, res) => {
   const success = await DB.deleteExpense(req.params.id);
@@ -1327,6 +1482,21 @@ app.post("/api/tasks", authenticateToken, async (req, res) => {
     daysLeft: Number(daysLeft) || 3
   });
   res.status(201).json(task);
+});
+app.put("/api/tasks/:id", authenticateToken, async (req, res) => {
+  const { title, status, priority, assignee, daysLeft } = req.body;
+  const updates = {};
+  if (title !== void 0) updates.title = title;
+  if (status !== void 0) updates.status = status;
+  if (priority !== void 0) updates.priority = priority;
+  if (assignee !== void 0) updates.assignee = assignee;
+  if (daysLeft !== void 0) updates.daysLeft = Number(daysLeft);
+  const updated = await DB.updateTask(req.params.id, updates);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: "Vedic task identifier not discovered." });
+  }
 });
 app.put("/api/tasks/:id/status", authenticateToken, async (req, res) => {
   const { status } = req.body;

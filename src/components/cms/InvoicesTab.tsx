@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, ExternalLink } from 'lucide-react';
+import { Search, Plus, ExternalLink, Pencil } from 'lucide-react';
 import { INVOICE_STATUSES } from './seedData';
 import type { Invoice, CmsSubTab } from './types';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { InvoicePreviewModal } from './InvoicePreviewModal';
 import { AddInvoiceModal } from './AddInvoiceModal';
+import { EditInvoiceModal } from './EditInvoiceModal';
 
 interface Props {
   state: CmsState;
@@ -14,11 +15,12 @@ interface Props {
 
 export function InvoicesTab({ state, handlers }: Props) {
   const { invoices } = state;
-  const { createInvoice } = handlers;
+  const { createInvoice, updateInvoice } = handlers;
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<string>('All');
   const [preview, setPreview] = useState<Invoice | null>(null);
   const [showAdd, setShowAdd] = useState(false);
+  const [editing, setEditing] = useState<Invoice | null>(null);
 
   const searched = useMemo(
     () =>
@@ -40,6 +42,20 @@ export function InvoicesTab({ state, handlers }: Props) {
     const overdue = invoices.filter((i) => i.status === 'Overdue').reduce((a, c) => a + c.amount, 0);
     return { paid, pending, overdue, total: invoices.reduce((a, c) => a + c.amount, 0) };
   }, [invoices]);
+
+  const STATUS_COLORS: Record<string, string> = {
+    Paid: 'bg-emerald-50 text-emerald-800 border border-emerald-200/25',
+    Sent: 'bg-blue-50 text-blue-800 border border-blue-200/25',
+    Overdue: 'bg-red-50 text-red-800 border border-red-200/25 font-bold animate-pulse',
+    Draft: 'bg-gray-100 text-gray-500 border border-gray-200',
+  };
+
+  const nextStatus: Record<string, Invoice['status']> = {
+    Draft: 'Sent',
+    Sent: 'Paid',
+    Paid: 'Paid',
+    Overdue: 'Sent',
+  };
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -106,7 +122,7 @@ export function InvoicesTab({ state, handlers }: Props) {
                 <th className="p-4 md:p-5 font-bold">ASTRONOMICAL ALIGNMENT ITEM</th>
                 <th className="p-4 md:p-5 font-bold text-right">LEDGER CHARGE</th>
                 <th className="p-4 md:p-5 font-bold text-center">STATUS</th>
-                <th className="p-4 md:p-5 font-bold text-right">CERTIFICATE / PREVIEW</th>
+                <th className="p-4 md:p-5 font-bold text-right">ACTIONS</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-cream">
@@ -129,27 +145,30 @@ export function InvoicesTab({ state, handlers }: Props) {
                       ₹{inv.amount.toLocaleString('en-IN')}
                     </td>
                     <td className="p-4 md:p-5 text-center">
-                      <span
-                        className={`inline-block font-mono text-[9px] uppercase tracking-wide px-2.5 py-1 rounded-md font-bold ${
-                          inv.status === 'Paid'
-                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/25'
-                            : inv.status === 'Sent'
-                              ? 'bg-blue-50 text-blue-800 border border-blue-200/25'
-                              : inv.status === 'Overdue'
-                                ? 'bg-red-50 text-red-800 border border-red-200/25 font-bold animate-pulse'
-                                : 'bg-gray-100 text-gray-500 border border-gray-200'
-                        }`}
+                      <button
+                        onClick={() => updateInvoice(inv.id, { status: nextStatus[inv.status] })}
+                        className={`cursor-pointer inline-block font-mono text-[9px] uppercase tracking-wide px-2.5 py-1 rounded-md font-bold transition-all hover:opacity-80 ${STATUS_COLORS[inv.status] || ''}`}
+                        title={`Click to change to ${nextStatus[inv.status]}`}
                       >
                         {inv.status}
-                      </span>
+                      </button>
                     </td>
                     <td className="p-4 md:p-5 text-right">
-                      <button
-                        onClick={() => setPreview(inv)}
-                        className="cursor-pointer bg-cream hover:bg-mist/50 border border-stone text-ink p-2 rounded-lg text-[10px] font-mono tracking-wider uppercase font-bold flex items-center justify-center gap-1.5 ml-auto transition-colors"
-                      >
-                        <ExternalLink className="h-3 w-3 text-gold-muted" /> Render PDF Preview
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => setEditing(inv)}
+                          className="cursor-pointer bg-cream hover:bg-mist/50 border border-stone text-ink p-2 rounded-lg font-mono text-[10px] tracking-wider uppercase font-bold flex items-center justify-center gap-1 transition-colors"
+                          title="Edit invoice"
+                        >
+                          <Pencil className="h-3 w-3 text-gold-muted" /> Edit
+                        </button>
+                        <button
+                          onClick={() => setPreview(inv)}
+                          className="cursor-pointer bg-cream hover:bg-mist/50 border border-stone text-ink p-2 rounded-lg font-mono text-[10px] tracking-wider uppercase font-bold flex items-center justify-center gap-1 transition-colors"
+                        >
+                          <ExternalLink className="h-3 w-3 text-gold-muted" /> PDF
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -166,6 +185,15 @@ export function InvoicesTab({ state, handlers }: Props) {
           onSubmit={async (form) => {
             await createInvoice(form);
             setShowAdd(false);
+          }}
+        />
+      )}
+      {editing && (
+        <EditInvoiceModal
+          invoice={editing}
+          onClose={() => setEditing(null)}
+          onSubmit={async (id, updates) => {
+            await updateInvoice(id, updates);
           }}
         />
       )}

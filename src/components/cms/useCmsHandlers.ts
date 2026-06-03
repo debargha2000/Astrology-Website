@@ -20,7 +20,9 @@ async function authedFetch(path: string, init: Parameters<typeof apiFetch>[1] = 
   });
 }
 
-export function useCmsHandlers(state: CmsState) {
+export type ToastFn = (message: string, type?: 'success' | 'error' | 'info') => void;
+
+export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   const {
     setInvoices,
     setVendors,
@@ -38,6 +40,13 @@ export function useCmsHandlers(state: CmsState) {
     loadData
   } = state;
 
+  const notify = useCallback(
+    (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+      if (toast) toast(message, type);
+    },
+    [toast]
+  );
+
   const addTerminalLog = useCallback(
     async (msg: string) => {
       if (!getAdminToken()) return;
@@ -48,11 +57,11 @@ export function useCmsHandlers(state: CmsState) {
 
   const requireGoogle = useCallback((): boolean => {
     if (!googleUser) {
-      alert('Please sign in with Google first to perform Firestore operations.');
+      notify('Please sign in with Google first to perform Firestore operations.', 'error');
       return false;
     }
     return true;
-  }, [googleUser]);
+  }, [googleUser, notify]);
 
   const saveProduct = useCallback(
     async (productData: ProductForm) => {
@@ -82,19 +91,19 @@ export function useCmsHandlers(state: CmsState) {
             method: 'POST',
             body: JSON.stringify({ title: `AutoBackup: Updated product "${cleanProduct.name}"` })
           });
-          alert(`Product "${cleanProduct.name}" synchronized and automatic backup checkpoint registered!`);
+          notify(`Product "${cleanProduct.name}" synchronized and backup created.`);
           await loadData();
         } else {
           const err = await res.json();
-          alert(`Error saving product: ${err.error}`);
+          notify(`Error saving product: ${err.error}`, 'error');
         }
       } catch (e: any) {
-        alert(`Save error: ${e.message}`);
+        notify(`Save error: ${e.message}`, 'error');
       } finally {
         setIsLoading(false);
       }
     },
-    [loadData, setIsLoading]
+    [loadData, setIsLoading, notify]
   );
 
   const deleteProduct = useCallback(
@@ -108,18 +117,18 @@ export function useCmsHandlers(state: CmsState) {
             method: 'POST',
             body: JSON.stringify({ title: `AutoBackup: Deleted product "${name}"` })
           });
-          alert(`Product "${name}" deleted.`);
+          notify(`Product "${name}" deleted.`);
           await loadData();
         } else {
-          alert('Failed to delete product.');
+          notify('Failed to delete product.', 'error');
         }
       } catch (e: any) {
-        alert(`Delete error: ${e.message}`);
+        notify(`Delete error: ${e.message}`, 'error');
       } finally {
         setIsLoading(false);
       }
     },
-    [loadData, setIsLoading]
+    [loadData, setIsLoading, notify]
   );
 
   const updateWebsite = useCallback(
@@ -132,18 +141,18 @@ export function useCmsHandlers(state: CmsState) {
             method: 'POST',
             body: JSON.stringify({ title: 'AutoBackup: Website customization settings updated' })
           });
-          alert('Website copy and imagery adjustments synchronized live and fully backed up!');
+          notify('Website settings synchronized live and backed up!');
           await loadData();
         } else {
-          alert('Failed to update website customization.');
+          notify('Failed to update website customization.', 'error');
         }
       } catch (e: any) {
-        alert(`Update error: ${e.message}`);
+        notify(`Update error: ${e.message}`, 'error');
       } finally {
         setIsLoading(false);
       }
     },
-    [loadData, setIsLoading]
+    [loadData, setIsLoading, notify]
   );
 
   const createManualCheckpoint = useCallback(async () => {
@@ -153,17 +162,17 @@ export function useCmsHandlers(state: CmsState) {
       setIsLoading(true);
       const res = await authedFetch('/api/website/checkpoints', { method: 'POST', body: JSON.stringify({ title }) });
       if (res.ok) {
-        alert('Manual Checkpoint saved!');
+        notify('Manual checkpoint saved!');
         await loadData();
       } else {
-        alert('Failed to create checkpoint.');
+        notify('Failed to create checkpoint.', 'error');
       }
     } catch (e: any) {
-      alert(`Error: ${e.message}`);
+      notify(`Error: ${e.message}`, 'error');
     } finally {
       setIsLoading(false);
     }
-  }, [loadData, setIsLoading]);
+  }, [loadData, setIsLoading, notify]);
 
   const rollbackTo = useCallback(
     async (id: string, title: string) => {
@@ -177,18 +186,18 @@ export function useCmsHandlers(state: CmsState) {
         setIsLoading(true);
         const res = await authedFetch(`/api/website/checkpoints/${id}/rollback`, { method: 'POST' });
         if (res.ok) {
-          alert(`Rollback succeeded! Reverted to: ${title}`);
+          notify(`Rollback succeeded! Reverted to: ${title}`);
           await loadData();
         } else {
-          alert('Failed to execute system rollback.');
+          notify('Failed to execute system rollback.', 'error');
         }
       } catch (e: any) {
-        alert(`Error: ${e.message}`);
+        notify(`Error: ${e.message}`, 'error');
       } finally {
         setIsLoading(false);
       }
     },
-    [loadData, setIsLoading]
+    [loadData, setIsLoading, notify]
   );
 
   const createInvoice = useCallback(
@@ -216,6 +225,7 @@ export function useCmsHandlers(state: CmsState) {
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
             message: `Created High-Precision Invoice ${customId} for ${payload.client} (₹${payload.amount}) via Firestore.`
           });
+          notify(`Invoice created for ${payload.client}.`);
           await loadData();
         } catch (err) {
           console.error(err);
@@ -224,9 +234,32 @@ export function useCmsHandlers(state: CmsState) {
       }
 
       const res = await authedFetch('/api/invoices', { method: 'POST', body: JSON.stringify(payload) });
-      if (res.ok) await loadData();
+      if (res.ok) {
+        notify(`Invoice created for ${payload.client}.`);
+        await loadData();
+      }
     },
-    [loadData, requireGoogle, useFirestoreSource]
+    [loadData, requireGoogle, useFirestoreSource, notify]
+  );
+
+  const updateInvoice = useCallback(
+    async (id: string, updates: Partial<Invoice>) => {
+      try {
+        setIsLoading(true);
+        const res = await authedFetch(`/api/invoices/${id}`, { method: 'PUT', body: JSON.stringify(updates) });
+        if (res.ok) {
+          notify('Invoice updated.');
+          await loadData();
+        } else {
+          notify('Failed to update invoice.', 'error');
+        }
+      } catch (e: any) {
+        notify(`Update error: ${e.message}`, 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [loadData, setIsLoading, notify]
   );
 
   const createVendor = useCallback(
@@ -250,6 +283,7 @@ export function useCmsHandlers(state: CmsState) {
         try {
           await setDoc(doc(firestoreDb, 'vendors', customId), payload)
             .catch((err) => handleFirestoreError(err, OperationType.CREATE, `vendors/${customId}`));
+          notify(`Vendor "${payload.name}" onboarded.`);
           await loadData();
         } catch (err) {
           console.error(err);
@@ -258,9 +292,32 @@ export function useCmsHandlers(state: CmsState) {
       }
 
       const res = await authedFetch('/api/vendors', { method: 'POST', body: JSON.stringify(payload) });
-      if (res.ok) await loadData();
+      if (res.ok) {
+        notify(`Vendor "${payload.name}" onboarded.`);
+        await loadData();
+      }
     },
-    [loadData, requireGoogle, useFirestoreSource]
+    [loadData, requireGoogle, useFirestoreSource, notify]
+  );
+
+  const updateVendor = useCallback(
+    async (id: string, updates: Partial<Vendor>) => {
+      try {
+        setIsLoading(true);
+        const res = await authedFetch(`/api/vendors/${id}`, { method: 'PUT', body: JSON.stringify(updates) });
+        if (res.ok) {
+          notify('Vendor updated.');
+          await loadData();
+        } else {
+          notify('Failed to update vendor.', 'error');
+        }
+      } catch (e: any) {
+        notify(`Update error: ${e.message}`, 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [loadData, setIsLoading, notify]
   );
 
   const createExpense = useCallback(
@@ -281,6 +338,7 @@ export function useCmsHandlers(state: CmsState) {
         try {
           await setDoc(doc(firestoreDb, 'expenses', customId), payload)
             .catch((err) => handleFirestoreError(err, OperationType.CREATE, `expenses/${customId}`));
+          notify(`Expense "${payload.title}" logged.`);
           await loadData();
         } catch (err) {
           console.error(err);
@@ -289,9 +347,32 @@ export function useCmsHandlers(state: CmsState) {
       }
 
       const res = await authedFetch('/api/expenses', { method: 'POST', body: JSON.stringify(payload) });
-      if (res.ok) await loadData();
+      if (res.ok) {
+        notify(`Expense "${payload.title}" logged.`);
+        await loadData();
+      }
     },
-    [loadData, requireGoogle, useFirestoreSource]
+    [loadData, requireGoogle, useFirestoreSource, notify]
+  );
+
+  const updateExpense = useCallback(
+    async (id: string, updates: Partial<Expense>) => {
+      try {
+        setIsLoading(true);
+        const res = await authedFetch(`/api/expenses/${id}`, { method: 'PUT', body: JSON.stringify(updates) });
+        if (res.ok) {
+          notify('Expense updated.');
+          await loadData();
+        } else {
+          notify('Failed to update expense.', 'error');
+        }
+      } catch (e: any) {
+        notify(`Update error: ${e.message}`, 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [loadData, setIsLoading, notify]
   );
 
   const createTask = useCallback(
@@ -312,6 +393,7 @@ export function useCmsHandlers(state: CmsState) {
         try {
           await setDoc(doc(firestoreDb, 'tasks', customId), payload)
             .catch((err) => handleFirestoreError(err, OperationType.CREATE, `tasks/${customId}`));
+          notify(`Task created for ${payload.assignee}.`);
           await loadData();
         } catch (err) {
           console.error(err);
@@ -320,9 +402,32 @@ export function useCmsHandlers(state: CmsState) {
       }
 
       const res = await authedFetch('/api/tasks', { method: 'POST', body: JSON.stringify(payload) });
-      if (res.ok) await loadData();
+      if (res.ok) {
+        notify(`Task created for ${payload.assignee}.`);
+        await loadData();
+      }
     },
-    [loadData, requireGoogle, useFirestoreSource]
+    [loadData, requireGoogle, useFirestoreSource, notify]
+  );
+
+  const updateTask = useCallback(
+    async (id: string, updates: Partial<Task>) => {
+      try {
+        setIsLoading(true);
+        const res = await authedFetch(`/api/tasks/${id}`, { method: 'PUT', body: JSON.stringify(updates) });
+        if (res.ok) {
+          notify('Task updated.');
+          await loadData();
+        } else {
+          notify('Failed to update task.', 'error');
+        }
+      } catch (e: any) {
+        notify(`Update error: ${e.message}`, 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [loadData, setIsLoading, notify]
   );
 
   const moveTask = useCallback(
@@ -358,6 +463,27 @@ export function useCmsHandlers(state: CmsState) {
     [loadData, requireGoogle, state.tasks, useFirestoreSource]
   );
 
+  const deleteTask = useCallback(
+    async (id: string) => {
+      if (!confirm('Delete this task permanently?')) return;
+      try {
+        setIsLoading(true);
+        const res = await authedFetch(`/api/tasks/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          notify('Task deleted.');
+          await loadData();
+        } else {
+          notify('Failed to delete task.', 'error');
+        }
+      } catch (e: any) {
+        notify(`Delete error: ${e.message}`, 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [loadData, setIsLoading, notify]
+  );
+
   const deleteExpense = useCallback(
     async (id: string) => {
       if (useFirestoreSource) {
@@ -365,6 +491,7 @@ export function useCmsHandlers(state: CmsState) {
         try {
           await deleteDoc(doc(firestoreDb, 'expenses', id))
             .catch((err) => handleFirestoreError(err, OperationType.DELETE, `expenses/${id}`));
+          notify('Expense removed.');
           await loadData();
         } catch (err) {
           console.error(err);
@@ -372,9 +499,12 @@ export function useCmsHandlers(state: CmsState) {
         return;
       }
       const res = await authedFetch(`/api/expenses/${id}`, { method: 'DELETE' });
-      if (res.ok) await loadData();
+      if (res.ok) {
+        notify('Expense removed.');
+        await loadData();
+      }
     },
-    [loadData, requireGoogle, useFirestoreSource]
+    [loadData, requireGoogle, useFirestoreSource, notify]
   );
 
   const syncLocalToFirestore = useCallback(async () => {
@@ -420,15 +550,16 @@ export function useCmsHandlers(state: CmsState) {
       });
       state.setFirestoreSyncSuccess('Successfully synchronized e-commerce ledger collections to Firestore.');
       state.setUseFirestoreSource(true);
+      notify('Firestore sync complete!');
       await loadData();
     } catch (err) {
       console.error('Data Sync Error:', err);
-      alert('Sync Failed: Check application console logs for rules details.');
+      notify('Sync failed. Check console for details.', 'error');
     } finally {
       setIsLoading(false);
       state.setFirestoreSyncLoading(false);
     }
-  }, [googleUser, loadData, setIsLoading, state]);
+  }, [googleUser, loadData, setIsLoading, state, notify]);
 
   return {
     addTerminalLog,
@@ -438,10 +569,15 @@ export function useCmsHandlers(state: CmsState) {
     createManualCheckpoint,
     rollbackTo,
     createInvoice,
+    updateInvoice,
     createVendor,
+    updateVendor,
     createExpense,
+    updateExpense,
     createTask,
+    updateTask,
     moveTask,
+    deleteTask,
     deleteExpense,
     syncLocalToFirestore
   };
