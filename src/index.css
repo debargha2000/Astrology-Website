@@ -97,3 +97,48 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   animation: spinReverse 20s linear infinite;
 }
 
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  .fixed.inset-0.z-50,
+  .fixed.inset-0.z-50 * {
+    visibility: visible !important;
+  }
+
+  .fixed.inset-0.z-50 {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 9999 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  .fixed.inset-0.z-50 > div:first-child {
+    display: none !important;
+  }
+
+  .fixed.inset-0.z-50 > div:last-child {
+    position: static !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 20mm !important;
+  }
+
+  .fixed.inset-0.z-50 button {
+    display: none !important;
+  }
+
+  @page {
+    margin: 15mm;
+    size: A4;
+  }
+}
+

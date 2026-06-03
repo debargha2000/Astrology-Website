@@ -114,10 +114,34 @@ export function InvoicePreviewModal({ invoice, onClose }: Props) {
 
         <div className="flex gap-3 justify-end font-mono text-[10px] pt-4">
           <button
-            onClick={() => window.print()}
+            onClick={() => {
+              const printWindow = window.open('', '_blank', 'width=800,height=600');
+              if (printWindow) {
+                const content = document.querySelector('.fixed.inset-0.z-50 > div:last-child');
+                if (content) {
+                  printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                      <title>Invoice ${invoice.id}</title>
+                      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,705;1,300;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+                      <style>
+                        body { font-family: 'Inter', sans-serif; margin: 0; padding: 20mm; color: #1A1A1A; }
+                        .font-serif { font-family: 'Cormorant Garamond', serif; }
+                        .font-mono { font-family: 'JetBrains Mono', monospace; }
+                      </style>
+                    </head>
+                    <body>${content.innerHTML}</body>
+                    </html>
+                  `);
+                  printWindow.document.close();
+                  setTimeout(() => { printWindow.print(); }, 500);
+                }
+              }
+            }}
             className="cursor-pointer bg-cream hover:bg-mist/50 border border-stone text-ink font-bold px-4 py-2.5 rounded-xl uppercase tracking-wider flex items-center justify-center gap-1"
           >
-            <Printer className="h-4.5 w-4.5 text-gold-muted" /> Print Certificate
+            <Printer className="h-4.5 w-4.5 text-gold-muted" /> Download PDF
           </button>
           <button
             onClick={onClose}
