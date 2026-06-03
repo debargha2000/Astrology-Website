@@ -4,6 +4,8 @@ import { EXPENSE_CATEGORIES } from './seedData';
 import { useCsvExport } from './useCsvExport';
 import { useSearchFilter } from './useSearchFilter';
 import { useSort } from './useSort';
+import { usePagination } from './usePagination';
+import { Pagination } from './Pagination';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddExpenseModal } from './AddExpenseModal';
@@ -27,6 +29,7 @@ export function ExpensesTab({ state, handlers }: Props) {
     defaultFilter: 'All',
   });
   const { sorted, sortKey, sortDir, requestSort } = useSort(searched);
+  const { page, setPage, perPage, setPerPage, paginated, totalPages, total } = usePagination(sorted);
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
   const [deleting, setDeleting] = useState<Expense | null>(null);
@@ -113,14 +116,14 @@ export function ExpensesTab({ state, handlers }: Props) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-cream">
-                {sorted.length === 0 ? (
+                {paginated.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide">
                       No logged consecration charges found.
                     </td>
                   </tr>
                 ) : (
-                  sorted.map((exp) => (
+                  paginated.map((exp) => (
                     <tr key={exp.id} className="hover:bg-cream/10 transition-all">
                       <td className="p-4 md:p-5 font-mono text-gold-muted font-bold">{exp.id}</td>
                       <td className="p-4 md:p-5 space-y-0.5">
@@ -156,6 +159,16 @@ export function ExpensesTab({ state, handlers }: Props) {
                 )}
               </tbody>
             </table>
+          </div>
+          <div className="px-4 pb-4">
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              perPage={perPage}
+              total={total}
+              onChange={setPage}
+              onPerPageChange={setPerPage}
+            />
           </div>
         </div>
 
