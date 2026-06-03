@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { getDocs, collection } from 'firebase/firestore';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
 import {
   db as firestoreDb,
   auth as firebaseAuth,
@@ -152,33 +152,71 @@ export function useCmsData() {
   const [firestoreSyncLoading, setFirestoreSyncLoading] = useState<boolean>(false);
   const [firestoreSyncSuccess, setFirestoreSyncSuccess] = useState<string | null>(null);
 
+  const unsubscribersRef = useRef<(() => void)[]>([]);
+
+  const cleanupFirestoreListeners = useCallback(() => {
+    unsubscribersRef.current.forEach((unsub) => unsub());
+    unsubscribersRef.current = [];
+  }, []);
+
+  const setupFirestoreListeners = useCallback(() => {
+    cleanupFirestoreListeners();
+
+    const unsub1 = onSnapshot(
+      collection(firestoreDb, 'invoices'),
+      (snap) => setInvoices(snap.docs.map((d) => d.data() as Invoice)),
+      (err) => handleFirestoreError(err, OperationType.GET, 'invoices')
+    );
+    const unsub2 = onSnapshot(
+      collection(firestoreDb, 'vendors'),
+      (snap) => setVendors(snap.docs.map((d) => d.data() as Vendor)),
+      (err) => handleFirestoreError(err, OperationType.GET, 'vendors')
+    );
+    const unsub3 = onSnapshot(
+      collection(firestoreDb, 'expenses'),
+      (snap) => setExpenses(snap.docs.map((d) => d.data() as Expense)),
+      (err) => handleFirestoreError(err, OperationType.GET, 'expenses')
+    );
+    const unsub4 = onSnapshot(
+      collection(firestoreDb, 'tasks'),
+      (snap) => setTasks(snap.docs.map((d) => d.data() as Task)),
+      (err) => handleFirestoreError(err, OperationType.GET, 'tasks')
+    );
+    const unsub5 = onSnapshot(
+      query(collection(firestoreDb, 'logs'), orderBy('id', 'desc'), limit(10)),
+      (snap) => {
+        const dataLogs = snap.docs.map((d) => d.data());
+        setTerminalLog(dataLogs.map((l: any) => `[${l.timestamp}] ${l.message}`));
+      },
+      (err) => handleFirestoreError(err, OperationType.GET, 'logs')
+    );
+    const unsub6 = onSnapshot(
+      collection(firestoreDb, 'email_records'),
+      () => {},
+      (err) => handleFirestoreError(err, OperationType.GET, 'email_records')
+    );
+
+    unsubscribersRef.current = [unsub1, unsub2, unsub3, unsub4, unsub5, unsub6];
+  }, [cleanupFirestoreListeners]);
+
+  useEffect(() => {
+    return () => cleanupFirestoreListeners();
+  }, [cleanupFirestoreListeners]);
+
   const loadData = useCallback(async () => {
     if (useFirestoreSource) {
       setIsLoading(true);
       try {
-        const [invSnap, venSnap, expSnap, tskSnap, logSnap] = await Promise.all([
-          getDocs(collection(firestoreDb, 'invoices')).catch((err) => handleFirestoreError(err, OperationType.GET, 'invoices')),
-          getDocs(collection(firestoreDb, 'vendors')).catch((err) => handleFirestoreError(err, OperationType.GET, 'vendors')),
-          getDocs(collection(firestoreDb, 'expenses')).catch((err) => handleFirestoreError(err, OperationType.GET, 'expenses')),
-          getDocs(collection(firestoreDb, 'tasks')).catch((err) => handleFirestoreError(err, OperationType.GET, 'tasks')),
-          getDocs(collection(firestoreDb, 'logs')).catch((err) => handleFirestoreError(err, OperationType.GET, 'logs'))
-        ]);
-
-        setInvoices(invSnap.docs.map((d) => d.data() as Invoice));
-        setVendors(venSnap.docs.map((d) => d.data() as Vendor));
-        setExpenses(expSnap.docs.map((d) => d.data() as Expense));
-        setTasks(tskSnap.docs.map((d) => d.data() as Task));
-
-        const dataLogs = logSnap.docs.map((d) => d.data());
-        const sortedLogs = [...dataLogs].sort((a: any, b: any) => b.id.localeCompare(a.id));
-        setTerminalLog(sortedLogs.map((l: any) => `[${l.timestamp}] ${l.message}`));
+        setupFirestoreListeners();
       } catch (err) {
-        console.error('Firestore alignment sync failure', err);
+        console.error('Firestore listener setup failure', err);
       } finally {
         setIsLoading(false);
       }
       return;
     }
+
+    cleanupFirestoreListeners();
 
     const token = getAdminToken();
     if (!token) return;
@@ -226,7 +264,7 @@ export function useCmsData() {
     } finally {
       setIsLoading(false);
     }
-  }, [useFirestoreSource]);
+  }, [useFirestoreSource, setupFirestoreListeners, cleanupFirestoreListeners]);
 
   return {
     invoices,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -7,8 +7,6 @@ import {
   Users,
   DollarSign,
   CheckSquare,
-  Clock,
-  Compass
 } from 'lucide-react';
 import { googleSignIn } from '../../lib/firebase';
 import type { CmsState } from './useCmsState';
@@ -19,6 +17,67 @@ interface Props {
   state: CmsState;
   handlers: CmsHandlers;
   onNavigate: (tab: CmsSubTab) => void;
+}
+
+function buildChart(invoices: any[], expenses: any[]) {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  const invoiceByMonth: Record<number, number> = {};
+  const expenseByMonth: Record<number, number> = {};
+
+  invoices.forEach((inv) => {
+    const d = new Date(inv.date);
+    if (!isNaN(d.getTime())) {
+      const m = d.getMonth();
+      invoiceByMonth[m] = (invoiceByMonth[m] || 0) + (inv.amount || 0);
+    }
+  });
+
+  expenses.forEach((exp) => {
+    const d = new Date(exp.date);
+    if (!isNaN(d.getTime())) {
+      const m = d.getMonth();
+      expenseByMonth[m] = (expenseByMonth[m] || 0) + (exp.amount || 0);
+    }
+  });
+
+  const usedMonths = Array.from(new Set([
+    ...Object.keys(invoiceByMonth).map(Number),
+    ...Object.keys(expenseByMonth).map(Number),
+  ])).sort((a, b) => a - b);
+
+  if (usedMonths.length === 0) {
+    return { points: { billing: '', expense: '' }, labels: ['No data'], maxVal: 1, billingData: [], expenseData: [] };
+  }
+
+  const billingData = usedMonths.map((m) => ({ month: m, label: months[m], value: invoiceByMonth[m] || 0 }));
+  const expenseData = usedMonths.map((m) => ({ month: m, label: months[m], value: expenseByMonth[m] || 0 }));
+
+  const allValues = [...billingData.map((d) => d.value), ...expenseData.map((d) => d.value)];
+  const maxVal = Math.max(...allValues, 1);
+
+  const padX = 40;
+  const padY = 10;
+  const chartW = 600 - padX * 2;
+  const chartH = 100 - padY * 2;
+
+  const toPoints = (data: { value: number }[]) => {
+    return data.map((d, i) => {
+      const x = padX + (i / Math.max(data.length - 1, 1)) * chartW;
+      const y = padY + chartH - (d.value / maxVal) * chartH;
+      return `${x},${y}`;
+    }).join(' ');
+  };
+
+  const labels = billingData.map((d) => d.label);
+
+  return {
+    points: { billing: toPoints(billingData), expense: toPoints(expenseData) },
+    labels,
+    maxVal,
+    billingData,
+    expenseData,
+  };
 }
 
 export function DashboardTab({ state, handlers, onNavigate }: Props) {
@@ -41,8 +100,8 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
   const totalOpex = expenses.reduce((acc, curr) => acc + curr.amount, 0);
   const activeTasks = tasks.filter((t) => t.status !== 'Sealed / Composed').length;
 
-  const billingChartPoints = '10,95  120,80  240,65  360,45  480,30  600,15';
-  const expenseChartPoints = '10,90  120,82  240,75  360,60  480,50  600,45';
+  const chart = useMemo(() => buildChart(invoices, expenses), [invoices, expenses]);
+  const hasChartData = chart.billingData.length > 0;
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -53,7 +112,7 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
               <ShieldCheck className="h-3 w-3 text-gold" /> FIREBASE CLOUD FORTS
             </span>
             <span className="text-[10px] font-mono text-clay uppercase tracking-wider font-bold">
-              PROJECT: gen-lang-client-0811246245
+              PROJECT: aura-and-stone
             </span>
           </div>
           <h2 className="font-serif text-xl font-light text-ink tracking-wider">
@@ -61,7 +120,7 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
           </h2>
           <p className="text-xs text-ink/75 leading-relaxed font-sans max-w-3xl font-light">
             Configure your dual-mode storage core. Transition seamlessly between standard low-latency flat-file cluster
-            and your secure mathematically-hardened **Google Cloud Firestore**. Synced operations conform strictly to
+            and your secure mathematically-hardened Google Cloud Firestore. Synced operations conform strictly to
             deployed Zero-Trust cellular rules.
           </p>
           {firestoreSyncSuccess && (
@@ -87,7 +146,6 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
               <button
                 onClick={() => {
                   if (!googleUser) {
-                    alert('Sign in to your Google Account first to utilize Cloud Firestore.');
                     return;
                   }
                   setUseFirestoreSource(true);
@@ -131,7 +189,7 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
                 try {
                   await googleSignIn();
                 } catch (e) {
-                  alert('Handshake denied: Check secure credentials.');
+                  // Auth handled by parent
                 }
               }}
               className="cursor-pointer text-center bg-white hover:bg-cream border border-stone text-ink py-3.5 px-4 rounded-xl text-xs font-mono font-bold tracking-widest uppercase transition-all shadow-xs flex items-center justify-center gap-2"
@@ -184,32 +242,52 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-amber-600" />
-                <span>purify expenses</span>
+                <span>Purify Expenses</span>
               </div>
             </div>
           </div>
 
           <div className="relative pt-6 h-52 w-full">
-            <svg className="w-full h-full overflow-visible" viewBox="0 0 600 100" preserveAspectRatio="none">
-              <line x1="0" y1="20" x2="600" y2="20" stroke="#FAF7F2" strokeWidth="1" strokeDasharray="3" />
-              <line x1="0" y1="50" x2="600" y2="50" stroke="#FAF7F2" strokeWidth="1" strokeDasharray="3" />
-              <line x1="0" y1="80" x2="600" y2="80" stroke="#FAF7F2" strokeWidth="1" strokeDasharray="3" />
-              <path d={`M 10,95 L ${billingChartPoints} L 600,95 Z`} fill="rgba(4, 120, 87, 0.08)" />
-              <path d={`M 10,95 L ${expenseChartPoints} L 600,95 Z`} fill="rgba(217, 119, 6, 0.05)" />
-              <polyline points={billingChartPoints} fill="none" stroke="#047857" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              <polyline points={expenseChartPoints} fill="none" stroke="#D97706" strokeWidth="2" strokeDasharray="4" strokeLinecap="round" strokeLinejoin="round" />
-              <circle cx="10" cy="95" r="3.5" fill="#047857" />
-              <circle cx="360" cy="45" r="4.5" fill="#D4AF37" stroke="#FAF7F2" strokeWidth="1.5" />
-              <circle cx="600" cy="15" r="4" fill="#047857" />
-            </svg>
-            <div className="flex justify-between font-mono text-[9px] text-gold-muted pt-3 uppercase tracking-widest border-t border-cream/60 mt-2">
-              <span>Q2 2025</span>
-              <span>June Solstice</span>
-              <span>Sept Equinox</span>
-              <span>Makar Sankranti</span>
-              <span>Chaitra Moon</span>
-              <span>Today (Waxing)</span>
-            </div>
+            {hasChartData ? (
+              <>
+                <svg className="w-full h-full overflow-visible" viewBox="0 0 600 100" preserveAspectRatio="none">
+                  <line x1="40" y1="10" x2="40" y2="90" stroke="#FAF7F2" strokeWidth="1" />
+                  <line x1="40" y1="90" x2="560" y2="90" stroke="#FAF7F2" strokeWidth="1" />
+                  {[0.25, 0.5, 0.75].map((frac) => (
+                    <line key={frac} x1="40" y1={90 - frac * 80} x2="560" y2={90 - frac * 80} stroke="#FAF7F2" strokeWidth="1" strokeDasharray="3" />
+                  ))}
+                  <polygon
+                    points={`40,90 ${chart.points.billing} ${40 + (chart.billingData.length > 1 ? 520 : 0)},90`}
+                    fill="rgba(4, 120, 87, 0.08)"
+                  />
+                  <polygon
+                    points={`40,90 ${chart.points.expense} ${40 + (chart.expenseData.length > 1 ? 520 : 0)},90`}
+                    fill="rgba(217, 119, 6, 0.05)"
+                  />
+                  <polyline points={chart.points.billing} fill="none" stroke="#047857" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <polyline points={chart.points.expense} fill="none" stroke="#D97706" strokeWidth="2" strokeDasharray="4" strokeLinecap="round" strokeLinejoin="round" />
+                  {chart.billingData.map((d, i) => {
+                    const x = 40 + (i / Math.max(chart.billingData.length - 1, 1)) * 520;
+                    const y = 90 - (d.value / chart.maxVal) * 80;
+                    return <circle key={`b-${i}`} cx={x} cy={y} r="3" fill="#047857" />;
+                  })}
+                  {chart.expenseData.map((d, i) => {
+                    const x = 40 + (i / Math.max(chart.expenseData.length - 1, 1)) * 520;
+                    const y = 90 - (d.value / chart.maxVal) * 80;
+                    return <circle key={`e-${i}`} cx={x} cy={y} r="3" fill="#D97706" />;
+                  })}
+                </svg>
+                <div className="flex justify-between font-mono text-[9px] text-gold-muted pt-3 uppercase tracking-widest border-t border-cream/60 mt-2">
+                  {chart.labels.map((label, i) => (
+                    <span key={i}>{label}</span>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="h-full flex items-center justify-center text-xs font-mono text-clay uppercase tracking-wider">
+                No invoice or expense data available for chart
+              </div>
+            )}
           </div>
         </div>
 
