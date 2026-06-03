@@ -96,6 +96,7 @@ export interface Checkpoint {
 }
 
 export interface MailRecord {
+  id: string;
   clientName: string;
   email: string;
   subject: string;

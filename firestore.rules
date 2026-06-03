@@ -87,6 +87,15 @@ service cloud.firestore {
         && data.message is string && data.message.size() <= 2000;
     }
 
+    function isValidEmailRecord(data) {
+      return data.keys().hasAll(['id', 'clientName', 'email', 'subject', 'dateStr'])
+        && data.id is string && data.id.size() <= 128
+        && data.clientName is string && data.clientName.size() <= 200
+        && data.email is string && data.email.size() <= 200
+        && data.subject is string && data.subject.size() <= 500
+        && data.dateStr is string && data.dateStr.size() <= 100;
+    }
+
     // 4. Matches & Path Configurations
     match /invoices/{invoiceId} {
       allow read: if isVerified();
@@ -121,6 +130,22 @@ service cloud.firestore {
       allow read: if isVerified();
       allow create: if isVerified() && isValidId(logId) && isValidLog(incoming()) && incoming().id == logId;
       allow update, delete: if false; // Logs are write-once audit events
+    }
+
+    match /email_records/{recordId} {
+      allow read: if isVerified();
+      allow create: if isVerified() && isValidId(recordId) && isValidEmailRecord(incoming()) && incoming().id == recordId;
+      allow update, delete: if false; // Email records are append-only audit entries
+    }
+
+    match /website_content/{docId} {
+      allow read: if true; // Public content readable by anyone
+      allow write: if isVerified(); // Only admin can modify
+    }
+
+    match /products/{productId} {
+      allow read: if true; // Public product catalog
+      allow write: if isVerified(); // Only admin can modify
     }
   }
 }
