@@ -21,7 +21,8 @@ import {
   type Expense,
   type Task,
   type Checkpoint,
-  type SiteForm
+  type SiteForm,
+  type AstroContent
 } from './types';
 import { DEFAULT_SITE_FORM } from './seedData';
 import { apiFetch } from '../../services/apiFetch';
@@ -147,6 +148,7 @@ export function useCmsData() {
   const [productsList, setProductsList] = useState<any[]>([]);
   const [checkpointsList, setCheckpointsList] = useState<Checkpoint[]>([]);
   const [siteForm, setSiteForm] = useState<SiteForm>(DEFAULT_SITE_FORM);
+  const [astroContent, setAstroContent] = useState<AstroContent[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [useFirestoreSource, setUseFirestoreSource] = useState<boolean>(false);
   const [firestoreSyncLoading, setFirestoreSyncLoading] = useState<boolean>(false);
@@ -195,8 +197,13 @@ export function useCmsData() {
       () => {},
       (err) => handleFirestoreError(err, OperationType.GET, 'email_records')
     );
+    const unsub7 = onSnapshot(
+      collection(firestoreDb, 'astro_content'),
+      (snap) => setAstroContent(snap.docs.map((d) => d.data() as AstroContent)),
+      (err) => handleFirestoreError(err, OperationType.GET, 'astro_content')
+    );
 
-    unsubscribersRef.current = [unsub1, unsub2, unsub3, unsub4, unsub5, unsub6];
+    unsubscribersRef.current = [unsub1, unsub2, unsub3, unsub4, unsub5, unsub6, unsub7];
   }, [cleanupFirestoreListeners]);
 
   useEffect(() => {
@@ -224,7 +231,7 @@ export function useCmsData() {
     const headers = { Authorization: `Bearer ${token}` };
 
     try {
-      const [resInvoices, resVendors, resExpenses, resTasks, resLogs, resProducts, resContent, resCheckpoints] = await Promise.all([
+      const [resInvoices, resVendors, resExpenses, resTasks, resLogs, resProducts, resContent, resCheckpoints, resAstro] = await Promise.all([
         apiFetch('/api/invoices', { headers }),
         apiFetch('/api/vendors', { headers }),
         apiFetch('/api/expenses', { headers }),
@@ -232,7 +239,8 @@ export function useCmsData() {
         apiFetch('/api/logs', { headers }),
         apiFetch('/api/products', { headers }),
         apiFetch('/api/website/content', { headers }),
-        apiFetch('/api/website/checkpoints', { headers })
+        apiFetch('/api/website/checkpoints', { headers }),
+        apiFetch('/api/astro-content', { headers })
       ]);
 
       if (resInvoices.status === 401 || resInvoices.status === 403) {
@@ -240,7 +248,7 @@ export function useCmsData() {
         return;
       }
 
-      const [dataInvoices, dataVendors, dataExpenses, dataTasks, dataLogs, dataProducts, dataContent, dataCheckpoints] = await Promise.all([
+      const [dataInvoices, dataVendors, dataExpenses, dataTasks, dataLogs, dataProducts, dataContent, dataCheckpoints, dataAstro] = await Promise.all([
         resInvoices.json(),
         resVendors.json(),
         resExpenses.json(),
@@ -248,7 +256,8 @@ export function useCmsData() {
         resLogs.json(),
         resProducts.json(),
         resContent.json(),
-        resCheckpoints.json()
+        resCheckpoints.json(),
+        resAstro.json()
       ]);
 
       setInvoices(dataInvoices || []);
@@ -258,6 +267,7 @@ export function useCmsData() {
       setProductsList(dataProducts || []);
       setSiteForm({ ...DEFAULT_SITE_FORM, ...(dataContent || {}) });
       setCheckpointsList(dataCheckpoints || []);
+      setAstroContent(dataAstro || []);
       setTerminalLog((dataLogs || []).map((l: any) => `[${l.timestamp}] ${l.message}`));
     } catch (err) {
       console.error('Failed to align temple records', err);
@@ -283,6 +293,8 @@ export function useCmsData() {
     setCheckpointsList,
     siteForm,
     setSiteForm,
+    astroContent,
+    setAstroContent,
     isLoading,
     setIsLoading,
     useFirestoreSource,

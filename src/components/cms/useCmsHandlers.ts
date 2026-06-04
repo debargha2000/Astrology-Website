@@ -5,7 +5,7 @@ import { firestoreDb } from './useCmsState';
 import { getAdminToken } from './types';
 import { apiFetch } from '../../services/apiFetch';
 import type { ProductForm } from './types';
-import type { Invoice, Vendor, Expense, Task, SiteForm } from './types';
+import type { Invoice, Vendor, Expense, Task, SiteForm, AstroContent, AstroContentType } from './types';
 import type { CmsState } from './useCmsState';
 
 const TOKEN_HEADER = () => ({ Authorization: `Bearer ${getAdminToken()}` });
@@ -659,6 +659,52 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     [loadData, notify]
   );
 
+  const saveAstroEntry = useCallback(
+    async (entry: { id?: string; type: AstroContentType; key: string; title: string; interpretation: string }) => {
+      const updatedBy = state.googleUser?.email || 'admin';
+      const url = entry.id ? `/api/astro-content/${entry.id}` : '/api/astro-content';
+      const method = entry.id ? 'PUT' : 'POST';
+      const res = await authedFetch(url, {
+        method,
+        body: JSON.stringify({ ...entry, updatedBy })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        notify(`Saved "${data.title}".`, 'success');
+        await loadData();
+        return data as AstroContent;
+      }
+      const err = await res.json().catch(() => ({ error: 'Save failed' }));
+      notify(`Error: ${err.error}`, 'error');
+      return null;
+    },
+    [loadData, notify, state.googleUser]
+  );
+
+  const deleteAstroEntry = useCallback(
+    async (id: string, title: string) => {
+      const res = await authedFetch(`/api/astro-content/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        notify(`Deleted "${title}".`, 'success');
+        await loadData();
+      } else {
+        notify('Failed to delete entry.', 'error');
+      }
+    },
+    [loadData, notify]
+  );
+
+  const seedAstroDefaults = useCallback(async () => {
+    const res = await authedFetch('/api/astro-content/bulk-seed', { method: 'POST' });
+    if (res.ok) {
+      const data = await res.json();
+      notify(`Seeded ${data.created} default interpretations.`, 'success');
+      await loadData();
+    } else {
+      notify('Failed to seed defaults.', 'error');
+    }
+  }, [loadData, notify]);
+
   return {
     addTerminalLog,
     saveProduct,
@@ -682,7 +728,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     importExpenses,
     importVendors,
     bulkDeleteInvoices,
-    bulkDeleteExpenses
+    bulkDeleteExpenses,
+    saveAstroEntry,
+    deleteAstroEntry,
+    seedAstroDefaults
   };
 }
 

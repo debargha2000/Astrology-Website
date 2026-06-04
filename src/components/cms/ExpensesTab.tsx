@@ -9,7 +9,6 @@ import { Pagination } from './Pagination';
 import { CsvImport } from './CsvImport';
 import { useBulkSelect } from './useBulkSelect';
 import { BulkActions } from './BulkActions';
-import { ConfirmDialog } from './ConfirmDialog';
 import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
 import { AddExpenseModal } from './AddExpenseModal';

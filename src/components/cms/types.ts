@@ -105,6 +105,18 @@ export interface MailRecord {
   dateStr: string;
 }
 
+export type AstroContentType = 'planet' | 'ascendant' | 'aspect' | 'nakshatra';
+
+export interface AstroContent {
+  id: string;
+  type: AstroContentType;
+  key: string;
+  title: string;
+  interpretation: string;
+  updatedAt: string;
+  updatedBy: string;
+}
+
 export const ADMIN_EMAIL = 'debarghapakhira@gmail.com';
 export const ADMIN_TOKEN_KEY = 'aura_stone_admin_token';
 export const LEGACY_ADMIN_TOKEN_KEYS = ['signtific_admin_token'];

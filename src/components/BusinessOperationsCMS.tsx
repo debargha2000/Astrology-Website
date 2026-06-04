@@ -63,7 +63,7 @@ export default function BusinessOperationsCMS(_props: BusinessOperationsCMSProps
       {activeTab === 'products' && <ProductsTab state={{ ...auth, ...data }} handlers={handlers} />}
       {activeTab === 'site' && <SiteTab state={{ ...auth, ...data }} handlers={handlers} />}
       {activeTab === 'logs' && <LogsTab state={{ ...auth, ...data }} />}
-      {activeTab === 'astro' && <AstroTab />}
+      {activeTab === 'astro' && <AstroTab state={{ ...auth, ...data }} handlers={handlers} />}
     </div>
   );
 }

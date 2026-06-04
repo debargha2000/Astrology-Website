@@ -127,13 +127,22 @@ export interface NatalChart {
   ketu: PlanetPosition;
   ascendant: PlanetPosition;
   mc: PlanetPosition;
-  nakshatra: { name: string; lord: string; pada: number; sign: string };
+  nakshatra: {
+    name: string;
+    lord: string;
+    pada: number;
+    sign: string;
+    symbol?: string;
+    deity?: string;
+    nature?: string;
+    interpretation?: string;
+  };
   houseCusps: number[];
   currentTransits: TransitAspect[];
 }
 
 export interface TransitAspect {
-  planet: string;
+  transitPlanet: string;
   natalPlanet: string;
   aspect: string;
   angle: number;

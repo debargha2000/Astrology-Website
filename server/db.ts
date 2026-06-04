@@ -143,6 +143,18 @@ export interface EmailRecord {
   dateStr: string;
 }
 
+export type AstroContentType = 'planet' | 'ascendant' | 'aspect' | 'nakshatra';
+
+export interface AstroContent {
+  id: string;
+  type: AstroContentType;
+  key: string;
+  title: string;
+  interpretation: string;
+  updatedAt: string;
+  updatedBy: string;
+}
+
 const DB_FILE = path.join(process.cwd(), 'database.json');
 
 const INITIAL_INVOICES: Invoice[] = [
@@ -207,6 +219,7 @@ interface DatabaseStructure {
   products: Product[];
   websiteContent: WebsiteContent;
   checkpoints: Checkpoint[];
+  astroContent: AstroContent[];
 }
 
 export class DB {
@@ -221,7 +234,8 @@ export class DB {
       emailRecords: [],
       products: PRODUCTS,
       websiteContent: INITIAL_WEBSITE_CONTENT,
-      checkpoints: []
+      checkpoints: [],
+      astroContent: []
     };
     return defaultData;
   }
@@ -246,6 +260,10 @@ export class DB {
         data.emailRecords = [];
         modified = true;
       }
+      if (!data.astroContent) {
+        data.astroContent = [];
+        modified = true;
+      }
       if (modified) {
         this.save(data);
       }
@@ -264,7 +282,8 @@ export class DB {
     emailRecords: [],
     products: PRODUCTS,
     websiteContent: INITIAL_WEBSITE_CONTENT,
-    checkpoints: []
+    checkpoints: [],
+    astroContent: []
   };
     this.save(defaultData);
     return defaultData;
@@ -350,6 +369,91 @@ export class DB {
     data.emailRecords = [newRecord, ...(data.emailRecords || [])].slice(0, 50);
     this.save(data);
     return newRecord;
+  }
+
+  // ASTRO CONTENT CRUD
+  public static async getAstroContent(): Promise<AstroContent[]> {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const snapshot = await fdb.collection('astro_content').get();
+        return snapshot.docs.map(doc => doc.data() as AstroContent);
+      } catch (e) {
+        // Silently fall back to local storage
+      }
+    }
+    return this.load().astroContent || [];
+  }
+
+  public static async upsertAstroContent(entry: Omit<AstroContent, 'id'> & { id?: string }): Promise<AstroContent> {
+    const id = entry.id || `astro-${entry.type}-${entry.key}-${Date.now()}`;
+    const newEntry: AstroContent = { ...entry, id };
+
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        await fdb.collection('astro_content').doc(id).set(newEntry, { merge: true });
+        return newEntry;
+      } catch (e) {
+        // Silently fall back to local storage
+      }
+    }
+
+    const data = this.load();
+    const list = data.astroContent || [];
+    const idx = list.findIndex((e) => e.id === id);
+    if (idx >= 0) list[idx] = newEntry;
+    else list.push(newEntry);
+    data.astroContent = list;
+    this.save(data);
+    return newEntry;
+  }
+
+  public static async deleteAstroContent(id: string): Promise<void> {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        await fdb.collection('astro_content').doc(id).delete();
+        return;
+      } catch (e) {
+        // Silently fall back to local storage
+      }
+    }
+
+    const data = this.load();
+    data.astroContent = (data.astroContent || []).filter((e) => e.id !== id);
+    this.save(data);
+  }
+
+  public static async bulkUpsertAstroContent(entries: Omit<AstroContent, 'id'>[]): Promise<AstroContent[]> {
+    const fdb = getFirestoreDB();
+    if (fdb) {
+      try {
+        const batch = fdb.batch();
+        const results: AstroContent[] = entries.map((entry) => {
+          const id = `astro-${entry.type}-${entry.key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+          const newEntry: AstroContent = { ...entry, id };
+          batch.set(fdb.collection('astro_content').doc(id), newEntry);
+          return newEntry;
+        });
+        await batch.commit();
+        return results;
+      } catch (e) {
+        // Silently fall back to local storage
+      }
+    }
+
+    const data = this.load();
+    const list = data.astroContent || [];
+    const newEntries: AstroContent[] = entries.map((entry) => {
+      const id = `astro-${entry.type}-${entry.key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const newEntry: AstroContent = { ...entry, id };
+      list.push(newEntry);
+      return newEntry;
+    });
+    data.astroContent = list;
+    this.save(data);
+    return newEntries;
   }
 
   // INVOICES CRUD

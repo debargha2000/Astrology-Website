@@ -12,6 +12,7 @@ import {
 } from '../data';
 import { Product, BirthDetails, NatalChart } from '../types';
 import { computeNatalChart } from '../lib/astro';
+import { PLANET_INTERPRETATIONS, ASCENDANT_INTERPRETATIONS } from '../lib/interpretations';
 import { BirthDetailsForm } from './astro/BirthDetailsForm';
 import { NatalChartWheel } from './astro/NatalChartWheel';
 import { PlanetTable } from './astro/PlanetTable';
@@ -93,15 +94,10 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
       const zodiacSign = determineSignFromDate(month, day);
       setSelectedSign(zodiacSign);
 
-      // Compute natal chart if time and place provided
-      if (birthDetails.birthTime && birthDetails.latitude != null && birthDetails.longitude != null) {
+      // Compute natal chart if time provided (place optional per Q5b)
+      if (birthDetails.birthTime) {
         try {
-          const chart = computeNatalChart(
-            birthDetails.birthDate,
-            birthDetails.birthTime,
-            birthDetails.latitude,
-            birthDetails.longitude
-          );
+          const chart = computeNatalChart(birthDetails);
           setNatalChart(chart);
         } catch {
           setNatalChart(null);
@@ -540,9 +536,14 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                           <span className="text-[#A6A18F]/30">•</span>
                           <NakshatraBadge nakshatra={natalChart.nakshatra.name} symbol={natalChart.nakshatra.symbol} />
                         </div>
-                        <p className="text-xs text-[#FAF8F5]/80 leading-relaxed font-light mt-2">
-                          Moon in {natalChart.moon.sign} with {natalChart.nakshatra.name} nakshatra — {natalChart.nakshatra.deity}. {natalChart.nakshatra.nature}
+                        <p className="text-xs text-[#FAF8F5]/85 leading-relaxed font-light mt-2">
+                          {PLANET_INTERPRETATIONS.Moon?.[natalChart.moon.sign] || `Moon in ${natalChart.moon.sign} with ${natalChart.nakshatra.name} nakshatra.`}
                         </p>
+                        {natalChart.nakshatra.interpretation && (
+                          <p className="text-[11px] text-[#FAF8F5]/65 leading-relaxed font-light italic mt-1.5 pt-1.5 border-t border-white/5">
+                            <span className="text-[#C5A880] not-italic font-bold">{natalChart.nakshatra.name}</span> — {natalChart.nakshatra.interpretation}
+                          </p>
+                        )}
                       </div>
 
                       {/* Ascendant (Rising Sign) */}
@@ -557,8 +558,8 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                             {natalChart.ascendant.degree.toFixed(1)}°
                           </span>
                         </div>
-                        <p className="text-xs text-[#FAF8F5]/80 leading-relaxed font-light mt-2">
-                          Your outward persona and first impression. The Ascendant shapes how others perceive you and how you navigate the world.
+                        <p className="text-xs text-[#FAF8F5]/85 leading-relaxed font-light mt-2">
+                          {ASCENDANT_INTERPRETATIONS[natalChart.ascendant.sign] || 'Your outward persona and first impression. The Ascendant shapes how others perceive you and how you navigate the world.'}
                         </p>
                       </div>
                     </div>
