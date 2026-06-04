@@ -10,7 +10,8 @@ import {
   ZODIAC_LEO_IMAGE, ZODIAC_VIRGO_IMAGE, ZODIAC_LIBRA_IMAGE, ZODIAC_SCORPIO_IMAGE,
   ZODIAC_SAGITTARIUS_IMAGE, ZODIAC_CAPRICORN_IMAGE, ZODIAC_AQUARIUS_IMAGE, ZODIAC_PISCES_IMAGE
 } from '../data';
-import { Product } from '../types';
+import { Product, BirthDetails } from '../types';
+import { BirthDetailsForm } from './astro/BirthDetailsForm';
 import { 
   Sparkles, Calendar, User, Compass, TrendingUp, ShieldAlert, 
   ArrowRight, Zap, RefreshCw, Star, Info, Sun, Moon, 
@@ -25,9 +26,7 @@ interface ZodiacCalculatorProps {
 }
 
 export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProducts }: ZodiacCalculatorProps) {
-  const [userName, setUserName] = useState('');
-  const [birthMonth, setBirthMonth] = useState('01');
-  const [birthDay, setBirthDay] = useState(1);
+  const [birthDetails, setBirthDetails] = useState<BirthDetails>({ name: '', birthDate: '' });
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
   const [isAligning, setIsAligning] = useState(false);
   const [showResult, setShowResult] = useState(false);
@@ -80,9 +79,11 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
     setIsAligning(true);
     setShowResult(false);
     
-    // Vedic astro mathematical calculations
     setTimeout(() => {
-      const zodiacSign = determineSignFromDate(birthMonth, birthDay);
+      const dateParts = birthDetails.birthDate.split('-');
+      const month = dateParts[1] || '01';
+      const day = parseInt(dateParts[2] || '1');
+      const zodiacSign = determineSignFromDate(month, day);
       setSelectedSign(zodiacSign);
       setIsAligning(false);
       setShowResult(true);
@@ -146,81 +147,15 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
             </h3>
             
             <form onSubmit={handleCalculate} className="space-y-5">
-              <div>
-                <label className="block text-[10px] font-mono tracking-wider uppercase text-[#5E5950] mb-2 font-semibold">
-                  Your Full Chosen Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-4 top-3.5 h-4 w-4 text-[#A6A18F]" />
-                  <input
-                    id="zodiac-name-input"
-                    type="text"
-                    required
-                    maxLength={32}
-                    placeholder="e.g. Aarav Sharma"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    className="w-full bg-white border border-[#E5E0D5] rounded-xl pl-11 pr-4 py-3 text-xs outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880] text-[#1A1A1A] font-medium transition-all shadow-inner"
-                  />
-                </div>
-                {userName && (
-                  <motion.p 
-                    initial={{ opacity: 0, y: -5 }} 
-                    animate={{ opacity: 1, y: 0 }} 
-                    className="text-[10px] text-[#C5A880] font-mono mt-1.5 flex items-center gap-1"
-                  >
-                    <Sparkles className="h-3 w-3 animate-spin-slow" />
-                    Tracking frequency variables for: "{userName}"
-                  </motion.p>
-                )}
-              </div>
+              <BirthDetailsForm
+                value={birthDetails}
+                onChange={setBirthDetails}
+                showName={true}
+              />
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[10px] font-mono tracking-wider uppercase text-[#5E5950] mb-2 font-semibold">
-                    Birth Month
-                  </label>
-                  <div className="relative">
-                    <Calendar className="absolute left-4 top-3.5 h-4 w-4 text-[#A6A18F] pointer-events-none" />
-                    <select
-                      id="zodiac-month-select"
-                      value={birthMonth}
-                      onChange={(e) => setBirthMonth(e.target.value)}
-                      className="w-full bg-white border border-[#E5E0D5] rounded-xl pl-11 pr-3 py-3 text-xs outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880] text-[#1A1A1A] appearance-none cursor-pointer font-medium transition-all shadow-inner"
-                    >
-                      <option value="01">January</option>
-                      <option value="02">February</option>
-                      <option value="03">March</option>
-                      <option value="04">April</option>
-                      <option value="05">May</option>
-                      <option value="06">June</option>
-                      <option value="07">July</option>
-                      <option value="08">August</option>
-                      <option value="09">September</option>
-                      <option value="10">October</option>
-                      <option value="11">November</option>
-                      <option value="12">December</option>
-                    </select>
-                    <div className="absolute right-3.5 top-4.5 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[4px] border-t-[#C5A880] pointer-events-none" />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-mono tracking-wider uppercase text-[#5E5950] mb-2 font-semibold font-medium">
-                    Birth Day (1-31)
-                  </label>
-                  <input
-                    id="zodiac-day-select"
-                    type="number"
-                    min="1"
-                    max="31"
-                    required
-                    value={birthDay}
-                    onChange={(e) => setBirthDay(parseInt(e.target.value) || 1)}
-                    className="w-full bg-white border border-[#E5E0D5] rounded-xl px-4 py-3 text-xs outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880] text-[#1A1A1A] font-medium transition-all shadow-inner"
-                  />
-                </div>
-              </div>
+              <p className="text-[10px] text-[#857F75] italic text-center">
+                Add birth time and place for a complete natal chart (ascendant, moon sign, nakshatra, transits).
+              </p>
 
               <button
                 id="calculate-alignment-btn"
@@ -418,7 +353,7 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                     </div>
                     <div>
                       <span className="text-[10px] font-mono tracking-[0.25em] text-[#C5A880] uppercase block">
-                        Natal Frequency for {userName || 'Universal Seeker'}
+                        Natal Frequency for {birthDetails.name || 'Universal Seeker'}
                       </span>
                       <h4 className="font-serif text-2xl tracking-wide text-white font-normal mt-0.5">
                         {activeSignData.sign} Alignments

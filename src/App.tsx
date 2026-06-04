@@ -16,10 +16,12 @@ import CartDrawer from './components/CartDrawer';
 import CheckoutView from './components/CheckoutView';
 import BusinessOperationsCMS from './components/BusinessOperationsCMS';
 import PranayamaCalmGuide from './components/PranayamaCalmGuide';
+import { BirthDetailsForm } from './components/astro/BirthDetailsForm';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star, Flame, Eye, ShoppingBag, ShieldCheck, HelpCircle, Send, Check, Heart, Sparkles, MessageSquarePlus, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useAppStore } from './store';
 import { apiService } from './services/api';
+import type { BirthDetails } from './types';
 
 export default function App() {
   // Use Zustand store for state management
@@ -100,8 +102,7 @@ export default function App() {
   const [reviewCarouselIdx, setReviewCarouselIdx] = useState(0);
 
   // About Page Contact Form State
-  const [contactName, setContactName] = useState('');
-  const [contactBday, setContactBday] = useState('');
+  const [contactBirthDetails, setContactBirthDetails] = useState<BirthDetails>({ name: '', birthDate: '' });
   const [contactQuery, setContactQuery] = useState('');
   const [contactSubmitted, setContactSubmitted] = useState(false);
 
@@ -249,8 +250,7 @@ export default function App() {
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setContactSubmitted(true);
-    setContactName('');
-    setContactBday('');
+    setContactBirthDetails({ name: '', birthDate: '' });
     setContactQuery('');
   };
 
@@ -905,31 +905,11 @@ export default function App() {
                   </div>
                 ) : (
                   <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1 font-semibold">Consignee Name</label>
-                        <input
-                          id="natal-form-name"
-                          type="text"
-                          required
-                          value={contactName}
-                          onChange={(e) => setContactName(e.target.value)}
-                          placeholder="e.g. Aarav Mehta"
-                          className="w-full bg-white border border-[#EAE6DF] rounded-lg px-4 py-3 text-xs outline-none focus:border-[#C5A880] text-[#1C1917] font-medium"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1 font-semibold">Full Birth Date</label>
-                        <input
-                          id="natal-form-date"
-                          type="date"
-                          required
-                          value={contactBday}
-                          onChange={(e) => setContactBday(e.target.value)}
-                          className="w-full bg-white border border-[#EAE6DF] rounded-lg px-4 py-3 text-xs outline-none focus:border-[#C5A880] text-[#1C1917]"
-                        />
-                      </div>
-                    </div>
+                    <BirthDetailsForm
+                      value={contactBirthDetails}
+                      onChange={setContactBirthDetails}
+                      showName={true}
+                    />
 
                     <div>
                       <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1 font-semibold">Your Astral hurdles / Natal query</label>

@@ -662,6 +662,22 @@ var DB = class {
     }
     return false;
   }
+  static async bulkDeleteInvoices(ids) {
+    let deleted = 0;
+    for (const id of ids) {
+      const ok = await this.deleteInvoice(id);
+      if (ok) deleted++;
+    }
+    return deleted;
+  }
+  static async bulkDeleteExpenses(ids) {
+    let deleted = 0;
+    for (const id of ids) {
+      const ok = await this.deleteExpense(id);
+      if (ok) deleted++;
+    }
+    return deleted;
+  }
   // VENDORS CRUD
   static async getVendors() {
     const fdb = getFirestoreDB();
@@ -1454,6 +1470,14 @@ app.delete("/api/invoices/:id", authenticateToken, async (req, res) => {
     res.status(404).json({ error: "Invoice signature reference not found." });
   }
 });
+app.delete("/api/invoices/batch", authenticateToken, async (req, res) => {
+  const { ids } = req.body;
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: "ids array is required." });
+  }
+  const deleted = await DB.bulkDeleteInvoices(ids);
+  res.json({ deleted, total: ids.length });
+});
 app.get("/api/vendors", authenticateToken, async (_req, res) => {
   const vendors = await DB.getVendors();
   res.json(vendors);
@@ -1565,6 +1589,14 @@ app.delete("/api/expenses/:id", authenticateToken, async (req, res) => {
   } else {
     res.status(404).json({ error: "Expense code reference not found." });
   }
+});
+app.delete("/api/expenses/batch", authenticateToken, async (req, res) => {
+  const { ids } = req.body;
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: "ids array is required." });
+  }
+  const deleted = await DB.bulkDeleteExpenses(ids);
+  res.json({ deleted, total: ids.length });
 });
 app.get("/api/tasks", authenticateToken, async (_req, res) => {
   const tasks = await DB.getTasks();

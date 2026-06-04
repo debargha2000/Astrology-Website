@@ -147,5 +147,10 @@ service cloud.firestore {
       allow read: if true; // Public product catalog
       allow write: if isVerified(); // Only admin can modify
     }
+
+    match /astro_content/{docId} {
+      allow read: if true; // Public astrology content
+      allow write: if isVerified(); // Only admin can modify
+    }
   }
 }

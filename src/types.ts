@@ -99,6 +99,48 @@ export interface WebsiteContent {
   bannerImage: string;
 }
 
+export interface BirthDetails {
+  name: string;
+  birthDate: string;
+  birthTime?: string;
+  birthPlace?: string;
+  birthCoords?: { lat: number; lon: number; timezone: string };
+}
+
+export interface PlanetPosition {
+  sign: string;
+  longitude: number;
+  house: number;
+  degree: number;
+  retrograde: boolean;
+}
+
+export interface NatalChart {
+  sun: PlanetPosition;
+  moon: PlanetPosition;
+  mercury: PlanetPosition;
+  venus: PlanetPosition;
+  mars: PlanetPosition;
+  jupiter: PlanetPosition;
+  saturn: PlanetPosition;
+  rahu: PlanetPosition;
+  ketu: PlanetPosition;
+  ascendant: PlanetPosition;
+  mc: PlanetPosition;
+  nakshatra: { name: string; lord: string; pada: number; sign: string };
+  houseCusps: number[];
+  currentTransits: TransitAspect[];
+}
+
+export interface TransitAspect {
+  planet: string;
+  natalPlanet: string;
+  aspect: string;
+  angle: number;
+  orb: number;
+  isExact: boolean;
+}
+
 export interface Checkpoint {
   id: string;
   timestamp: string;

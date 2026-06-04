@@ -262,6 +262,22 @@ export default function CartDrawer({
                                 </div>
                                 <div>
                                   <label className="block text-[8px] font-mono uppercase text-[#1A1A1A]/60 mb-0.5">
+                                    Birth Time (optional):
+                                  </label>
+                                  <input
+                                    id={`birth-details-time-${idx}`}
+                                    type="time"
+                                    value={item.birthDetails?.birthTime || ''}
+                                    onChange={(e) => {
+                                      const details = item.birthDetails || { name: '', birthDate: '' };
+                                      onUpdatePersonalization(idx, true, { ...details, birthTime: e.target.value || undefined });
+                                    }}
+                                    className="w-full bg-white border border-[#D1CEBF] px-2 py-1 rounded text-[10px] outline-none text-[#1A1A1A]"
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                  <label className="block text-[8px] font-mono uppercase text-[#1A1A1A]/60 mb-0.5">
                                     Birth Place:
                                   </label>
                                   <input
@@ -276,7 +292,6 @@ export default function CartDrawer({
                                     className="w-full bg-white border border-[#D1CEBF] px-2 py-1 rounded text-[10px] outline-none text-[#1A1A1A] font-medium"
                                   />
                                 </div>
-                              </div>
                             </motion.div>
                           )}
                         </AnimatePresence>
