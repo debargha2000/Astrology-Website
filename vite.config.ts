@@ -15,6 +15,9 @@ export default defineConfig(() => {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
+      // Bind to localhost by default so the printed URL works in the browser.
+      // Override via HOST env var when running vite directly (e.g. HOST=0.0.0.0).
+      host: process.env.HOST || 'localhost',
     },
     build: {
       // Disable source maps for production builds to improve performance
