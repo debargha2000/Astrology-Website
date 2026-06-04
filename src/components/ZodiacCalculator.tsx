@@ -10,8 +10,13 @@ import {
   ZODIAC_LEO_IMAGE, ZODIAC_VIRGO_IMAGE, ZODIAC_LIBRA_IMAGE, ZODIAC_SCORPIO_IMAGE,
   ZODIAC_SAGITTARIUS_IMAGE, ZODIAC_CAPRICORN_IMAGE, ZODIAC_AQUARIUS_IMAGE, ZODIAC_PISCES_IMAGE
 } from '../data';
-import { Product, BirthDetails } from '../types';
+import { Product, BirthDetails, NatalChart } from '../types';
+import { computeNatalChart } from '../lib/astro';
 import { BirthDetailsForm } from './astro/BirthDetailsForm';
+import { NatalChartWheel } from './astro/NatalChartWheel';
+import { PlanetTable } from './astro/PlanetTable';
+import { NakshatraBadge } from './astro/NakshatraBadge';
+import { TransitList } from './astro/TransitList';
 import { 
   Sparkles, Calendar, User, Compass, TrendingUp, ShieldAlert, 
   ArrowRight, Zap, RefreshCw, Star, Info, Sun, Moon, 
@@ -30,6 +35,7 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
   const [isAligning, setIsAligning] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [natalChart, setNatalChart] = useState<NatalChart | null>(null);
 
   // Exact coordinates matching zodiac signs for rotational math
   const signsList = [
@@ -78,6 +84,7 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
     e.preventDefault();
     setIsAligning(true);
     setShowResult(false);
+    setNatalChart(null);
     
     setTimeout(() => {
       const dateParts = birthDetails.birthDate.split('-');
@@ -85,6 +92,22 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
       const day = parseInt(dateParts[2] || '1');
       const zodiacSign = determineSignFromDate(month, day);
       setSelectedSign(zodiacSign);
+
+      // Compute natal chart if time and place provided
+      if (birthDetails.birthTime && birthDetails.latitude != null && birthDetails.longitude != null) {
+        try {
+          const chart = computeNatalChart(
+            birthDetails.birthDate,
+            birthDetails.birthTime,
+            birthDetails.latitude,
+            birthDetails.longitude
+          );
+          setNatalChart(chart);
+        } catch {
+          setNatalChart(null);
+        }
+      }
+
       setIsAligning(false);
       setShowResult(true);
     }, 2000);
@@ -466,6 +489,86 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                     </div>
                   </div>
                 </div>
+
+                {/* ── Natal Chart Results (when time + place provided) ── */}
+                {natalChart && (
+                  <div className="space-y-5" id="natal-chart-results">
+                    {/* Chart wheel + planet table row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-[#1C1A18] p-4 rounded-xl border border-white/5 flex flex-col items-center">
+                        <span className="text-[10px] font-mono text-[#A6A18F] uppercase tracking-widest font-bold mb-3 block">
+                          Celestial Wheel
+                        </span>
+                        <NatalChartWheel chart={natalChart} />
+                      </div>
+                      <PlanetTable
+                        planets={[
+                          { name: 'Sun', pos: natalChart.sun },
+                          { name: 'Moon', pos: natalChart.moon },
+                          { name: 'Mercury', pos: natalChart.mercury },
+                          { name: 'Venus', pos: natalChart.venus },
+                          { name: 'Mars', pos: natalChart.mars },
+                          { name: 'Jupiter', pos: natalChart.jupiter },
+                          { name: 'Saturn', pos: natalChart.saturn },
+                          { name: 'Rahu', pos: natalChart.rahu },
+                          { name: 'Ketu', pos: natalChart.ketu },
+                        ]}
+                      />
+                    </div>
+
+                    {/* Lunar Alignment + Ascendant row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Lunar Alignment (Moon sign) */}
+                      <div className="bg-[#1C1A18] p-5 rounded-xl border border-white/5 space-y-2">
+                        <span className="text-[10px] font-mono text-[#C5A880] uppercase tracking-widest flex items-center gap-1.5 font-bold">
+                          <Moon className="h-4 w-4" /> Lunar Alignment
+                        </span>
+                        <div className="h-px bg-gradient-to-r from-[#C5A880]/20 to-transparent mb-1" />
+                        <div className="flex items-center gap-3 mb-1.5">
+                          <span className="text-2xl font-serif text-[#FAF8F5]">{natalChart.moon.sign}</span>
+                          <span className="text-xs font-mono text-[#A6A18F]">
+                            {natalChart.moon.degree.toFixed(1)}°
+                          </span>
+                          {natalChart.moon.retrograde && (
+                            <span className="text-[8px] font-mono px-1.5 py-0.5 rounded bg-[#EF4444]/20 text-[#EF4444]">
+                              RETRO
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono text-[#A6A18F]">House {natalChart.moon.house}</span>
+                          <span className="text-[#A6A18F]/30">•</span>
+                          <NakshatraBadge nakshatra={natalChart.nakshatra.name} symbol={natalChart.nakshatra.symbol} />
+                        </div>
+                        <p className="text-xs text-[#FAF8F5]/80 leading-relaxed font-light mt-2">
+                          Moon in {natalChart.moon.sign} with {natalChart.nakshatra.name} nakshatra — {natalChart.nakshatra.deity}. {natalChart.nakshatra.nature}
+                        </p>
+                      </div>
+
+                      {/* Ascendant (Rising Sign) */}
+                      <div className="bg-[#1C1A18] p-5 rounded-xl border border-white/5 space-y-2">
+                        <span className="text-[10px] font-mono text-[#C5A880] uppercase tracking-widest flex items-center gap-1.5 font-bold">
+                          <Compass className="h-4 w-4" /> Ascendant (Rising Sign)
+                        </span>
+                        <div className="h-px bg-gradient-to-r from-[#C5A880]/20 to-transparent mb-1" />
+                        <div className="flex items-center gap-3 mb-1.5">
+                          <span className="text-2xl font-serif text-[#FAF8F5]">{natalChart.ascendant.sign}</span>
+                          <span className="text-xs font-mono text-[#A6A18F]">
+                            {natalChart.ascendant.degree.toFixed(1)}°
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#FAF8F5]/80 leading-relaxed font-light mt-2">
+                          Your outward persona and first impression. The Ascendant shapes how others perceive you and how you navigate the world.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Transits */}
+                    {natalChart.currentTransits.length > 0 && (
+                      <TransitList transits={natalChart.currentTransits} />
+                    )}
+                  </div>
+                )}
 
                 {/* Lucky Pillars block */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-2" id="lucky-pillars-section">
