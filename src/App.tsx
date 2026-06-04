@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import React, { useEffect, useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 
 import { BirthDetailsForm } from './components/astro/BirthDetailsForm';
 import BusinessOperationsCMS from './components/BusinessOperationsCMS';
@@ -1391,6 +1392,7 @@ export default function App() {
           </>
         )}
       </AnimatePresence>
+      <Analytics />
     </div>
   );
 }
