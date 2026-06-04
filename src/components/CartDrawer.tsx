@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { CartItem, Product, PageId } from '../types';
 import { X, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Sparkles, Gift } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import React from 'react';
+
+import { CartItem, Product, PageId } from '../types';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -27,9 +28,8 @@ export default function CartDrawer({
   onRemoveItem,
   onUpdateSize,
   onUpdatePersonalization,
-  onCheckout
+  onCheckout,
 }: CartDrawerProps) {
-  
   const subtotal = cartItems.reduce((acc, curr) => {
     let price = curr.product.salePrice * curr.quantity;
     if (curr.personalizedCertification) {
@@ -42,7 +42,7 @@ export default function CartDrawer({
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
@@ -128,7 +128,7 @@ export default function CartDrawer({
                         <h4 className="font-serif text-sm text-[#1A1A1A] font-light leading-snug line-clamp-2">
                           {item.product.name}
                         </h4>
-                        
+
                         <div className="flex items-center gap-1.5 text-[10px] text-[#1A1A1A]/60 font-mono">
                           <span>₹{item.product.salePrice}</span>
                           {item.personalizedCertification && (
@@ -201,7 +201,11 @@ export default function CartDrawer({
                         checked={item.personalizedCertification}
                         onChange={(e) => {
                           const checked = e.target.checked;
-                          onUpdatePersonalization(idx, checked, checked ? { name: '', birthDate: '' } : undefined);
+                          onUpdatePersonalization(
+                            idx,
+                            checked,
+                            checked ? { name: '', birthDate: '' } : undefined
+                          );
                         }}
                         className="mt-0.5 accent-[#A6A18F] cursor-pointer"
                       />
@@ -211,10 +215,13 @@ export default function CartDrawer({
                           className="text-[10px] font-mono text-[#1A1A1A] font-semibold uppercase tracking-wider cursor-pointer flex items-center justify-between"
                         >
                           <span>Natal Chart Seal (+ ₹250)</span>
-                          <span className="text-[8px] tracking-normal bg-[#A6A18F]/15 text-[#A6A18F] font-bold px-1.5 py-0.5 rounded uppercase font-mono">Recommended</span>
+                          <span className="text-[8px] tracking-normal bg-[#A6A18F]/15 text-[#A6A18F] font-bold px-1.5 py-0.5 rounded uppercase font-mono">
+                            Recommended
+                          </span>
                         </label>
                         <p className="text-[10px] text-[#1A1A1A]/70 leading-normal font-sans font-light">
-                          Provides a signed certificate with the precise constellation alignment hour at consecration.
+                          Provides a signed certificate with the precise constellation alignment
+                          hour at consecration.
                         </p>
 
                         <AnimatePresence>
@@ -236,8 +243,14 @@ export default function CartDrawer({
                                   placeholder="e.g. Priyan Sharma"
                                   value={item.birthDetails?.name || ''}
                                   onChange={(e) => {
-                                    const details = item.birthDetails || { name: '', birthDate: '' };
-                                    onUpdatePersonalization(idx, true, { ...details, name: e.target.value });
+                                    const details = item.birthDetails || {
+                                      name: '',
+                                      birthDate: '',
+                                    };
+                                    onUpdatePersonalization(idx, true, {
+                                      ...details,
+                                      name: e.target.value,
+                                    });
                                   }}
                                   className="w-full bg-white border border-[#D1CEBF] px-2 py-1 rounded text-[10px] outline-none text-[#1A1A1A] font-medium"
                                 />
@@ -254,8 +267,14 @@ export default function CartDrawer({
                                     required
                                     value={item.birthDetails?.birthDate || ''}
                                     onChange={(e) => {
-                                      const details = item.birthDetails || { name: '', birthDate: '' };
-                                      onUpdatePersonalization(idx, true, { ...details, birthDate: e.target.value });
+                                      const details = item.birthDetails || {
+                                        name: '',
+                                        birthDate: '',
+                                      };
+                                      onUpdatePersonalization(idx, true, {
+                                        ...details,
+                                        birthDate: e.target.value,
+                                      });
                                     }}
                                     className="w-full bg-white border border-[#D1CEBF] px-2 py-1 rounded text-[10px] outline-none text-[#1A1A1A]"
                                   />
@@ -269,29 +288,41 @@ export default function CartDrawer({
                                     type="time"
                                     value={item.birthDetails?.birthTime || ''}
                                     onChange={(e) => {
-                                      const details = item.birthDetails || { name: '', birthDate: '' };
-                                      onUpdatePersonalization(idx, true, { ...details, birthTime: e.target.value || undefined });
+                                      const details = item.birthDetails || {
+                                        name: '',
+                                        birthDate: '',
+                                      };
+                                      onUpdatePersonalization(idx, true, {
+                                        ...details,
+                                        birthTime: e.target.value || undefined,
+                                      });
                                     }}
                                     className="w-full bg-white border border-[#D1CEBF] px-2 py-1 rounded text-[10px] outline-none text-[#1A1A1A]"
                                   />
                                 </div>
                               </div>
                               <div>
-                                  <label className="block text-[8px] font-mono uppercase text-[#1A1A1A]/60 mb-0.5">
-                                    Birth Place:
-                                  </label>
-                                  <input
-                                    id={`birth-details-place-${idx}`}
-                                    type="text"
-                                    placeholder="City (e.g. Mumbai)"
-                                    value={item.birthDetails?.birthPlace || ''}
-                                    onChange={(e) => {
-                                      const details = item.birthDetails || { name: '', birthDate: '' };
-                                      onUpdatePersonalization(idx, true, { ...details, birthPlace: e.target.value });
-                                    }}
-                                    className="w-full bg-white border border-[#D1CEBF] px-2 py-1 rounded text-[10px] outline-none text-[#1A1A1A] font-medium"
-                                  />
-                                </div>
+                                <label className="block text-[8px] font-mono uppercase text-[#1A1A1A]/60 mb-0.5">
+                                  Birth Place:
+                                </label>
+                                <input
+                                  id={`birth-details-place-${idx}`}
+                                  type="text"
+                                  placeholder="City (e.g. Mumbai)"
+                                  value={item.birthDetails?.birthPlace || ''}
+                                  onChange={(e) => {
+                                    const details = item.birthDetails || {
+                                      name: '',
+                                      birthDate: '',
+                                    };
+                                    onUpdatePersonalization(idx, true, {
+                                      ...details,
+                                      birthPlace: e.target.value,
+                                    });
+                                  }}
+                                  className="w-full bg-white border border-[#D1CEBF] px-2 py-1 rounded text-[10px] outline-none text-[#1A1A1A] font-medium"
+                                />
+                              </div>
                             </motion.div>
                           )}
                         </AnimatePresence>

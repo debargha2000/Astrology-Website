@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from 'react';
+
 import { EXPENSE_CATEGORIES } from './seedData';
 import type { Expense } from './types';
 
@@ -33,18 +34,27 @@ export function EditExpenseModal({ expense, onClose, onSubmit }: Props) {
         >
           <div className="flex items-center justify-between border-b border-cream pb-4 mb-6">
             <h3 className="font-serif text-lg text-ink">Edit Expense</h3>
-            <button onClick={onClose} className="text-clay hover:text-ink p-2 leading-none">✕</button>
+            <button onClick={onClose} className="text-clay hover:text-ink p-2 leading-none">
+              ✕
+            </button>
           </div>
           <form
             onSubmit={async (e) => {
               e.preventDefault();
-              await onSubmit(expense.id, { title, category, amount: parseFloat(amount) || 0, notes });
+              await onSubmit(expense.id, {
+                title,
+                category,
+                amount: parseFloat(amount) || 0,
+                notes,
+              });
               onClose();
             }}
             className="space-y-4 text-xs"
           >
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Expenditure Descriptor</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Expenditure Descriptor
+              </label>
               <input
                 type="text"
                 required
@@ -55,7 +65,9 @@ export function EditExpenseModal({ expense, onClose, onSubmit }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Cost (INR)</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Cost (INR)
+                </label>
                 <input
                   type="number"
                   required
@@ -65,20 +77,26 @@ export function EditExpenseModal({ expense, onClose, onSubmit }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Category</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Category
+                </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   className="w-full bg-cream/45 border border-stone rounded-xl px-4 py-3 text-xs outline-none focus:border-ink text-ink font-bold"
                 >
                   {EXPENSE_CATEGORIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
                   ))}
                 </select>
               </div>
             </div>
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Notes</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Notes
+              </label>
               <textarea
                 rows={3}
                 value={notes}

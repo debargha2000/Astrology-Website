@@ -1,4 +1,3 @@
-import React, { useMemo, useState } from 'react';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -8,10 +7,13 @@ import {
   DollarSign,
   CheckSquare,
 } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+
 import { googleSignIn } from '../../lib/firebase';
-import type { CmsState } from './useCmsState';
-import type { CmsHandlers } from './useCmsHandlers';
+
 import type { CmsSubTab } from './types';
+import type { CmsHandlers } from './useCmsHandlers';
+import type { CmsState } from './useCmsState';
 
 interface Props {
   state: CmsState;
@@ -20,7 +22,20 @@ interface Props {
 }
 
 function buildChart(invoices: any[], expenses: any[]) {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
 
   const invoiceByMonth: Record<number, number> = {};
   const expenseByMonth: Record<number, number> = {};
@@ -41,17 +56,33 @@ function buildChart(invoices: any[], expenses: any[]) {
     }
   });
 
-  const usedMonths = Array.from(new Set([
-    ...Object.keys(invoiceByMonth).map(Number),
-    ...Object.keys(expenseByMonth).map(Number),
-  ])).sort((a, b) => a - b);
+  const usedMonths = Array.from(
+    new Set([
+      ...Object.keys(invoiceByMonth).map(Number),
+      ...Object.keys(expenseByMonth).map(Number),
+    ])
+  ).sort((a, b) => a - b);
 
   if (usedMonths.length === 0) {
-    return { points: { billing: '', expense: '' }, labels: ['No data'], maxVal: 1, billingData: [], expenseData: [] };
+    return {
+      points: { billing: '', expense: '' },
+      labels: ['No data'],
+      maxVal: 1,
+      billingData: [],
+      expenseData: [],
+    };
   }
 
-  const billingData = usedMonths.map((m) => ({ month: m, label: months[m], value: invoiceByMonth[m] || 0 }));
-  const expenseData = usedMonths.map((m) => ({ month: m, label: months[m], value: expenseByMonth[m] || 0 }));
+  const billingData = usedMonths.map((m) => ({
+    month: m,
+    label: months[m],
+    value: invoiceByMonth[m] || 0,
+  }));
+  const expenseData = usedMonths.map((m) => ({
+    month: m,
+    label: months[m],
+    value: expenseByMonth[m] || 0,
+  }));
 
   const allValues = [...billingData.map((d) => d.value), ...expenseData.map((d) => d.value)];
   const maxVal = Math.max(...allValues, 1);
@@ -62,11 +93,13 @@ function buildChart(invoices: any[], expenses: any[]) {
   const chartH = 100 - padY * 2;
 
   const toPoints = (data: { value: number }[]) => {
-    return data.map((d, i) => {
-      const x = padX + (i / Math.max(data.length - 1, 1)) * chartW;
-      const y = padY + chartH - (d.value / maxVal) * chartH;
-      return `${x},${y}`;
-    }).join(' ');
+    return data
+      .map((d, i) => {
+        const x = padX + (i / Math.max(data.length - 1, 1)) * chartW;
+        const y = padY + chartH - (d.value / maxVal) * chartH;
+        return `${x},${y}`;
+      })
+      .join(' ');
   };
 
   const labels = billingData.map((d) => d.label);
@@ -91,12 +124,14 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
     setUseFirestoreSource,
     firestoreSyncLoading,
     firestoreSyncSuccess,
-    googleUser
+    googleUser,
   } = state;
   const { addTerminalLog, syncLocalToFirestore } = handlers;
 
   const totalInvoiced = invoices.reduce((acc, curr) => acc + curr.amount, 0);
-  const paidInvoiced = invoices.filter((i) => i.status === 'Paid').reduce((a, c) => a + c.amount, 0);
+  const paidInvoiced = invoices
+    .filter((i) => i.status === 'Paid')
+    .reduce((a, c) => a + c.amount, 0);
   const totalOpex = expenses.reduce((acc, curr) => acc + curr.amount, 0);
   const activeTasks = tasks.filter((t) => t.status !== 'Sealed / Composed').length;
 
@@ -116,12 +151,13 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
             </span>
           </div>
           <h2 className="font-serif text-xl font-light text-ink tracking-wider">
-            Vedas Cloud <span className="font-semibold text-gold-muted">Storage Core Controller</span>
+            Vedas Cloud{' '}
+            <span className="font-semibold text-gold-muted">Storage Core Controller</span>
           </h2>
           <p className="text-xs text-ink/75 leading-relaxed font-sans max-w-3xl font-light">
-            Configure your dual-mode storage core. Transition seamlessly between standard low-latency flat-file cluster
-            and your secure mathematically-hardened Google Cloud Firestore. Synced operations conform strictly to
-            deployed Zero-Trust cellular rules.
+            Configure your dual-mode storage core. Transition seamlessly between standard
+            low-latency flat-file cluster and your secure mathematically-hardened Google Cloud
+            Firestore. Synced operations conform strictly to deployed Zero-Trust cellular rules.
           </p>
           {firestoreSyncSuccess && (
             <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs font-mono flex items-center gap-1.5">
@@ -133,7 +169,9 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
 
         <div className="md:col-span-4 flex flex-col gap-3 justify-center">
           <div className="flex items-center justify-between p-2.5 bg-white border border-stone rounded-2xl gap-4">
-            <span className="text-[10px] font-mono font-bold text-ink uppercase tracking-wider">Active Core:</span>
+            <span className="text-[10px] font-mono font-bold text-ink uppercase tracking-wider">
+              Active Core:
+            </span>
             <div className="flex items-center gap-1 bg-cream p-1 rounded-xl border border-stone/45">
               <button
                 onClick={() => setUseFirestoreSource(false)}
@@ -208,16 +246,41 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Total billing ledger', value: `₹${totalInvoiced.toLocaleString('en-IN')}`, sub: `Paid: ₹${paidInvoiced.toLocaleString('en-IN')}`, icon: FileText },
-          { label: 'Mineral supply partners', value: `${vendors.length} Vendors`, sub: 'All geological matrix verified', icon: Users },
-          { label: 'Temple purify expenditures', value: `₹${totalOpex.toLocaleString('en-IN')}`, sub: 'Acoustics & Sandalwood: 62%', icon: DollarSign },
-          { label: 'Attunement sprint schedule', value: `${activeTasks} Active Tasks`, sub: '4 High Priority items pending bath', icon: CheckSquare }
+          {
+            label: 'Total billing ledger',
+            value: `₹${totalInvoiced.toLocaleString('en-IN')}`,
+            sub: `Paid: ₹${paidInvoiced.toLocaleString('en-IN')}`,
+            icon: FileText,
+          },
+          {
+            label: 'Mineral supply partners',
+            value: `${vendors.length} Vendors`,
+            sub: 'All geological matrix verified',
+            icon: Users,
+          },
+          {
+            label: 'Temple purify expenditures',
+            value: `₹${totalOpex.toLocaleString('en-IN')}`,
+            sub: 'Acoustics & Sandalwood: 62%',
+            icon: DollarSign,
+          },
+          {
+            label: 'Attunement sprint schedule',
+            value: `${activeTasks} Active Tasks`,
+            sub: '4 High Priority items pending bath',
+            icon: CheckSquare,
+          },
         ].map((m, i) => (
-          <div key={i} className="p-6 bg-white border border-stone rounded-2xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+          <div
+            key={i}
+            className="p-6 bg-white border border-stone rounded-2xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow"
+          >
             <div className="absolute top-0 right-0 h-16 w-16 bg-cream rounded-bl-full pointer-events-none flex items-center justify-end p-2 text-stone">
               <m.icon className="h-5 w-5" />
             </div>
-            <span className="text-[10px] font-mono tracking-widest uppercase text-gold-muted font-bold">{m.label}</span>
+            <span className="text-[10px] font-mono tracking-widest uppercase text-gold-muted font-bold">
+              {m.label}
+            </span>
             <div className="mt-4 space-y-1">
               <span className="text-3xl font-serif text-ink font-light">{m.value}</span>
               <p className="text-[9.5px] text-gold-muted font-mono leading-none">{m.sub}</p>
@@ -233,7 +296,9 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
               <span className="text-[9px] font-mono tracking-[0.25em] text-gold-muted uppercase font-bold block">
                 Consolidated Analytics
               </span>
-              <h3 className="font-serif text-lg text-ink">Operational Cashflow vs. Purifying Expenses</h3>
+              <h3 className="font-serif text-lg text-ink">
+                Operational Cashflow vs. Purifying Expenses
+              </h3>
             </div>
             <div className="flex gap-4 font-mono text-[9px] font-bold uppercase tracking-wide text-ink/80">
               <div className="flex items-center gap-1.5">
@@ -250,11 +315,24 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
           <div className="relative pt-6 h-52 w-full">
             {hasChartData ? (
               <>
-                <svg className="w-full h-full overflow-visible" viewBox="0 0 600 100" preserveAspectRatio="none">
+                <svg
+                  className="w-full h-full overflow-visible"
+                  viewBox="0 0 600 100"
+                  preserveAspectRatio="none"
+                >
                   <line x1="40" y1="10" x2="40" y2="90" stroke="#FAF7F2" strokeWidth="1" />
                   <line x1="40" y1="90" x2="560" y2="90" stroke="#FAF7F2" strokeWidth="1" />
                   {[0.25, 0.5, 0.75].map((frac) => (
-                    <line key={frac} x1="40" y1={90 - frac * 80} x2="560" y2={90 - frac * 80} stroke="#FAF7F2" strokeWidth="1" strokeDasharray="3" />
+                    <line
+                      key={frac}
+                      x1="40"
+                      y1={90 - frac * 80}
+                      x2="560"
+                      y2={90 - frac * 80}
+                      stroke="#FAF7F2"
+                      strokeWidth="1"
+                      strokeDasharray="3"
+                    />
                   ))}
                   <polygon
                     points={`40,90 ${chart.points.billing} ${40 + (chart.billingData.length > 1 ? 520 : 0)},90`}
@@ -264,8 +342,23 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
                     points={`40,90 ${chart.points.expense} ${40 + (chart.expenseData.length > 1 ? 520 : 0)},90`}
                     fill="rgba(217, 119, 6, 0.05)"
                   />
-                  <polyline points={chart.points.billing} fill="none" stroke="#047857" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                  <polyline points={chart.points.expense} fill="none" stroke="#D97706" strokeWidth="2" strokeDasharray="4" strokeLinecap="round" strokeLinejoin="round" />
+                  <polyline
+                    points={chart.points.billing}
+                    fill="none"
+                    stroke="#047857"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <polyline
+                    points={chart.points.expense}
+                    fill="none"
+                    stroke="#D97706"
+                    strokeWidth="2"
+                    strokeDasharray="4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                   {chart.billingData.map((d, i) => {
                     const x = 40 + (i / Math.max(chart.billingData.length - 1, 1)) * 520;
                     const y = 90 - (d.value / chart.maxVal) * 80;
@@ -294,8 +387,12 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
         <div className="lg:col-span-4 bg-ink border border-stone/20 rounded-3xl p-6 text-white space-y-4 shadow-xl flex flex-col justify-between">
           <div className="space-y-1 border-b border-white/10 pb-3">
             <div className="flex items-center gap-1.5">
-              <span className="font-mono text-[9px] bg-red-800 text-white px-2 py-0.5 rounded leading-none">REAL-TIME</span>
-              <span className="font-mono text-[9px] text-gold-muted uppercase tracking-wider font-bold">Operations Logs</span>
+              <span className="font-mono text-[9px] bg-red-800 text-white px-2 py-0.5 rounded leading-none">
+                REAL-TIME
+              </span>
+              <span className="font-mono text-[9px] text-gold-muted uppercase tracking-wider font-bold">
+                Operations Logs
+              </span>
             </div>
             <h4 className="font-serif text-paper font-semibold text-sm">Sacred Ledger Feed</h4>
           </div>
@@ -309,16 +406,26 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
           </div>
 
           <div className="pt-4 border-t border-white/10 space-y-2">
-            <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold tracking-widest">Rapid Quick Triggers</span>
+            <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold tracking-widest">
+              Rapid Quick Triggers
+            </span>
             <div className="grid grid-cols-2 gap-2 text-[9px] font-mono">
               <button
-                onClick={() => addTerminalLog('MANUAL OVERRIDE: Moon purification frequencies recalibrated at 432Hz.')}
+                onClick={() =>
+                  addTerminalLog(
+                    'MANUAL OVERRIDE: Moon purification frequencies recalibrated at 432Hz.'
+                  )
+                }
                 className="cursor-pointer text-left bg-white/10 hover:bg-white/15 text-white p-2 rounded border border-white/5 transition-colors uppercase font-bold"
               >
                 ✦ Calm Freq Bath
               </button>
               <button
-                onClick={() => addTerminalLog('MANUAL OVERRIDE: Solder seal validation triggered on dispatch bulk packaging.')}
+                onClick={() =>
+                  addTerminalLog(
+                    'MANUAL OVERRIDE: Solder seal validation triggered on dispatch bulk packaging.'
+                  )
+                }
                 className="cursor-pointer text-left bg-white/10 hover:bg-white/15 text-white p-2 rounded border border-white/5 transition-colors uppercase font-bold"
               >
                 ⚡ Solder Seal Check
@@ -340,21 +447,31 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
             </button>
           </div>
           <div className="space-y-3">
-            {tasks.filter((t) => t.priority === 'High' && t.status !== 'Sealed / Composed').slice(0, 3).map((task) => (
-              <div key={task.id} className="flex items-center justify-between bg-cream/45 border border-stone/40 p-3 rounded-xl hover:border-stone transition-colors">
-                <div className="space-y-1">
-                  <span className="block text-xs text-ink font-medium leading-normal">{task.title}</span>
-                  <div className="flex gap-2 items-center text-[9px] font-mono">
-                    <span className="text-gold-muted">{task.assignee}</span>
-                    <span className="text-ink/40">•</span>
-                    <span className="text-amber-800 font-bold bg-amber-100 px-1 py-0.5 rounded leading-none">{task.status}</span>
+            {tasks
+              .filter((t) => t.priority === 'High' && t.status !== 'Sealed / Composed')
+              .slice(0, 3)
+              .map((task) => (
+                <div
+                  key={task.id}
+                  className="flex items-center justify-between bg-cream/45 border border-stone/40 p-3 rounded-xl hover:border-stone transition-colors"
+                >
+                  <div className="space-y-1">
+                    <span className="block text-xs text-ink font-medium leading-normal">
+                      {task.title}
+                    </span>
+                    <div className="flex gap-2 items-center text-[9px] font-mono">
+                      <span className="text-gold-muted">{task.assignee}</span>
+                      <span className="text-ink/40">•</span>
+                      <span className="text-amber-800 font-bold bg-amber-100 px-1 py-0.5 rounded leading-none">
+                        {task.status}
+                      </span>
+                    </div>
                   </div>
+                  <span className="text-[10px] font-mono text-gold-muted whitespace-nowrap bg-white border border-stone/45 px-2 py-1 rounded-lg">
+                    {task.daysLeft} Day{task.daysLeft > 1 ? 's' : ''} Left
+                  </span>
                 </div>
-                <span className="text-[10px] font-mono text-gold-muted whitespace-nowrap bg-white border border-stone/45 px-2 py-1 rounded-lg">
-                  {task.daysLeft} Day{task.daysLeft > 1 ? 's' : ''} Left
-                </span>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
 
@@ -370,7 +487,10 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
           </div>
           <div className="space-y-3">
             {vendors.slice(0, 3).map((vendor) => (
-              <div key={vendor.id} className="flex items-center justify-between bg-cream/45 border border-stone/40 p-3 rounded-xl">
+              <div
+                key={vendor.id}
+                className="flex items-center justify-between bg-cream/45 border border-stone/40 p-3 rounded-xl"
+              >
                 <div className="space-y-1">
                   <span className="block text-xs text-ink font-semibold">{vendor.name}</span>
                   <p className="text-[9.5px] text-clay font-mono leading-none">

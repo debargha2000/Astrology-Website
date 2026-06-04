@@ -3,11 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {
+  Search,
+  Flame,
+  ShieldAlert,
+  BookOpen,
+  Layers,
+  Gem,
+  Activity,
+  HelpCircle,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import React, { useState } from 'react';
+
 import { CRYSTAL_ENCYCLOPEDIA } from '../data';
 import { CrystalDetails } from '../types';
-import { Search, Flame, ShieldAlert, BookOpen, Layers, Gem, Activity, HelpCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 
 export default function CrystalEncyclopedia() {
   const [selectedCrystal, setSelectedCrystal] = useState<string | null>('Citrine');
@@ -21,13 +31,15 @@ export default function CrystalEncyclopedia() {
     { id: 'Solar Plexus', name: 'Solar Plexus (Abundance)' },
     { id: 'Root', name: 'Root (Shielding/Ground)' },
     { id: 'Crown', name: 'Crown & Third Eye (Serenity)' },
-    { id: 'Throat', name: 'Throat (Intellect/Eloquence)' }
+    { id: 'Throat', name: 'Throat (Intellect/Eloquence)' },
   ];
 
   const filteredCrystals = crystals.filter((c) => {
-    const matchesChakra = filterChakra === 'all' || c.chakra.toLowerCase().includes(filterChakra.toLowerCase());
-    const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          c.metaphysicalProperties.some((p) => p.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesChakra =
+      filterChakra === 'all' || c.chakra.toLowerCase().includes(filterChakra.toLowerCase());
+    const matchesSearch =
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.metaphysicalProperties.some((p) => p.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesChakra && matchesSearch;
   });
 
@@ -35,7 +47,6 @@ export default function CrystalEncyclopedia() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-20 font-sans">
-      
       {/* Editorial Header */}
       <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
         <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#A6A18F] font-medium block">
@@ -45,15 +56,15 @@ export default function CrystalEncyclopedia() {
           The Crystal Codex
         </h2>
         <p className="text-xs text-[#1A1A1A]/70 leading-relaxed font-light">
-          Stones are not mere accessories; they are highly ordered geometric lattices formed under thousands of atmospheric pressures. Explore their raw physics and dynamic metaphysical alignments.
+          Stones are not mere accessories; they are highly ordered geometric lattices formed under
+          thousands of atmospheric pressures. Explore their raw physics and dynamic metaphysical
+          alignments.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-        
         {/* Left: Codex sidebar menu and filter mechanisms */}
         <div className="lg:col-span-4 space-y-6">
-          
           {/* Sizing box with search bar */}
           <div className="bg-[#F8F6F1] border border-[#D1CEBF] rounded-2xl p-5 space-y-4">
             <div className="relative">
@@ -120,7 +131,9 @@ export default function CrystalEncyclopedia() {
                         {cry.name}
                       </span>
                     </div>
-                    <Layers className={`h-3.5 w-3.5 opacity-40 group-hover:opacity-100 transition-opacity ${isSelected ? 'text-[#A6A18F]' : ''}`} />
+                    <Layers
+                      className={`h-3.5 w-3.5 opacity-40 group-hover:opacity-100 transition-opacity ${isSelected ? 'text-[#A6A18F]' : ''}`}
+                    />
                   </button>
                 );
               })}
@@ -131,7 +144,6 @@ export default function CrystalEncyclopedia() {
               )}
             </div>
           </div>
-
         </div>
 
         {/* Right: Rich Encyclopedia sheet display */}
@@ -169,7 +181,6 @@ export default function CrystalEncyclopedia() {
 
                 {/* Physics Technical Specifications */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  
                   <div className="space-y-1">
                     <span className="text-[10px] font-mono text-[#1A1A1A]/60 uppercase tracking-wider block font-semibold">
                       Chemical Formula
@@ -196,7 +207,6 @@ export default function CrystalEncyclopedia() {
                       {activeCrystalDetails.origin}
                     </span>
                   </div>
-
                 </div>
 
                 {/* Energy Meridian Info / Chakra */}
@@ -242,7 +252,6 @@ export default function CrystalEncyclopedia() {
                     </p>
                   </div>
                 </div>
-
               </motion.div>
             ) : (
               <div className="border border-dashed border-[#D1CEBF] rounded-3xl p-12 text-center h-[400px] flex flex-col items-center justify-center space-y-4">
@@ -253,9 +262,7 @@ export default function CrystalEncyclopedia() {
             )}
           </AnimatePresence>
         </div>
-
       </div>
-
     </div>
   );
 }

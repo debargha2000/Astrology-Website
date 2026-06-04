@@ -1,13 +1,14 @@
-import React, { useState, useMemo } from 'react';
 import { Search, Plus, Pencil, Download } from 'lucide-react';
-import { useCsvExport } from './useCsvExport';
-import { useSearchFilter } from './useSearchFilter';
-import { CsvImport } from './CsvImport';
-import type { CmsState } from './useCmsState';
-import type { CmsHandlers } from './useCmsHandlers';
+import React, { useState, useMemo } from 'react';
+
 import { AddVendorModal } from './AddVendorModal';
+import { CsvImport } from './CsvImport';
 import { EditVendorModal } from './EditVendorModal';
 import type { Vendor } from './types';
+import type { CmsHandlers } from './useCmsHandlers';
+import type { CmsState } from './useCmsState';
+import { useCsvExport } from './useCsvExport';
+import { useSearchFilter } from './useSearchFilter';
 
 interface Props {
   state: CmsState;
@@ -18,7 +19,11 @@ export function VendorsTab({ state, handlers }: Props) {
   const { vendors } = state;
   const { createVendor, updateVendor, addTerminalLog, importVendors } = handlers;
   const { exportVendors } = useCsvExport();
-  const { search, setSearch, results: searched } = useSearchFilter(vendors, {
+  const {
+    search,
+    setSearch,
+    results: searched,
+  } = useSearchFilter(vendors, {
     searchFields: ['name', 'leadGems', 'origin', 'contact', 'category'],
   });
   const [showAdd, setShowAdd] = useState(false);
@@ -77,13 +82,18 @@ export function VendorsTab({ state, handlers }: Props) {
           </div>
         ) : (
           searched.map((vendor) => (
-            <div key={vendor.id} className="bg-white border border-stone rounded-3xl p-6 space-y-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div
+              key={vendor.id}
+              className="bg-white border border-stone rounded-3xl p-6 space-y-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow"
+            >
               <div className="flex items-start justify-between border-b border-cream pb-4">
                 <div className="space-y-1">
                   <span className="font-mono text-[9px] text-clay font-bold uppercase tracking-wider leading-none block">
                     {vendor.id} • {vendor.category}
                   </span>
-                  <h4 className="font-serif text-lg font-light text-ink tracking-normal leading-snug">{vendor.name}</h4>
+                  <h4 className="font-serif text-lg font-light text-ink tracking-normal leading-snug">
+                    {vendor.name}
+                  </h4>
                 </div>
                 <button
                   onClick={() => updateVendor(vendor.id, { status: nextStatus[vendor.status] })}
@@ -95,25 +105,35 @@ export function VendorsTab({ state, handlers }: Props) {
               </div>
               <div className="grid grid-cols-2 gap-4 text-xs font-sans text-ink/70">
                 <div>
-                  <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold leading-none mb-1">Representative</span>
+                  <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold leading-none mb-1">
+                    Representative
+                  </span>
                   <strong className="text-ink">{vendor.contact}</strong>
                 </div>
                 <div>
-                  <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold leading-none mb-1">Origin Basin</span>
+                  <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold leading-none mb-1">
+                    Origin Basin
+                  </span>
                   <strong className="text-ink">{vendor.origin}</strong>
                 </div>
                 <div>
-                  <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold leading-none mb-1">Flagship Crystals Sourced</span>
+                  <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold leading-none mb-1">
+                    Flagship Crystals Sourced
+                  </span>
                   <strong className="text-ink">{vendor.leadGems}</strong>
                 </div>
                 <div>
-                  <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold leading-none mb-1">Lead Time</span>
+                  <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold leading-none mb-1">
+                    Lead Time
+                  </span>
                   <strong className="text-ink">{vendor.leadTime}</strong>
                 </div>
               </div>
               <div className="flex items-center justify-between pt-4 border-t border-cream font-mono text-[10px]">
                 <div className="flex items-center gap-1.5 text-xs text-ink">
-                  <span className="text-gold-muted font-semibold text-[10px]">PLANETARY SCORE:</span>
+                  <span className="text-gold-muted font-semibold text-[10px]">
+                    PLANETARY SCORE:
+                  </span>
                   <div className="flex text-gold">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <span key={i} className="text-[13px] leading-none">
@@ -131,7 +151,9 @@ export function VendorsTab({ state, handlers }: Props) {
                   </button>
                   <button
                     onClick={() => {
-                      addTerminalLog(`Simulated supply chain audit of mineral reserves at: ${vendor.name}`);
+                      addTerminalLog(
+                        `Simulated supply chain audit of mineral reserves at: ${vendor.name}`
+                      );
                     }}
                     className="cursor-pointer bg-cream hover:bg-mist/50 border border-stone text-ink text-[9.5px] px-3 py-1.5 rounded-lg uppercase tracking-wider font-bold"
                   >

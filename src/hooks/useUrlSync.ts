@@ -4,6 +4,7 @@
  */
 
 import { useEffect } from 'react';
+
 import { PageId } from '../types';
 
 /**
@@ -11,10 +12,7 @@ import { PageId } from '../types';
  * - When the URL changes (popstate / hashchange), update the page.
  * - When the page changes, push the matching URL into history.
  */
-export function useUrlSync(
-  currentPage: PageId,
-  setCurrentPage: (page: PageId) => void
-): void {
+export function useUrlSync(currentPage: PageId, setCurrentPage: (page: PageId) => void): void {
   useEffect(() => {
     const BASE_PATH = import.meta.env.BASE_URL || '/';
 
@@ -54,7 +52,10 @@ export function useUrlSync(
     const hash = window.location.hash;
     const normalizedPath = path.startsWith(BASE_PATH) ? path.slice(BASE_PATH.length) : path;
     const isAdminPath =
-      normalizedPath === 'admin' || normalizedPath === 'admin/' || normalizedPath === '/admin' || normalizedPath === '/admin/';
+      normalizedPath === 'admin' ||
+      normalizedPath === 'admin/' ||
+      normalizedPath === '/admin' ||
+      normalizedPath === '/admin/';
     const isAdminHash =
       hash === '#/admin' || hash === '#admin' || hash === '#/cms' || hash === '#cms';
 

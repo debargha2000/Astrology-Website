@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
 import { invoiceService } from '../invoiceService';
 
 vi.mock('../apiFetch', () => ({
@@ -18,9 +19,7 @@ describe('invoiceService', () => {
 
   describe('getAll', () => {
     it('should fetch all invoices successfully', async () => {
-      const mockInvoices = [
-        { id: 'INV-1', client: 'Test Client', amount: 1000, status: 'Paid' },
-      ];
+      const mockInvoices = [{ id: 'INV-1', client: 'Test Client', amount: 1000, status: 'Paid' }];
       (apiFetch as any).mockResolvedValue({
         ok: true,
         json: async () => mockInvoices,
@@ -43,7 +42,14 @@ describe('invoiceService', () => {
 
   describe('create', () => {
     it('should create an invoice', async () => {
-      const newInvoice = { client: 'Test', amount: 500, item: 'Crystal', status: 'Sent' as const, date: '2026-01-01', alignment: 'Test' };
+      const newInvoice = {
+        client: 'Test',
+        amount: 500,
+        item: 'Crystal',
+        status: 'Sent' as const,
+        date: '2026-01-01',
+        alignment: 'Test',
+      };
       const created = { ...newInvoice, id: 'INV-NEW' };
       (apiFetch as any).mockResolvedValue({
         ok: true,

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
 import { Sparkles, Clock, Plus, RefreshCw } from 'lucide-react';
-import { ImageUpload } from './ImageUpload';
+import React, { useState } from 'react';
+
 import { ConfirmDialog } from './ConfirmDialog';
+import { ImageUpload } from './ImageUpload';
 import type { Checkpoint, SiteForm } from './types';
-import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
+import type { CmsState } from './useCmsState';
 
 interface Props {
   state: CmsState;
@@ -27,7 +28,9 @@ export function SiteTab({ state, handlers }: Props) {
     <div className="space-y-6 animate-fadeIn font-sans select-text pb-20">
       <div className="flex justify-between items-center border-b border-stone/50 pb-5">
         <div>
-          <span className="text-[10px] font-mono tracking-widest uppercase text-[#C5A880] font-bold">WEBSITE LAYOUT CUSTOMIZER & VERSIONING</span>
+          <span className="text-[10px] font-mono tracking-widest uppercase text-[#C5A880] font-bold">
+            WEBSITE LAYOUT CUSTOMIZER & VERSIONING
+          </span>
           <h2 className="font-serif text-2xl font-light text-ink">Vedic Live Copywriter Portal</h2>
         </div>
       </div>
@@ -46,7 +49,9 @@ export function SiteTab({ state, handlers }: Props) {
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[9px] uppercase font-bold">Core Brand Name *</label>
+                  <label className="block text-clay font-mono text-[9px] uppercase font-bold">
+                    Core Brand Name *
+                  </label>
                   <input
                     type="text"
                     required
@@ -56,7 +61,9 @@ export function SiteTab({ state, handlers }: Props) {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[9px] uppercase font-bold">Global Tagline *</label>
+                  <label className="block text-clay font-mono text-[9px] uppercase font-bold">
+                    Global Tagline *
+                  </label>
                   <input
                     type="text"
                     required
@@ -74,7 +81,9 @@ export function SiteTab({ state, handlers }: Props) {
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[9px] uppercase font-bold">Hero Headline Prefix *</label>
+                  <label className="block text-clay font-mono text-[9px] uppercase font-bold">
+                    Hero Headline Prefix *
+                  </label>
                   <input
                     type="text"
                     required
@@ -84,7 +93,9 @@ export function SiteTab({ state, handlers }: Props) {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[9px] uppercase font-bold">Hero Highlight *</label>
+                  <label className="block text-clay font-mono text-[9px] uppercase font-bold">
+                    Hero Highlight *
+                  </label>
                   <input
                     type="text"
                     required
@@ -95,7 +106,9 @@ export function SiteTab({ state, handlers }: Props) {
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="block text-clay font-mono text-[9px] uppercase font-bold">Hero Paragraph *</label>
+                <label className="block text-clay font-mono text-[9px] uppercase font-bold">
+                  Hero Paragraph *
+                </label>
                 <textarea
                   required
                   rows={3}
@@ -115,9 +128,13 @@ export function SiteTab({ state, handlers }: Props) {
             </div>
 
             <div className="p-4 bg-cream border border-stone rounded-2xl space-y-4">
-              <span className="text-[9px] font-mono text-[#C5A880] font-bold uppercase block tracking-wider">Block 3: Founders Quote</span>
+              <span className="text-[9px] font-mono text-[#C5A880] font-bold uppercase block tracking-wider">
+                Block 3: Founders Quote
+              </span>
               <div className="space-y-1">
-                <label className="block text-clay font-mono text-[9px] uppercase font-bold">Quote Text *</label>
+                <label className="block text-clay font-mono text-[9px] uppercase font-bold">
+                  Quote Text *
+                </label>
                 <textarea
                   required
                   rows={3}
@@ -127,7 +144,9 @@ export function SiteTab({ state, handlers }: Props) {
                 />
               </div>
               <div className="space-y-1">
-                <label className="block text-clay font-mono text-[9px] uppercase font-bold">Author Attribution *</label>
+                <label className="block text-clay font-mono text-[9px] uppercase font-bold">
+                  Author Attribution *
+                </label>
                 <input
                   type="text"
                   required
@@ -139,9 +158,13 @@ export function SiteTab({ state, handlers }: Props) {
             </div>
 
             <div className="p-4 bg-cream border border-stone rounded-2xl space-y-4">
-              <span className="text-[9px] font-mono text-[#C5A880] font-bold uppercase block tracking-wider">Block 4: Heritage Story</span>
+              <span className="text-[9px] font-mono text-[#C5A880] font-bold uppercase block tracking-wider">
+                Block 4: Heritage Story
+              </span>
               <div className="space-y-1">
-                <label className="block text-clay font-mono text-[9px] uppercase font-bold">Headline *</label>
+                <label className="block text-clay font-mono text-[9px] uppercase font-bold">
+                  Headline *
+                </label>
                 <input
                   type="text"
                   required
@@ -151,7 +174,9 @@ export function SiteTab({ state, handlers }: Props) {
                 />
               </div>
               <div className="space-y-1">
-                <label className="block text-clay font-mono text-[9px] uppercase font-bold">Paragraph 1 *</label>
+                <label className="block text-clay font-mono text-[9px] uppercase font-bold">
+                  Paragraph 1 *
+                </label>
                 <textarea
                   required
                   rows={3}
@@ -161,7 +186,9 @@ export function SiteTab({ state, handlers }: Props) {
                 />
               </div>
               <div className="space-y-1">
-                <label className="block text-clay font-mono text-[9px] uppercase font-bold">Paragraph 2 *</label>
+                <label className="block text-clay font-mono text-[9px] uppercase font-bold">
+                  Paragraph 2 *
+                </label>
                 <textarea
                   required
                   rows={3}
@@ -189,15 +216,17 @@ export function SiteTab({ state, handlers }: Props) {
                 <Clock className="h-5 w-5 shrink-0" />
               </div>
               <div>
-                <h3 className="font-serif text-base font-semibold text-ink">Historical Sync Records</h3>
+                <h3 className="font-serif text-base font-semibold text-ink">
+                  Historical Sync Records
+                </h3>
                 <p className="text-[10px] text-clay">Planetary Rollback Vault</p>
               </div>
             </div>
 
             <p className="text-xs text-clay leading-relaxed">
-              Aura & Stone records up to <strong>25 operational backups</strong>. If layout modifications fail to satisfy
-              your design eyes, or catalog records are mistakenly corrupted, you can revert the entire website to an
-              earlier state instantly.
+              Aura & Stone records up to <strong>25 operational backups</strong>. If layout
+              modifications fail to satisfy your design eyes, or catalog records are mistakenly
+              corrupted, you can revert the entire website to an earlier state instantly.
             </p>
 
             <button
@@ -209,7 +238,9 @@ export function SiteTab({ state, handlers }: Props) {
             </button>
 
             <div className="space-y-3.5 mt-4 pt-4 border-t border-dashed border-stone/50">
-              <span className="text-[9px] font-mono font-bold text-clay uppercase block tracking-wider">Rolling Backup Timeline (Max 25 states)</span>
+              <span className="text-[9px] font-mono font-bold text-clay uppercase block tracking-wider">
+                Rolling Backup Timeline (Max 25 states)
+              </span>
               <div className="space-y-2 max-h-[460px] overflow-y-auto pr-1">
                 {checkpointsList.length === 0 ? (
                   <div className="p-8 text-center bg-white rounded-xl border border-mist/60 text-clay italic text-[11px]">
@@ -219,9 +250,14 @@ export function SiteTab({ state, handlers }: Props) {
                   checkpointsList.map((chk: Checkpoint) => {
                     const localTime = new Date(chk.timestamp).toLocaleString();
                     return (
-                      <div key={chk.id} className="p-3 bg-white rounded-xl border border-mist space-y-2 shadow-4xs hover:shadow-3xs transition-all text-[11px]">
+                      <div
+                        key={chk.id}
+                        className="p-3 bg-white rounded-xl border border-mist space-y-2 shadow-4xs hover:shadow-3xs transition-all text-[11px]"
+                      >
                         <div className="flex justify-between items-start gap-1.5">
-                          <span className="font-sans font-bold leading-tight block text-ink">{chk.title}</span>
+                          <span className="font-sans font-bold leading-tight block text-ink">
+                            {chk.title}
+                          </span>
                           <span className="text-[8.5px] font-mono bg-emerald-50 text-emerald-800 border border-emerald-100 px-1.5 py-0.5 rounded font-bold shrink-0 uppercase">
                             Secure
                           </span>
@@ -231,7 +267,8 @@ export function SiteTab({ state, handlers }: Props) {
                             Time: <span className="text-gray-900 font-medium">{localTime}</span>
                           </div>
                           <div>
-                            ID: <span className="font-sans text-[9px] tracking-tight">{chk.id}</span>
+                            ID:{' '}
+                            <span className="font-sans text-[9px] tracking-tight">{chk.id}</span>
                           </div>
                           <div>
                             Author: <span className="text-gray-900 font-bold">{chk.user}</span>

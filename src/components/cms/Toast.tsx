@@ -1,6 +1,7 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, XCircle, Info, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import React from 'react';
+
 import type { Toast as ToastType } from './useToast';
 
 interface Props {

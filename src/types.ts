@@ -3,7 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export type PageId = 'home' | 'shop' | 'products' | 'zodiac-calculator' | 'charging-station' | 'encyclopedia' | 'about' | 'checkout' | 'cms';
+export type PageId =
+  | 'home'
+  | 'shop'
+  | 'products'
+  | 'zodiac-calculator'
+  | 'charging-station'
+  | 'encyclopedia'
+  | 'about'
+  | 'checkout'
+  | 'cms';
 
 export interface Product {
   id: string;
@@ -158,4 +167,3 @@ export interface Checkpoint {
   websiteContent: WebsiteContent;
   products: Product[];
 }
-

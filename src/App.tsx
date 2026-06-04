@@ -3,24 +3,52 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {
+  Star,
+  Flame,
+  Eye,
+  ShoppingBag,
+  ShieldCheck,
+  HelpCircle,
+  Send,
+  Check,
+  Heart,
+  Sparkles,
+  MessageSquarePlus,
+  ChevronLeft,
+  ChevronRight,
+  X,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import React, { useEffect, useState } from 'react';
-import { PageId, Product, CartItem, Review, WebsiteContent, Checkpoint } from './types';
-import { PRODUCTS, REVIEWS, HERO_IMAGE, COMBO_IMAGE, RITUAL_IMAGE, VEDIC_EXPERT_IMAGE, POLISHED_GEMSTONES_LOOM_IMAGE, MONEY_MAGNET_IMAGE, EVIL_EYE_IMAGE, STRESS_KILLER_IMAGE, LOVE_HARMONY_IMAGE } from './data';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import ProductCard from './components/ProductCard';
-import ZodiacCalculator from './components/ZodiacCalculator';
+
+import { BirthDetailsForm } from './components/astro/BirthDetailsForm';
+import BusinessOperationsCMS from './components/BusinessOperationsCMS';
+import CartDrawer from './components/CartDrawer';
 import ChargingStation from './components/ChargingStation';
 import CrystalEncyclopedia from './components/CrystalEncyclopedia';
-import CartDrawer from './components/CartDrawer';
+import Footer from './components/Footer';
+import Header from './components/Header';
+import {
+  PRODUCTS,
+  REVIEWS,
+  HERO_IMAGE,
+  COMBO_IMAGE,
+  RITUAL_IMAGE,
+  VEDIC_EXPERT_IMAGE,
+  POLISHED_GEMSTONES_LOOM_IMAGE,
+  MONEY_MAGNET_IMAGE,
+  EVIL_EYE_IMAGE,
+  STRESS_KILLER_IMAGE,
+  LOVE_HARMONY_IMAGE,
+} from './data';
+import ProductCard from './components/ProductCard';
+import ZodiacCalculator from './components/ZodiacCalculator';
 import CheckoutView from './components/CheckoutView';
-import BusinessOperationsCMS from './components/BusinessOperationsCMS';
 import PranayamaCalmGuide from './components/PranayamaCalmGuide';
-import { BirthDetailsForm } from './components/astro/BirthDetailsForm';
-import { motion, AnimatePresence } from 'motion/react';
-import { Star, Flame, Eye, ShoppingBag, ShieldCheck, HelpCircle, Send, Check, Heart, Sparkles, MessageSquarePlus, ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { useAppStore } from './store';
 import { apiService } from './services/api';
+import { useAppStore } from './store';
+import { PageId, Product, CartItem, Review, WebsiteContent, Checkpoint } from './types';
 import type { BirthDetails } from './types';
 
 export default function App() {
@@ -50,7 +78,7 @@ export default function App() {
     try {
       const [productsData, contentData] = await Promise.all([
         apiService.getProducts(),
-        apiService.getWebsiteContent()
+        apiService.getWebsiteContent(),
       ]);
 
       if (Array.isArray(productsData) && productsData.length > 0) {
@@ -60,7 +88,7 @@ export default function App() {
         setWebsiteContentStore(contentData as WebsiteContent);
       }
     } catch (error) {
-      console.warn("Error fetching dynamic products and website configs.", error);
+      console.warn('Error fetching dynamic products and website configs.', error);
       // Fallback to local data is handled by the store initialization
     }
   }, [setProductsStore, setWebsiteContentStore]);
@@ -74,11 +102,36 @@ export default function App() {
   // Circular Slideshow States for Luxury Hero
   const [currentSlide, setCurrentSlide] = useState(0);
   const slideshowImages = [
-    { name: "The Money Magnet Bracelet", img: MONEY_MAGNET_IMAGE, crystal: "Citrine & Pyrite", price: "₹1,199" },
-    { name: "Grounding Armor Nazar Shield", img: EVIL_EYE_IMAGE, crystal: "Black Tourmaline", price: "₹899" },
-    { name: "The Master Healer Pack", img: COMBO_IMAGE, crystal: "Faceted Clear Quartz", price: "₹1,899" },
-    { name: "The Stress Killer Remedy", img: STRESS_KILLER_IMAGE, crystal: "Royal Amethyst", price: "₹999" },
-    { name: "Divine Harmony & Calm", img: LOVE_HARMONY_IMAGE, crystal: "Rose Quartz & Peach Sunstone", price: "₹949" },
+    {
+      name: 'The Money Magnet Bracelet',
+      img: MONEY_MAGNET_IMAGE,
+      crystal: 'Citrine & Pyrite',
+      price: '₹1,199',
+    },
+    {
+      name: 'Grounding Armor Nazar Shield',
+      img: EVIL_EYE_IMAGE,
+      crystal: 'Black Tourmaline',
+      price: '₹899',
+    },
+    {
+      name: 'The Master Healer Pack',
+      img: COMBO_IMAGE,
+      crystal: 'Faceted Clear Quartz',
+      price: '₹1,899',
+    },
+    {
+      name: 'The Stress Killer Remedy',
+      img: STRESS_KILLER_IMAGE,
+      crystal: 'Royal Amethyst',
+      price: '₹999',
+    },
+    {
+      name: 'Divine Harmony & Calm',
+      img: LOVE_HARMONY_IMAGE,
+      crystal: 'Rose Quartz & Peach Sunstone',
+      price: '₹949',
+    },
   ];
 
   useEffect(() => {
@@ -102,7 +155,10 @@ export default function App() {
   const [reviewCarouselIdx, setReviewCarouselIdx] = useState(0);
 
   // About Page Contact Form State
-  const [contactBirthDetails, setContactBirthDetails] = useState<BirthDetails>({ name: '', birthDate: '' });
+  const [contactBirthDetails, setContactBirthDetails] = useState<BirthDetails>({
+    name: '',
+    birthDate: '',
+  });
   const [contactQuery, setContactQuery] = useState('');
   const [contactSubmitted, setContactSubmitted] = useState(false);
 
@@ -118,18 +174,18 @@ export default function App() {
     const handleRouteCheck = () => {
       const path = window.location.pathname;
       const hash = window.location.hash;
-      
+
       // Strip base path prefix for comparison
       const normalizedPath = path.startsWith(BASE_PATH) ? path.slice(BASE_PATH.length) : path;
-      
+
       if (
-        normalizedPath === 'admin' || 
-        normalizedPath === 'admin/' || 
-        normalizedPath === '/admin' || 
+        normalizedPath === 'admin' ||
+        normalizedPath === 'admin/' ||
+        normalizedPath === '/admin' ||
         normalizedPath === '/admin/' ||
-        hash === '#/admin' || 
-        hash === '#admin' || 
-        hash === '#/cms' || 
+        hash === '#/admin' ||
+        hash === '#admin' ||
+        hash === '#/cms' ||
         hash === '#cms'
       ) {
         if (currentPage !== 'cms') {
@@ -144,7 +200,7 @@ export default function App() {
     // Listen to route changes
     window.addEventListener('popstate', handleRouteCheck);
     window.addEventListener('hashchange', handleRouteCheck);
-    
+
     return () => {
       window.removeEventListener('popstate', handleRouteCheck);
       window.removeEventListener('hashchange', handleRouteCheck);
@@ -159,11 +215,25 @@ export default function App() {
     const normalizedPath = path.startsWith(BASE_PATH) ? path.slice(BASE_PATH.length) : path;
 
     if (currentPage === 'cms') {
-      if (normalizedPath !== 'admin' && normalizedPath !== 'admin/' && normalizedPath !== '/admin' && normalizedPath !== '/admin/' && hash !== '#/admin' && hash !== '#admin' && hash !== '#/cms' && hash !== '#cms') {
+      if (
+        normalizedPath !== 'admin' &&
+        normalizedPath !== 'admin/' &&
+        normalizedPath !== '/admin' &&
+        normalizedPath !== '/admin/' &&
+        hash !== '#/admin' &&
+        hash !== '#admin' &&
+        hash !== '#/cms' &&
+        hash !== '#cms'
+      ) {
         window.history.pushState({ page: 'cms' }, '', BASE_PATH + 'admin');
       }
     } else {
-      if (normalizedPath === 'admin' || normalizedPath === 'admin/' || normalizedPath === '/admin' || normalizedPath === '/admin/') {
+      if (
+        normalizedPath === 'admin' ||
+        normalizedPath === 'admin/' ||
+        normalizedPath === '/admin' ||
+        normalizedPath === '/admin/'
+      ) {
         window.history.pushState({ page: currentPage }, '', BASE_PATH);
       }
     }
@@ -186,7 +256,10 @@ export default function App() {
         const existingIdx = prev.findIndex((item) => item.product.id === product.id);
         if (existingIdx > -1) {
           const updated = [...prev];
-          updated[existingIdx] = { ...updated[existingIdx], quantity: updated[existingIdx].quantity + 1 };
+          updated[existingIdx] = {
+            ...updated[existingIdx],
+            quantity: updated[existingIdx].quantity + 1,
+          };
           return updated;
         }
         return [
@@ -195,8 +268,8 @@ export default function App() {
             product,
             quantity: 1,
             size: 'standard-unisex',
-            personalizedCertification: false
-          }
+            personalizedCertification: false,
+          },
         ];
       })()
     );
@@ -220,9 +293,17 @@ export default function App() {
     setCartItems(updated);
   };
 
-  const handleUpdatePersonalization = (idx: number, val: boolean, details?: CartItem['birthDetails']) => {
+  const handleUpdatePersonalization = (
+    idx: number,
+    val: boolean,
+    details?: CartItem['birthDetails']
+  ) => {
     const updated = [...cartItems];
-    updated[idx] = { ...updated[idx], personalizedCertification: val, birthDetails: details ?? updated[idx].birthDetails };
+    updated[idx] = {
+      ...updated[idx],
+      personalizedCertification: val,
+      birthDetails: details ?? updated[idx].birthDetails,
+    };
     setCartItems(updated);
   };
 
@@ -237,13 +318,15 @@ export default function App() {
         date: 'Today',
         verifiedPurchase: true,
         productTitle: newReviewProduct,
-        avatarUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(newReviewAuthor)}&backgroundColor=d4af37&fontFamily=Inter`
+        avatarUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(newReviewAuthor)}&backgroundColor=d4af37&fontFamily=Inter`,
       };
       setAllReviews((prev) => [newRev, ...prev]);
       setIsReviewModalOpen(false);
       setNewReviewAuthor('');
       setNewReviewText('');
-      alert("✓ Manifestation Review posted successfully! Your voice now vibrates inside the e-commerce celestial grids.");
+      alert(
+        '✓ Manifestation Review posted successfully! Your voice now vibrates inside the e-commerce celestial grids.'
+      );
     }
   };
 
@@ -259,23 +342,24 @@ export default function App() {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(p);
   };
 
   // Shop item filters
-  const filteredProducts = products.filter((p) => {
-    if (shopCategory === 'all') return true;
-    return p.category === shopCategory;
-  }).sort((a, b) => {
-    if (shopSort === 'rating') return b.rating - a.rating;
-    if (shopSort === 'price-low') return a.salePrice - b.salePrice;
-    return b.salePrice - a.salePrice;
-  });
+  const filteredProducts = products
+    .filter((p) => {
+      if (shopCategory === 'all') return true;
+      return p.category === shopCategory;
+    })
+    .sort((a, b) => {
+      if (shopSort === 'rating') return b.rating - a.rating;
+      if (shopSort === 'price-low') return a.salePrice - b.salePrice;
+      return b.salePrice - a.salePrice;
+    });
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#1C1917] flex flex-col font-sans overflow-x-hidden selection:bg-[#C5A880]/30 selection:text-[#1C1917] antialiased">
-      
       {/* Upper Header component */}
       <Header
         currentPage={currentPage}
@@ -289,7 +373,6 @@ export default function App() {
       {/* Main Pages Router view */}
       <main className="flex-1 pt-[116px]">
         <AnimatePresence mode="wait">
-          
           {/* PAGE: HOME */}
           {currentPage === 'home' && (
             <motion.div
@@ -303,7 +386,6 @@ export default function App() {
               {/* Luxury Cinematic Hero section for Mobile view */}
               <section className="block sm:hidden relative w-full px-4 pt-6 select-none">
                 <div className="relative rounded-3xl overflow-hidden min-h-[480px] bg-[#151313] shadow-xl flex items-center justify-center p-6">
-                  
                   {/* Backdrop banner photo */}
                   <div className="absolute inset-0 z-0">
                     <img
@@ -323,7 +405,9 @@ export default function App() {
 
                     <h1 className="font-serif text-2xl font-light text-white tracking-[0.04em] leading-[1.2] uppercase px-2">
                       {websiteContent.heroHeadline} <br />
-                      <span className="font-semibold text-[#D4AF37]">{websiteContent.heroHighlight}</span>
+                      <span className="font-semibold text-[#D4AF37]">
+                        {websiteContent.heroHighlight}
+                      </span>
                     </h1>
 
                     <p className="text-xs text-[#EAE6DF]/85 font-sans leading-relaxed max-w-2xl mx-auto tracking-wide px-2">
@@ -354,7 +438,6 @@ export default function App() {
               <section className="hidden sm:block relative w-full bg-[#FAF8F5] py-12 md:py-20 lg:py-24 border-b border-[#EAE6DF]/60">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center">
-                    
                     {/* Left Column: Authentic Copywriting & CTA Buttons */}
                     <div className="space-y-6 lg:space-y-8 text-left select-none">
                       <div className="space-y-3">
@@ -363,10 +446,12 @@ export default function App() {
                         </span>
                         <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-[#1C1917] leading-[1.15] tracking-[0.01em] uppercase">
                           {websiteContent.heroHeadline},<br />
-                          <span className="font-normal text-[#C5A880]">{websiteContent.heroHighlight}</span>
+                          <span className="font-normal text-[#C5A880]">
+                            {websiteContent.heroHighlight}
+                          </span>
                         </h1>
                       </div>
-                      
+
                       <p className="text-sm sm:text-base text-[#5A554E] font-sans leading-relaxed max-w-xl">
                         {websiteContent.heroParagraph}
                       </p>
@@ -391,7 +476,6 @@ export default function App() {
 
                     {/* Right Column: Premium Square Product Slideshow */}
                     <div className="flex flex-col items-center justify-center relative">
-                      
                       {/* Square Image Container */}
                       <div className="relative z-10 w-[290px] h-[290px] sm:w-[360px] sm:h-[360px] md:w-[400px] md:h-[400px] lg:w-[440px] lg:h-[440px] aspect-square rounded-2xl overflow-hidden border border-[#E5E2DC] bg-[#FAF8F5] shadow-xl flex items-center justify-center group cursor-pointer">
                         <AnimatePresence mode="wait">
@@ -400,7 +484,7 @@ export default function App() {
                             initial={{ opacity: 0, scale: 1.04 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.96 }}
-                            transition={{ duration: 0.7, ease: "easeInOut" }}
+                            transition={{ duration: 0.7, ease: 'easeInOut' }}
                             className="absolute inset-0 w-full h-full"
                           >
                             <img
@@ -414,9 +498,13 @@ export default function App() {
 
                         {/* Slide Indicator Text Bottom Badge - Visible on Hover */}
                         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md px-4 py-2 rounded-full border border-[#EAE6DF] shadow-md flex items-center gap-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                          <span className="text-[9px] font-mono tracking-wider text-[#C5A880] uppercase font-bold">{slideshowImages[currentSlide].crystal}</span>
+                          <span className="text-[9px] font-mono tracking-wider text-[#C5A880] uppercase font-bold">
+                            {slideshowImages[currentSlide].crystal}
+                          </span>
                           <span className="h-1 w-1 rounded-full bg-[#1C1917]/20"></span>
-                          <span className="text-[10px] font-sans font-medium text-[#1C1917] whitespace-nowrap">{slideshowImages[currentSlide].name}</span>
+                          <span className="text-[10px] font-sans font-medium text-[#1C1917] whitespace-nowrap">
+                            {slideshowImages[currentSlide].name}
+                          </span>
                         </div>
                       </div>
 
@@ -432,7 +520,6 @@ export default function App() {
                         ))}
                       </div>
                     </div>
-
                   </div>
                 </div>
               </section>
@@ -441,20 +528,36 @@ export default function App() {
               <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 border-b border-[#EAE6DF] pb-12">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                   <div className="space-y-1">
-                    <div className="text-2xl md:text-3xl font-serif text-[#1C1917] font-semibold">15,000+</div>
-                    <div className="text-[10px] font-mono tracking-wider uppercase text-[#857F75]">Aligned Bracelets Shipped</div>
+                    <div className="text-2xl md:text-3xl font-serif text-[#1C1917] font-semibold">
+                      15,000+
+                    </div>
+                    <div className="text-[10px] font-mono tracking-wider uppercase text-[#857F75]">
+                      Aligned Bracelets Shipped
+                    </div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-2xl md:text-3xl font-serif text-[#1C1917] font-semibold">99.7%</div>
-                    <div className="text-[10px] font-mono tracking-wider uppercase text-[#857F75]">Manifestation Rating</div>
+                    <div className="text-2xl md:text-3xl font-serif text-[#1C1917] font-semibold">
+                      99.7%
+                    </div>
+                    <div className="text-[10px] font-mono tracking-wider uppercase text-[#857F75]">
+                      Manifestation Rating
+                    </div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-2xl md:text-3xl font-serif text-[#1C1917] font-semibold">75+ Yrs</div>
-                    <div className="text-[10px] font-mono tracking-wider uppercase text-[#857F75]">Astrological Heritage</div>
+                    <div className="text-2xl md:text-3xl font-serif text-[#1C1917] font-semibold">
+                      75+ Yrs
+                    </div>
+                    <div className="text-[10px] font-mono tracking-wider uppercase text-[#857F75]">
+                      Astrological Heritage
+                    </div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-2xl md:text-3xl font-serif text-[#1C1917] font-semibold">Grade A+</div>
-                    <div className="text-[10px] font-mono tracking-wider uppercase text-[#857F75]">Certified Pure Geodes</div>
+                    <div className="text-2xl md:text-3xl font-serif text-[#1C1917] font-semibold">
+                      Grade A+
+                    </div>
+                    <div className="text-[10px] font-mono tracking-wider uppercase text-[#857F75]">
+                      Certified Pure Geodes
+                    </div>
                   </div>
                 </div>
               </section>
@@ -484,15 +587,17 @@ export default function App() {
 
                 {/* Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {products.filter((p) => p.isBestSeller).map((prod) => (
-                    <ProductCard
-                      key={prod.id}
-                      product={prod}
-                      onViewDetails={(p) => setSelectedProduct(p)}
-                      onAddToCart={handleAddToCart}
-                      isAdded={cartItems.some((item) => item.product.id === prod.id)}
-                    />
-                  ))}
+                  {products
+                    .filter((p) => p.isBestSeller)
+                    .map((prod) => (
+                      <ProductCard
+                        key={prod.id}
+                        product={prod}
+                        onViewDetails={(p) => setSelectedProduct(p)}
+                        onAddToCart={handleAddToCart}
+                        isAdded={cartItems.some((item) => item.product.id === prod.id)}
+                      />
+                    ))}
                 </div>
               </section>
 
@@ -549,7 +654,6 @@ export default function App() {
 
                 {/* Horizontal flow chart */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                  
                   {/* Item 1 */}
                   <div className="p-6 bg-[#FAF7F2] border border-[#EAE6DF] rounded-2xl relative space-y-3">
                     <div className="h-10 w-10 rounded-full bg-[#151313] text-[#D4AF37] font-mono text-xs font-semibold flex items-center justify-center mb-4">
@@ -559,7 +663,8 @@ export default function App() {
                       Liquid Hydration Cleanse
                     </h4>
                     <p className="text-xs text-[#857F75] leading-relaxed">
-                      Crystals are washed in Panchamrut—raw honey, cow milk, and ancient Ganges coordinates—to strip residual trade static and human friction energies.
+                      Crystals are washed in Panchamrut—raw honey, cow milk, and ancient Ganges
+                      coordinates—to strip residual trade static and human friction energies.
                     </p>
                   </div>
 
@@ -572,7 +677,8 @@ export default function App() {
                       Lunar Vibrational Bathing
                     </h4>
                     <p className="text-xs text-[#857F75] leading-relaxed">
-                      Stones rest under moon bathing frequencies to align molecular lattices. In addition, 432Hz Sanskrit chants resonate corresponding planetary frequencies.
+                      Stones rest under moon bathing frequencies to align molecular lattices. In
+                      addition, 432Hz Sanskrit chants resonate corresponding planetary frequencies.
                     </p>
                   </div>
 
@@ -585,17 +691,16 @@ export default function App() {
                       Solar Rise Gilded Lock
                     </h4>
                     <p className="text-xs text-[#857F75] leading-relaxed">
-                      The final sealing and solar warming locks auspicious material frequencies. We certificate each stone securely before airtight velvet shielding.
+                      The final sealing and solar warming locks auspicious material frequencies. We
+                      certificate each stone securely before airtight velvet shielding.
                     </p>
                   </div>
-
                 </div>
               </section>
 
               {/* Dynamic Customer Testimonials & Reviews Carousel slider */}
               <section className="bg-[#FAF7F2] py-20 border-y border-[#EAE6DF] overflow-hidden">
                 <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-12 relative flex flex-col items-center">
-                  
                   <div className="text-center space-y-2">
                     <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#C5A880] block font-medium">
                       Vibrational Client Truths
@@ -618,9 +723,11 @@ export default function App() {
                       >
                         {/* stars */}
                         <div className="flex text-[#D4AF37] gap-0.5">
-                          {Array.from({ length: allReviews[reviewCarouselIdx].rating }).map((_, i) => (
-                            <Star key={i} className="h-4.5 w-4.5 fill-current text-[#D4AF37]" />
-                          ))}
+                          {Array.from({ length: allReviews[reviewCarouselIdx].rating }).map(
+                            (_, i) => (
+                              <Star key={i} className="h-4.5 w-4.5 fill-current text-[#D4AF37]" />
+                            )
+                          )}
                         </div>
 
                         {/* review quote */}
@@ -631,7 +738,10 @@ export default function App() {
                         {/* reviewer bio details */}
                         <div className="flex items-center gap-3 pt-3 border-t border-[#EAE6DF]/60">
                           <img
-                            src={allReviews[reviewCarouselIdx].avatarUrl || 'https://api.dicebear.com/7.x/initials/svg?seed=ST&backgroundColor=d4af37&fontFamily=Inter'}
+                            src={
+                              allReviews[reviewCarouselIdx].avatarUrl ||
+                              'https://api.dicebear.com/7.x/initials/svg?seed=ST&backgroundColor=d4af37&fontFamily=Inter'
+                            }
                             alt={allReviews[reviewCarouselIdx].author}
                             className="h-9 w-9 rounded-full border border-[#EAE6DF]"
                           />
@@ -644,7 +754,6 @@ export default function App() {
                             </span>
                           </div>
                         </div>
-
                       </motion.div>
                     </AnimatePresence>
 
@@ -652,14 +761,20 @@ export default function App() {
                     <div className="flex gap-2.5 absolute bottom-6 right-6 md:bottom-10 md:right-10">
                       <button
                         id="prev-carousel-btn"
-                        onClick={() => setReviewCarouselIdx((prev) => (prev - 1 + allReviews.length) % allReviews.length)}
+                        onClick={() =>
+                          setReviewCarouselIdx(
+                            (prev) => (prev - 1 + allReviews.length) % allReviews.length
+                          )
+                        }
                         className="cursor-pointer p-1.5 rounded-full border border-[#EAE6DF] bg-white hover:bg-[#FAF7F2] transition-colors"
                       >
                         <ChevronLeft className="h-4.5 w-4.5" />
                       </button>
                       <button
                         id="next-carousel-btn"
-                        onClick={() => setReviewCarouselIdx((prev) => (prev + 1) % allReviews.length)}
+                        onClick={() =>
+                          setReviewCarouselIdx((prev) => (prev + 1) % allReviews.length)
+                        }
                         className="cursor-pointer p-1.5 rounded-full border border-[#EAE6DF] bg-white hover:bg-[#FAF7F2] transition-colors"
                       >
                         <ChevronRight className="h-4.5 w-4.5" />
@@ -675,7 +790,6 @@ export default function App() {
                   >
                     <MessageSquarePlus className="h-4 w-4" /> Share Your Sacred Manifestation
                   </button>
-
                 </div>
               </section>
 
@@ -691,14 +805,18 @@ export default function App() {
                 </div>
 
                 <div className="divide-y divide-[#EAE6DF] space-y-6">
-                  
                   <div className="pt-6 space-y-2">
                     <h4 className="font-serif text-base text-[#1C1917] font-medium flex items-center gap-2">
                       <HelpCircle className="h-4.5 w-4.5 text-[#C5A880]" />
                       Do I wear the bracelets on my left or right wrist?
                     </h4>
                     <p className="text-xs text-[#857F75] leading-relaxed pl-6">
-                      For receiving prosperity and career growth, wear the <strong className="text-[#1C1917]">Money Magnet on the left wrist</strong> (the intuitive receiving side of your nervous system). For repelling active envy, bad gaze (nazar), and workplace static, wear the <strong className="text-[#1C1917]">Evil Eye on the right wrist</strong> (the defensive projecting pathway).
+                      For receiving prosperity and career growth, wear the{' '}
+                      <strong className="text-[#1C1917]">Money Magnet on the left wrist</strong>{' '}
+                      (the intuitive receiving side of your nervous system). For repelling active
+                      envy, bad gaze (nazar), and workplace static, wear the{' '}
+                      <strong className="text-[#1C1917]">Evil Eye on the right wrist</strong> (the
+                      defensive projecting pathway).
                     </p>
                   </div>
 
@@ -708,7 +826,11 @@ export default function App() {
                       How long does the 3-Nights Consecration last?
                     </h4>
                     <p className="text-xs text-[#857F75] leading-relaxed pl-6">
-                      The acoustic mantras and lunar energy cells program the stones to peak alignment for <strong className="text-[#1C1917]">about 12 months</strong>. We highly recommend utilizing our interactive Vedic Charge Station on the portal to virtually "re-align" your crystals during peak cosmic alignments, like full-moon cycles, or shipping them back for manual planetary re-bathing.
+                      The acoustic mantras and lunar energy cells program the stones to peak
+                      alignment for <strong className="text-[#1C1917]">about 12 months</strong>. We
+                      highly recommend utilizing our interactive Vedic Charge Station on the portal
+                      to virtually "re-align" your crystals during peak cosmic alignments, like
+                      full-moon cycles, or shipping them back for manual planetary re-bathing.
                     </p>
                   </div>
 
@@ -718,13 +840,15 @@ export default function App() {
                       How do I know the crystals are authentic and mineralogical?
                     </h4>
                     <p className="text-xs text-[#857F75] leading-relaxed pl-6">
-                      We never use colored glass, lightweight plastic, synthetics, or acrylic beads. Every mineral geode is sourced directly from certified mines in Peru, Brazil, and Afghanistan, and physically tested for density, crystalline structure hardness (Mohs index), and origin integrity. We ship a signed Vedic Certificate verifying these coordinates in every box.
+                      We never use colored glass, lightweight plastic, synthetics, or acrylic beads.
+                      Every mineral geode is sourced directly from certified mines in Peru, Brazil,
+                      and Afghanistan, and physically tested for density, crystalline structure
+                      hardness (Mohs index), and origin integrity. We ship a signed Vedic
+                      Certificate verifying these coordinates in every box.
                     </p>
                   </div>
-
                 </div>
               </section>
-
             </motion.div>
           )}
 
@@ -743,12 +867,13 @@ export default function App() {
                 <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#C5A880] font-medium block">
                   Vedic Jewelry Storefront
                 </span>
-                <h2 className="font-serif text-3xl font-light text-[#1C1917]">Explore Gemstone Codex</h2>
+                <h2 className="font-serif text-3xl font-light text-[#1C1917]">
+                  Explore Gemstone Codex
+                </h2>
               </div>
 
               {/* Filters workspace bar */}
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EAE6DF] pb-6">
-                
                 {/* Category selectors */}
                 <div className="flex flex-wrap gap-2 text-xs tracking-wider font-mono">
                   {(['all', 'bracelet', 'ring', 'combo'] as const).map((cat) => (
@@ -782,7 +907,6 @@ export default function App() {
                     <option value="price-high">Authorized Cost: High to Low</option>
                   </select>
                 </div>
-
               </div>
 
               {/* Products Display Grid */}
@@ -797,7 +921,6 @@ export default function App() {
                   />
                 ))}
               </div>
-
             </motion.div>
           )}
 
@@ -894,14 +1017,19 @@ export default function App() {
                     Natal Coordinate Consultation
                   </h3>
                   <p className="text-xs text-[#857F75] leading-relaxed max-w-md mx-auto">
-                    Struggling with unexplained career stagnation or persistent nazar blocks? File your planetary coordinates directly for a free baseline crystallization report from Chief Astrologer Shastry.
+                    Struggling with unexplained career stagnation or persistent nazar blocks? File
+                    your planetary coordinates directly for a free baseline crystallization report
+                    from Chief Astrologer Shastry.
                   </p>
                 </div>
 
                 {contactSubmitted ? (
                   <div className="p-6 bg-[#E3EFE0] border border-[#2D5A27]/25 text-[#2E5A27] rounded-2xl text-center font-semibold text-xs tracking-wider space-y-2">
                     <Check className="h-6 w-6 text-emerald-700 mx-auto" />
-                    <span>Natal Report coordinates registered! Our Astrologer requires 48 hours for precise astronomical alignment calculation.</span>
+                    <span>
+                      Natal Report coordinates registered! Our Astrologer requires 48 hours for
+                      precise astronomical alignment calculation.
+                    </span>
                   </div>
                 ) : (
                   <form onSubmit={handleContactSubmit} className="space-y-4">
@@ -912,7 +1040,9 @@ export default function App() {
                     />
 
                     <div>
-                      <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1 font-semibold">Your Astral hurdles / Natal query</label>
+                      <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1 font-semibold">
+                        Your Astral hurdles / Natal query
+                      </label>
                       <textarea
                         id="natal-form-query"
                         required
@@ -934,10 +1064,9 @@ export default function App() {
                   </form>
                 )}
               </div>
-
             </motion.div>
           )}
-          
+
           {/* PAGE: CMS WORKSPACE PORTAL */}
           {currentPage === 'cms' && (
             <motion.div
@@ -947,10 +1076,7 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <BusinessOperationsCMS 
-                onDataChange={fetchDynamicData}
-                currentProducts={products}
-              />
+              <BusinessOperationsCMS onDataChange={fetchDynamicData} currentProducts={products} />
             </motion.div>
           )}
 
@@ -974,7 +1100,6 @@ export default function App() {
               />
             </motion.div>
           )}
-
         </AnimatePresence>
       </main>
 
@@ -1043,19 +1168,27 @@ export default function App() {
                   </span>
                   <div className="flex justify-between border-b border-[#EAE6DF]/45 pb-1">
                     <span>STRUCTURE:</span>
-                    <strong className="text-[#1C1917]">{selectedProduct.specifications.beadSize}</strong>
+                    <strong className="text-[#1C1917]">
+                      {selectedProduct.specifications.beadSize}
+                    </strong>
                   </div>
                   <div className="flex justify-between border-b border-[#EAE6DF]/45 pb-1">
                     <span>QUANTITY OF CHIPS:</span>
-                    <strong className="text-[#1C1917]">{selectedProduct.specifications.beadCount || 24} pieces</strong>
+                    <strong className="text-[#1C1917]">
+                      {selectedProduct.specifications.beadCount || 24} pieces
+                    </strong>
                   </div>
                   <div className="flex justify-between border-b border-[#EAE6DF]/45 pb-1">
                     <span>Vedic Charge Time:</span>
-                    <strong className="text-[#1C1917]">{selectedProduct.specifications.chargeTime}</strong>
+                    <strong className="text-[#1C1917]">
+                      {selectedProduct.specifications.chargeTime}
+                    </strong>
                   </div>
                   <div className="flex justify-between">
                     <span>GEOLOGICAL SOURCE:</span>
-                    <strong className="text-[#1C1917] truncate max-w-[130px]">{selectedProduct.specifications.origin}</strong>
+                    <strong className="text-[#1C1917] truncate max-w-[130px]">
+                      {selectedProduct.specifications.origin}
+                    </strong>
                   </div>
                 </div>
               </div>
@@ -1074,9 +1207,15 @@ export default function App() {
 
                   {/* price tag */}
                   <div className="flex items-baseline gap-2.5 font-mono text-[11px]">
-                    <span className="text-base font-bold text-[#1C1917]">{formatPrice(selectedProduct.salePrice)}</span>
-                    <span className="text-[#A39E96] line-through">{formatPrice(selectedProduct.originalPrice)}</span>
-                    <span className="text-emerald-700 tracking-normal font-semibold font-sans uppercase">Cleansing Included</span>
+                    <span className="text-base font-bold text-[#1C1917]">
+                      {formatPrice(selectedProduct.salePrice)}
+                    </span>
+                    <span className="text-[#A39E96] line-through">
+                      {formatPrice(selectedProduct.originalPrice)}
+                    </span>
+                    <span className="text-emerald-700 tracking-normal font-semibold font-sans uppercase">
+                      Cleansing Included
+                    </span>
                   </div>
 
                   <p className="text-xs text-[#5E5950] leading-relaxed">
@@ -1090,7 +1229,10 @@ export default function App() {
                     </span>
                     <div className="space-y-2.5">
                       {selectedProduct.benefits.map((bene, idx) => (
-                        <div key={idx} className="flex gap-2 items-start text-xs text-[#5E5950] leading-snug">
+                        <div
+                          key={idx}
+                          className="flex gap-2 items-start text-xs text-[#5E5950] leading-snug"
+                        >
                           <Check className="h-4 w-4 text-[#C5A880] shrink-0 mt-0.5" />
                           <span>{bene}</span>
                         </div>
@@ -1102,7 +1244,9 @@ export default function App() {
                 {/* Add to action sheet */}
                 <div className="flex gap-4 pt-6 mt-6 border-t border-[#EAE6DF] items-center justify-between">
                   <div>
-                    <span className="block text-[8px] font-mono uppercase text-[#857F75]">Vedic Stock status:</span>
+                    <span className="block text-[8px] font-mono uppercase text-[#857F75]">
+                      Vedic Stock status:
+                    </span>
                     <span className="text-[11px] font-sans font-bold text-emerald-800 uppercase flex items-center gap-1">
                       ● Active Sanctification Flow
                     </span>
@@ -1165,7 +1309,9 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1 font-semibold">Your Chosen Name</label>
+                  <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1 font-semibold">
+                    Your Chosen Name
+                  </label>
                   <input
                     id="new-review-author-input"
                     type="text"
@@ -1180,7 +1326,9 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1.5 font-semibold">Select Consecrated Product</label>
+                  <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1.5 font-semibold">
+                    Select Consecrated Product
+                  </label>
                   <select
                     id="new-review-product-select"
                     value={newReviewProduct}
@@ -1196,7 +1344,9 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1.5 font-semibold">Resonant Alignment rating stars:</label>
+                  <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1.5 font-semibold">
+                    Resonant Alignment rating stars:
+                  </label>
                   <div className="flex gap-2">
                     {[1, 2, 3, 4, 5].map((starVal) => (
                       <button
@@ -1206,14 +1356,18 @@ export default function App() {
                         onClick={() => setNewReviewRating(starVal)}
                         className="cursor-pointer p-1 text-[#D4AF37]"
                       >
-                        <Star className={`h-6 w-6 stroke-1.25 ${starVal <= newReviewRating ? 'fill-current' : 'opacity-25'}`} />
+                        <Star
+                          className={`h-6 w-6 stroke-1.25 ${starVal <= newReviewRating ? 'fill-current' : 'opacity-25'}`}
+                        />
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1 font-semibold">Manifestation story Text</label>
+                  <label className="block text-[8px] font-mono uppercase text-[#857F75] mb-1 font-semibold">
+                    Manifestation story Text
+                  </label>
                   <textarea
                     id="new-review-text-input"
                     required
@@ -1237,7 +1391,6 @@ export default function App() {
           </>
         )}
       </AnimatePresence>
-
     </div>
   );
 }

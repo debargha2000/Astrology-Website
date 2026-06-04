@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
 import { Search, Terminal, Clock, Info } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+
 import type { CmsState } from './useCmsState';
 
 interface Props {
@@ -27,7 +28,8 @@ export function LogsTab({ state }: Props) {
             System <span className="font-semibold text-gold-muted">Operations Log</span>
           </h2>
           <p className="text-xs text-ink/60 max-w-2xl leading-relaxed font-light">
-            Real-time feed of all system activities, data mutations, and operational events across the CMS.
+            Real-time feed of all system activities, data mutations, and operational events across
+            the CMS.
           </p>
         </div>
         <div className="relative">
@@ -64,7 +66,9 @@ export function LogsTab({ state }: Props) {
             <div className="p-12 text-center">
               <Info className="h-8 w-8 text-stone mx-auto mb-3" />
               <p className="font-mono text-xs text-clay uppercase tracking-wide">
-                {terminalLog.length === 0 ? 'No log entries recorded yet.' : 'No logs match your search.'}
+                {terminalLog.length === 0
+                  ? 'No log entries recorded yet.'
+                  : 'No logs match your search.'}
               </p>
             </div>
           ) : (

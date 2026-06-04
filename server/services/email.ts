@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+
 import { DB } from '../db.js';
 
 function getMailTransporter() {
@@ -12,7 +13,7 @@ function getMailTransporter() {
       host,
       port,
       secure: port === 465,
-      auth: { user, pass }
+      auth: { user, pass },
     });
   }
 
@@ -63,9 +64,11 @@ export async function sendFulfillmentEmail(
         to: clientEmail,
         subject,
         text: textContent,
-        html: htmlContent
+        html: htmlContent,
       });
-      await DB.addLog(`TRANSACTIONAL EMAIL DESPATCHED: Verification notice sent to client ${clientEmail}`);
+      await DB.addLog(
+        `TRANSACTIONAL EMAIL DESPATCHED: Verification notice sent to client ${clientEmail}`
+      );
     } catch (err: any) {
       console.error('Email dispatch error', err);
       await DB.addLog(`EMAIL ANOMALY: Failed to dispatch real SMTP transmission.`);

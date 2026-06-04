@@ -4,8 +4,9 @@
  */
 
 import { useState, useCallback, useMemo } from 'react';
-import { Product } from '../types';
+
 import { ShopCategory, ShopSort } from '../constants/content';
+import { Product } from '../types';
 
 export function useShopFilter(allProducts: Product[]) {
   const [shopCategory, setShopCategory] = useState<ShopCategory>('all');

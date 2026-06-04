@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { taskService } from '../taskService';
 
 vi.mock('../apiFetch', () => ({
@@ -15,7 +16,14 @@ describe('taskService', () => {
   describe('getAll', () => {
     it('should fetch all tasks', async () => {
       const mockTasks = [
-        { id: 'T-1', title: 'Test', status: 'Backlog' as const, priority: 'High' as const, assignee: 'A', daysLeft: 1 },
+        {
+          id: 'T-1',
+          title: 'Test',
+          status: 'Backlog' as const,
+          priority: 'High' as const,
+          assignee: 'A',
+          daysLeft: 1,
+        },
       ];
       (apiFetch as any).mockResolvedValue({
         ok: true,
@@ -28,7 +36,14 @@ describe('taskService', () => {
 
   describe('updateStatus', () => {
     it('should update a task status', async () => {
-      const updatedTask = { id: 'T-1', title: 'Test', status: 'Water Cleanse' as const, priority: 'High' as const, assignee: 'A', daysLeft: 1 };
+      const updatedTask = {
+        id: 'T-1',
+        title: 'Test',
+        status: 'Water Cleanse' as const,
+        priority: 'High' as const,
+        assignee: 'A',
+        daysLeft: 1,
+      };
       (apiFetch as any).mockResolvedValue({
         ok: true,
         json: async () => updatedTask,

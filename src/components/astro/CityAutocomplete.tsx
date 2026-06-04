@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Search, MapPin, Loader2, X } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+
 import { geocodeCity, GeoResult } from '../../lib/geocode';
 
 interface CityAutocompleteProps {
@@ -10,7 +11,13 @@ interface CityAutocompleteProps {
   className?: string;
 }
 
-export function CityAutocomplete({ value, coords, onChange, placeholder = 'Birth city', className = '' }: CityAutocompleteProps) {
+export function CityAutocomplete({
+  value,
+  coords,
+  onChange,
+  placeholder = 'Birth city',
+  className = '',
+}: CityAutocompleteProps) {
   const [query, setQuery] = useState(value);
   const [results, setResults] = useState<GeoResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -20,7 +27,9 @@ export function CityAutocomplete({ value, coords, onChange, placeholder = 'Birth
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  useEffect(() => { setQuery(value); }, [value]);
+  useEffect(() => {
+    setQuery(value);
+  }, [value]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -31,7 +40,11 @@ export function CityAutocomplete({ value, coords, onChange, placeholder = 'Birth
   }, []);
 
   const search = useCallback(async (q: string) => {
-    if (q.trim().length < 2) { setResults([]); setOpen(false); return; }
+    if (q.trim().length < 2) {
+      setResults([]);
+      setOpen(false);
+      return;
+    }
     setLoading(true);
     const res = await geocodeCity(q);
     setResults(res);
@@ -65,10 +78,18 @@ export function CityAutocomplete({ value, coords, onChange, placeholder = 'Birth
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!open) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); setHighlighted(h => Math.min(h + 1, results.length - 1)); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); setHighlighted(h => Math.max(h - 1, 0)); }
-    else if (e.key === 'Enter' && highlighted >= 0) { e.preventDefault(); handleSelect(results[highlighted]); }
-    else if (e.key === 'Escape') { setOpen(false); }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlighted((h) => Math.min(h + 1, results.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlighted((h) => Math.max(h - 1, 0));
+    } else if (e.key === 'Enter' && highlighted >= 0) {
+      e.preventDefault();
+      handleSelect(results[highlighted]);
+    } else if (e.key === 'Escape') {
+      setOpen(false);
+    }
   };
 
   return (
@@ -118,7 +139,8 @@ export function CityAutocomplete({ value, coords, onChange, placeholder = 'Birth
       )}
       {coords && (
         <p className="mt-1.5 text-[10px] text-[#857F75] font-mono">
-          {coords.lat.toFixed(2)}°{coords.lat >= 0 ? 'N' : 'S'}, {Math.abs(coords.lon).toFixed(2)}°{coords.lon >= 0 ? 'E' : 'W'} · {coords.timezone}
+          {coords.lat.toFixed(2)}°{coords.lat >= 0 ? 'N' : 'S'}, {Math.abs(coords.lon).toFixed(2)}°
+          {coords.lon >= 0 ? 'E' : 'W'} · {coords.timezone}
         </p>
       )}
     </div>

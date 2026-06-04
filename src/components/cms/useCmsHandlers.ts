@@ -1,22 +1,35 @@
-import { useCallback } from 'react';
 import { doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { useCallback } from 'react';
+
 import { handleFirestoreError, OperationType } from '../../lib/firebase';
-import { firestoreDb } from './useCmsState';
-import { getAdminToken } from './types';
 import { apiFetch } from '../../services/apiFetch';
-import type { ProductForm } from './types';
-import type { Invoice, Vendor, Expense, Task, SiteForm, AstroContent, AstroContentType } from './types';
+
+import { getAdminToken } from './types';
+import type {
+  ProductForm,
+  Invoice,
+  Vendor,
+  Expense,
+  Task,
+  SiteForm,
+  AstroContent,
+  AstroContentType,
+} from './types';
+import { firestoreDb } from './useCmsState';
 import type { CmsState } from './useCmsState';
 
 const TOKEN_HEADER = () => ({ Authorization: `Bearer ${getAdminToken()}` });
 
-async function authedFetch(path: string, init: Parameters<typeof apiFetch>[1] = {}): Promise<Response> {
+async function authedFetch(
+  path: string,
+  init: Parameters<typeof apiFetch>[1] = {}
+): Promise<Response> {
   return apiFetch(path, {
     ...init,
     headers: {
       ...(init.headers || {}),
-      ...TOKEN_HEADER()
-    }
+      ...TOKEN_HEADER(),
+    },
   });
 }
 
@@ -37,7 +50,7 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     googleUser,
     setGoogleUser,
     setGoogleToken,
-    loadData
+    loadData,
   } = state;
 
   const notify = useCallback(
@@ -77,19 +90,31 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
           reviewsCount: Number(productData.reviewsCount) || 1,
           benefits: Array.isArray(productData.benefits)
             ? productData.benefits
-            : String(productData.benefits).split('\n').map((b) => b.trim()).filter(Boolean),
+            : String(productData.benefits)
+                .split('\n')
+                .map((b) => b.trim())
+                .filter(Boolean),
           crystalsUsed: Array.isArray(productData.crystalsUsed)
             ? productData.crystalsUsed
-            : String(productData.crystalsUsed).split(',').map((c) => c.trim()).filter(Boolean),
+            : String(productData.crystalsUsed)
+                .split(',')
+                .map((c) => c.trim())
+                .filter(Boolean),
           zodiacConnection: Array.isArray(productData.zodiacConnection)
             ? productData.zodiacConnection
-            : String(productData.zodiacConnection).split(',').map((z) => z.trim()).filter(Boolean)
+            : String(productData.zodiacConnection)
+                .split(',')
+                .map((z) => z.trim())
+                .filter(Boolean),
         };
-        const res = await authedFetch('/api/products', { method: 'POST', body: JSON.stringify(cleanProduct) });
+        const res = await authedFetch('/api/products', {
+          method: 'POST',
+          body: JSON.stringify(cleanProduct),
+        });
         if (res.ok) {
           await authedFetch('/api/website/checkpoints', {
             method: 'POST',
-            body: JSON.stringify({ title: `AutoBackup: Updated product "${cleanProduct.name}"` })
+            body: JSON.stringify({ title: `AutoBackup: Updated product "${cleanProduct.name}"` }),
           });
           notify(`Product "${cleanProduct.name}" synchronized and backup created.`);
           await loadData();
@@ -114,7 +139,7 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         if (res.ok) {
           await authedFetch('/api/website/checkpoints', {
             method: 'POST',
-            body: JSON.stringify({ title: `AutoBackup: Deleted product "${name}"` })
+            body: JSON.stringify({ title: `AutoBackup: Deleted product "${name}"` }),
           });
           notify(`Product "${name}" deleted.`);
           await loadData();
@@ -134,11 +159,14 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (next: SiteForm) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch('/api/website/content', { method: 'POST', body: JSON.stringify(next) });
+        const res = await authedFetch('/api/website/content', {
+          method: 'POST',
+          body: JSON.stringify(next),
+        });
         if (res.ok) {
           await authedFetch('/api/website/checkpoints', {
             method: 'POST',
-            body: JSON.stringify({ title: 'AutoBackup: Website customization settings updated' })
+            body: JSON.stringify({ title: 'AutoBackup: Website customization settings updated' }),
           });
           notify('Website settings synchronized live and backed up!');
           await loadData();
@@ -155,11 +183,14 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   );
 
   const createManualCheckpoint = useCallback(async () => {
-    const title = prompt("Enter a description title for this backup checkpoint:");
+    const title = prompt('Enter a description title for this backup checkpoint:');
     if (!title) return;
     try {
       setIsLoading(true);
-      const res = await authedFetch('/api/website/checkpoints', { method: 'POST', body: JSON.stringify({ title }) });
+      const res = await authedFetch('/api/website/checkpoints', {
+        method: 'POST',
+        body: JSON.stringify({ title }),
+      });
       if (res.ok) {
         notify('Manual checkpoint saved!');
         await loadData();
@@ -177,7 +208,9 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string, title: string) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/website/checkpoints/${id}/rollback`, { method: 'POST' });
+        const res = await authedFetch(`/api/website/checkpoints/${id}/rollback`, {
+          method: 'POST',
+        });
         if (res.ok) {
           notify(`Rollback succeeded! Reverted to: ${title}`);
           await loadData();
@@ -194,7 +227,13 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   );
 
   const createInvoice = useCallback(
-    async (form: { client: string; item: string; amount: string; alignment: string; status: Invoice['status'] }) => {
+    async (form: {
+      client: string;
+      item: string;
+      amount: string;
+      alignment: string;
+      status: Invoice['status'];
+    }) => {
       if (!form.client || !form.amount) return;
       const customId = `INV-2026-${Math.floor(Math.random() * 900 + 100)}`;
       const payload: Invoice = {
@@ -204,19 +243,24 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         item: form.item || 'Planetary Crystal Alignment Package',
         amount: parseFloat(form.amount) || 0,
         status: form.status,
-        alignment: form.alignment || 'Universal Alignment'
+        alignment: form.alignment || 'Universal Alignment',
       };
 
       if (useFirestoreSource) {
         if (!requireGoogle()) return;
         try {
-          await setDoc(doc(firestoreDb, 'invoices', customId), payload)
-            .catch((err) => handleFirestoreError(err, OperationType.CREATE, `invoices/${customId}`));
+          await setDoc(doc(firestoreDb, 'invoices', customId), payload).catch((err) =>
+            handleFirestoreError(err, OperationType.CREATE, `invoices/${customId}`)
+          );
           const logId = `log-${Date.now()}`;
           await setDoc(doc(firestoreDb, 'logs', logId), {
             id: logId,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-            message: `Created High-Precision Invoice ${customId} for ${payload.client} (₹${payload.amount}) via Firestore.`
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            }),
+            message: `Created High-Precision Invoice ${customId} for ${payload.client} (₹${payload.amount}) via Firestore.`,
           });
           notify(`Invoice created for ${payload.client}.`);
           await loadData();
@@ -226,7 +270,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         return;
       }
 
-      const res = await authedFetch('/api/invoices', { method: 'POST', body: JSON.stringify(payload) });
+      const res = await authedFetch('/api/invoices', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
       if (res.ok) {
         notify(`Invoice created for ${payload.client}.`);
         await loadData();
@@ -239,7 +286,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string, updates: Partial<Invoice>) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/invoices/${id}`, { method: 'PUT', body: JSON.stringify(updates) });
+        const res = await authedFetch(`/api/invoices/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(updates),
+        });
         if (res.ok) {
           notify('Invoice updated.');
           await loadData();
@@ -256,7 +306,14 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   );
 
   const createVendor = useCallback(
-    async (form: { name: string; contact: string; origin: string; category: string; leadTime: string; leadGems: string }) => {
+    async (form: {
+      name: string;
+      contact: string;
+      origin: string;
+      category: string;
+      leadTime: string;
+      leadGems: string;
+    }) => {
       if (!form.name || !form.contact) return;
       const customId = `VND-${Math.floor(Math.random() * 90 + 300)}`;
       const payload: Vendor = {
@@ -268,14 +325,15 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         leadTime: form.leadTime || '5 Days',
         leadGems: form.leadGems || 'Natural Crystal Beads',
         rating: 5,
-        status: 'Approved'
+        status: 'Approved',
       };
 
       if (useFirestoreSource) {
         if (!requireGoogle()) return;
         try {
-          await setDoc(doc(firestoreDb, 'vendors', customId), payload)
-            .catch((err) => handleFirestoreError(err, OperationType.CREATE, `vendors/${customId}`));
+          await setDoc(doc(firestoreDb, 'vendors', customId), payload).catch((err) =>
+            handleFirestoreError(err, OperationType.CREATE, `vendors/${customId}`)
+          );
           notify(`Vendor "${payload.name}" onboarded.`);
           await loadData();
         } catch (err) {
@@ -284,7 +342,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         return;
       }
 
-      const res = await authedFetch('/api/vendors', { method: 'POST', body: JSON.stringify(payload) });
+      const res = await authedFetch('/api/vendors', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
       if (res.ok) {
         notify(`Vendor "${payload.name}" onboarded.`);
         await loadData();
@@ -297,7 +358,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string, updates: Partial<Vendor>) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/vendors/${id}`, { method: 'PUT', body: JSON.stringify(updates) });
+        const res = await authedFetch(`/api/vendors/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(updates),
+        });
         if (res.ok) {
           notify('Vendor updated.');
           await loadData();
@@ -323,14 +387,15 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         category: form.category,
         amount: parseFloat(form.amount) || 0,
         date: new Date().toISOString().split('T')[0],
-        notes: form.notes || ''
+        notes: form.notes || '',
       };
 
       if (useFirestoreSource) {
         if (!requireGoogle()) return;
         try {
-          await setDoc(doc(firestoreDb, 'expenses', customId), payload)
-            .catch((err) => handleFirestoreError(err, OperationType.CREATE, `expenses/${customId}`));
+          await setDoc(doc(firestoreDb, 'expenses', customId), payload).catch((err) =>
+            handleFirestoreError(err, OperationType.CREATE, `expenses/${customId}`)
+          );
           notify(`Expense "${payload.title}" logged.`);
           await loadData();
         } catch (err) {
@@ -339,7 +404,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         return;
       }
 
-      const res = await authedFetch('/api/expenses', { method: 'POST', body: JSON.stringify(payload) });
+      const res = await authedFetch('/api/expenses', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
       if (res.ok) {
         notify(`Expense "${payload.title}" logged.`);
         await loadData();
@@ -352,7 +420,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string, updates: Partial<Expense>) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/expenses/${id}`, { method: 'PUT', body: JSON.stringify(updates) });
+        const res = await authedFetch(`/api/expenses/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(updates),
+        });
         if (res.ok) {
           notify('Expense updated.');
           await loadData();
@@ -369,7 +440,13 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   );
 
   const createTask = useCallback(
-    async (form: { title: string; status: Task['status']; priority: Task['priority']; assignee: string; daysLeft: string }) => {
+    async (form: {
+      title: string;
+      status: Task['status'];
+      priority: Task['priority'];
+      assignee: string;
+      daysLeft: string;
+    }) => {
       if (!form.title || !form.assignee) return;
       const customId = `TSK-${Math.floor(Math.random() * 90 + 500)}`;
       const payload: Task = {
@@ -378,14 +455,15 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         status: form.status,
         priority: form.priority,
         assignee: form.assignee,
-        daysLeft: parseInt(form.daysLeft) || 3
+        daysLeft: parseInt(form.daysLeft) || 3,
       };
 
       if (useFirestoreSource) {
         if (!requireGoogle()) return;
         try {
-          await setDoc(doc(firestoreDb, 'tasks', customId), payload)
-            .catch((err) => handleFirestoreError(err, OperationType.CREATE, `tasks/${customId}`));
+          await setDoc(doc(firestoreDb, 'tasks', customId), payload).catch((err) =>
+            handleFirestoreError(err, OperationType.CREATE, `tasks/${customId}`)
+          );
           notify(`Task created for ${payload.assignee}.`);
           await loadData();
         } catch (err) {
@@ -394,7 +472,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         return;
       }
 
-      const res = await authedFetch('/api/tasks', { method: 'POST', body: JSON.stringify(payload) });
+      const res = await authedFetch('/api/tasks', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
       if (res.ok) {
         notify(`Task created for ${payload.assignee}.`);
         await loadData();
@@ -407,7 +488,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string, updates: Partial<Task>) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/tasks/${id}`, { method: 'PUT', body: JSON.stringify(updates) });
+        const res = await authedFetch(`/api/tasks/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(updates),
+        });
         if (res.ok) {
           notify('Task updated.');
           await loadData();
@@ -427,7 +511,12 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (taskId: string, direction: 'forward' | 'backward') => {
       const task = state.tasks.find((t) => t.id === taskId);
       if (!task) return;
-      const statuses: Task['status'][] = ['Backlog', 'Water Cleanse', 'Moon Bath Bathing', 'Sealed / Composed'];
+      const statuses: Task['status'][] = [
+        'Backlog',
+        'Water Cleanse',
+        'Moon Bath Bathing',
+        'Sealed / Composed',
+      ];
       const currentIdx = statuses.indexOf(task.status);
       let nextIdx = currentIdx;
       if (direction === 'forward' && currentIdx < statuses.length - 1) nextIdx += 1;
@@ -438,8 +527,9 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
       if (useFirestoreSource) {
         if (!requireGoogle()) return;
         try {
-          await updateDoc(doc(firestoreDb, 'tasks', taskId), { status: nextStatus })
-            .catch((err) => handleFirestoreError(err, OperationType.UPDATE, `tasks/${taskId}`));
+          await updateDoc(doc(firestoreDb, 'tasks', taskId), { status: nextStatus }).catch((err) =>
+            handleFirestoreError(err, OperationType.UPDATE, `tasks/${taskId}`)
+          );
           await loadData();
         } catch (err) {
           console.error(err);
@@ -449,7 +539,7 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
 
       const res = await authedFetch(`/api/tasks/${taskId}/status`, {
         method: 'PUT',
-        body: JSON.stringify({ status: nextStatus })
+        body: JSON.stringify({ status: nextStatus }),
       });
       if (res.ok) await loadData();
     },
@@ -481,8 +571,9 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
       if (useFirestoreSource) {
         if (!requireGoogle()) return;
         try {
-          await deleteDoc(doc(firestoreDb, 'expenses', id))
-            .catch((err) => handleFirestoreError(err, OperationType.DELETE, `expenses/${id}`));
+          await deleteDoc(doc(firestoreDb, 'expenses', id)).catch((err) =>
+            handleFirestoreError(err, OperationType.DELETE, `expenses/${id}`)
+          );
           notify('Expense removed.');
           await loadData();
         } catch (err) {
@@ -509,38 +600,48 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         apiFetch('/api/vendors', { headers }),
         apiFetch('/api/expenses', { headers }),
         apiFetch('/api/tasks', { headers }),
-        apiFetch('/api/logs', { headers })
+        apiFetch('/api/logs', { headers }),
       ]);
       const [dataInvoices, dataVendors, dataExpenses, dataTasks, dataLogs] = await Promise.all([
         resInvoices.json(),
         resVendors.json(),
         resExpenses.json(),
         resTasks.json(),
-        resLogs.json()
+        resLogs.json(),
       ]);
       for (const inv of dataInvoices) {
-        await setDoc(doc(firestoreDb, 'invoices', inv.id), inv)
-          .catch((err) => handleFirestoreError(err, OperationType.CREATE, `invoices/${inv.id}`));
+        await setDoc(doc(firestoreDb, 'invoices', inv.id), inv).catch((err) =>
+          handleFirestoreError(err, OperationType.CREATE, `invoices/${inv.id}`)
+        );
       }
       for (const ven of dataVendors) {
-        await setDoc(doc(firestoreDb, 'vendors', ven.id), ven)
-          .catch((err) => handleFirestoreError(err, OperationType.CREATE, `vendors/${ven.id}`));
+        await setDoc(doc(firestoreDb, 'vendors', ven.id), ven).catch((err) =>
+          handleFirestoreError(err, OperationType.CREATE, `vendors/${ven.id}`)
+        );
       }
       for (const exp of dataExpenses) {
-        await setDoc(doc(firestoreDb, 'expenses', exp.id), exp)
-          .catch((err) => handleFirestoreError(err, OperationType.CREATE, `expenses/${exp.id}`));
+        await setDoc(doc(firestoreDb, 'expenses', exp.id), exp).catch((err) =>
+          handleFirestoreError(err, OperationType.CREATE, `expenses/${exp.id}`)
+        );
       }
       for (const tsk of dataTasks) {
-        await setDoc(doc(firestoreDb, 'tasks', tsk.id), tsk)
-          .catch((err) => handleFirestoreError(err, OperationType.CREATE, `tasks/${tsk.id}`));
+        await setDoc(doc(firestoreDb, 'tasks', tsk.id), tsk).catch((err) =>
+          handleFirestoreError(err, OperationType.CREATE, `tasks/${tsk.id}`)
+        );
       }
       const logId = `log-${Date.now()}`;
       await setDoc(doc(firestoreDb, 'logs', logId), {
         id: logId,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-        message: `DATABASE SYNCHRONIZATION: Local flat-files synchronized to Firestore by ${googleUser.email}`
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        }),
+        message: `DATABASE SYNCHRONIZATION: Local flat-files synchronized to Firestore by ${googleUser.email}`,
       });
-      state.setFirestoreSyncSuccess('Successfully synchronized e-commerce ledger collections to Firestore.');
+      state.setFirestoreSyncSuccess(
+        'Successfully synchronized e-commerce ledger collections to Firestore.'
+      );
       state.setUseFirestoreSource(true);
       notify('Firestore sync complete!');
       await loadData();
@@ -556,11 +657,15 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   const importInvoices = useCallback(
     async (rows: Record<string, string>[]) => {
       const items = rows.map((r) => ({
-        client: r['Client'] || r['client'] || r['PATRON VOYAGER'] || 'Unknown',
-        item: r['Item'] || r['item'] || r['ASTRONOMICAL ALIGNMENT ITEM'] || 'Planetary Crystal Alignment Package',
-        amount: parseFloat(r['Amount'] || r['amount'] || r['LEDGER CHARGE'] || '0') || 0,
-        status: r['Status'] || r['status'] || 'Sent',
-        alignment: r['Alignment'] || r['alignment'] || 'Universal Alignment',
+        client: r.Client || r.client || r['PATRON VOYAGER'] || 'Unknown',
+        item:
+          r.Item ||
+          r.item ||
+          r['ASTRONOMICAL ALIGNMENT ITEM'] ||
+          'Planetary Crystal Alignment Package',
+        amount: parseFloat(r.Amount || r.amount || r['LEDGER CHARGE'] || '0') || 0,
+        status: r.Status || r.status || 'Sent',
+        alignment: r.Alignment || r.alignment || 'Universal Alignment',
       }));
       const res = await authedFetch('/api/invoices/batch', {
         method: 'POST',
@@ -580,10 +685,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   const importExpenses = useCallback(
     async (rows: Record<string, string>[]) => {
       const items = rows.map((r) => ({
-        title: r['Title'] || r['title'] || r['PURIFYING WORK DESCRIPTOR'] || 'Unknown',
-        category: r['Category'] || r['category'] || 'Ritual Consecration',
-        amount: parseFloat(r['Amount'] || r['amount'] || r['COST (INR)'] || '0') || 0,
-        notes: r['Notes'] || r['notes'] || '',
+        title: r.Title || r.title || r['PURIFYING WORK DESCRIPTOR'] || 'Unknown',
+        category: r.Category || r.category || 'Ritual Consecration',
+        amount: parseFloat(r.Amount || r.amount || r['COST (INR)'] || '0') || 0,
+        notes: r.Notes || r.notes || '',
       }));
       const res = await authedFetch('/api/expenses/batch', {
         method: 'POST',
@@ -603,12 +708,12 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   const importVendors = useCallback(
     async (rows: Record<string, string>[]) => {
       const items = rows.map((r) => ({
-        name: r['Name'] || r['name'] || 'Unknown',
-        contact: r['Contact'] || r['contact'] || 'Unknown',
-        origin: r['Origin'] || r['origin'] || 'Himalayan Foothills',
-        category: r['Category'] || r['category'] || 'Raw Crystals',
-        leadTime: r['Lead Time'] || r['leadTime'] || '5 Days',
-        leadGems: r['Lead Gems'] || r['leadGems'] || 'Crystalline beads',
+        name: r.Name || r.name || 'Unknown',
+        contact: r.Contact || r.contact || 'Unknown',
+        origin: r.Origin || r.origin || 'Himalayan Foothills',
+        category: r.Category || r.category || 'Raw Crystals',
+        leadTime: r['Lead Time'] || r.leadTime || '5 Days',
+        leadGems: r['Lead Gems'] || r.leadGems || 'Crystalline beads',
       }));
       const res = await authedFetch('/api/vendors/batch', {
         method: 'POST',
@@ -660,13 +765,19 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   );
 
   const saveAstroEntry = useCallback(
-    async (entry: { id?: string; type: AstroContentType; key: string; title: string; interpretation: string }) => {
+    async (entry: {
+      id?: string;
+      type: AstroContentType;
+      key: string;
+      title: string;
+      interpretation: string;
+    }) => {
       const updatedBy = state.googleUser?.email || 'admin';
       const url = entry.id ? `/api/astro-content/${entry.id}` : '/api/astro-content';
       const method = entry.id ? 'PUT' : 'POST';
       const res = await authedFetch(url, {
         method,
-        body: JSON.stringify({ ...entry, updatedBy })
+        body: JSON.stringify({ ...entry, updatedBy }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -731,7 +842,7 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     bulkDeleteExpenses,
     saveAstroEntry,
     deleteAstroEntry,
-    seedAstroDefaults
+    seedAstroDefaults,
   };
 }
 

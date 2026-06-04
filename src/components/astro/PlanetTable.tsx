@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
-import type { PlanetPosition } from '../../types';
-import { PLANET_INTERPRETATIONS } from '../../lib/interpretations';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { PLANET_INTERPRETATIONS } from '../../lib/interpretations';
+import type { PlanetPosition } from '../../types';
 
 const PLANET_GLYPHS: Record<string, string> = {
-  Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂',
-  Jupiter: '♃', Saturn: '♄', Rahu: '☊', Ketu: '☋',
+  Sun: '☉',
+  Moon: '☽',
+  Mercury: '☿',
+  Venus: '♀',
+  Mars: '♂',
+  Jupiter: '♃',
+  Saturn: '♄',
+  Rahu: '☊',
+  Ketu: '☋',
 };
 
 const PLANET_LABELS: Record<string, string> = {
@@ -61,10 +69,14 @@ export function PlanetTable({ planets, className = '' }: PlanetTableProps) {
                 onClick={() => interp && toggle(row.name)}
                 className={`w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left ${interp ? 'hover:bg-white/[0.02] cursor-pointer' : 'cursor-default'}`}
               >
-                <span className="text-base w-6 text-center" title={row.name}>{PLANET_GLYPHS[row.name]}</span>
+                <span className="text-base w-6 text-center" title={row.name}>
+                  {PLANET_GLYPHS[row.name]}
+                </span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-serif text-[#FAF8F5]/90">{PLANET_LABELS[row.name] || row.name}</span>
+                    <span className="text-xs font-serif text-[#FAF8F5]/90">
+                      {PLANET_LABELS[row.name] || row.name}
+                    </span>
                     {row.retrograde && (
                       <span className="text-[8px] font-mono px-1.5 py-0.5 rounded bg-[#EF4444]/20 text-[#EF4444]">
                         RETRO
@@ -73,14 +85,17 @@ export function PlanetTable({ planets, className = '' }: PlanetTableProps) {
                   </div>
                   <div className="text-[10px] font-mono text-[#A6A18F]">
                     {row.pos.sign} {row.pos.degree.toFixed(1)}°
-                    {row.pos.house && <span className="text-[#C5A880]"> • House {row.pos.house}</span>}
+                    {row.pos.house && (
+                      <span className="text-[#C5A880]"> • House {row.pos.house}</span>
+                    )}
                   </div>
                 </div>
-                {interp && (
-                  isOpen
-                    ? <ChevronDown className="h-3.5 w-3.5 text-[#A6A18F] flex-shrink-0" />
-                    : <ChevronRight className="h-3.5 w-3.5 text-[#A6A18F]/50 flex-shrink-0" />
-                )}
+                {interp &&
+                  (isOpen ? (
+                    <ChevronDown className="h-3.5 w-3.5 text-[#A6A18F] flex-shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5 text-[#A6A18F]/50 flex-shrink-0" />
+                  ))}
               </button>
               {isOpen && interp && (
                 <div className="px-4 pb-3 pl-12 -mt-1">

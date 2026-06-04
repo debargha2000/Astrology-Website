@@ -3,11 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {
+  Sparkles,
+  Play,
+  CheckCircle,
+  Moon,
+  Sun,
+  Flame,
+  Wind,
+  HelpCircle,
+  Eye,
+  RefreshCw,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import React, { useState, useEffect } from 'react';
+
 import { PRODUCTS, RITUAL_IMAGE } from '../data';
 import { Product } from '../types';
-import { Sparkles, Play, CheckCircle, Moon, Sun, Flame, Wind, HelpCircle, Eye, RefreshCw } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 
 interface ChargingStationProps {
   cartProducts: Product[];
@@ -16,8 +28,12 @@ interface ChargingStationProps {
 
 export default function ChargingStation({ cartProducts, onAddToCart }: ChargingStationProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product>(PRODUCTS[0]);
-  const [selectedMantra, setSelectedMantra] = useState<'wealth' | 'protection' | 'serenity' | 'focus'>('wealth');
-  const [ritualState, setRitualState] = useState<'idle' | 'washing' | 'moonlight' | 'solar' | 'complete'>('idle');
+  const [selectedMantra, setSelectedMantra] = useState<
+    'wealth' | 'protection' | 'serenity' | 'focus'
+  >('wealth');
+  const [ritualState, setRitualState] = useState<
+    'idle' | 'washing' | 'moonlight' | 'solar' | 'complete'
+  >('idle');
   const [progress, setProgress] = useState(0);
   const [ritualLogs, setRitualLogs] = useState<string[]>([]);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
@@ -25,20 +41,24 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
   const mantras = {
     wealth: {
       name: 'Om Shreem Hreem Kleem Shourayaye Namah (Kubera Abundance)',
-      description: 'Invokes cosmic wealth, breaks financial bottlenecks, and grounds entrepreneurial cash flows.'
+      description:
+        'Invokes cosmic wealth, breaks financial bottlenecks, and grounds entrepreneurial cash flows.',
     },
     protection: {
       name: 'Om Ham Hanumate Rudratmakaya Hung Phat (Aegis Shield)',
-      description: 'Builds an indestructible energetic firewall to deflect third-party envy, nazar, and workplace malice.'
+      description:
+        'Builds an indestructible energetic firewall to deflect third-party envy, nazar, and workplace malice.',
     },
     serenity: {
       name: 'Om Tryambakam Yajamahe Sugandhim (Mahamrityunjaya Sanative)',
-      description: 'Soothes nervous stress, quietens mental static, and anchors alpha sleeping wavelengths.'
+      description:
+        'Soothes nervous stress, quietens mental static, and anchors alpha sleeping wavelengths.',
     },
     focus: {
       name: 'Om Sri Saraswatyai Namah (Intellectual Mercury Aperture)',
-      description: 'Open communication channels, bolsters long-term memory recall, and sharpens analytical clarity.'
-    }
+      description:
+        'Open communication channels, bolsters long-term memory recall, and sharpens analytical clarity.',
+    },
   };
 
   useEffect(() => {
@@ -83,8 +103,12 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
     setRitualLogs([]);
     setProgress(0);
     setRitualState('washing');
-    addLog('Night 1 Initiated: Dipping stones into Panchamrut (Raw milk, honey, sacred Ganges water).');
-    addLog(`Vedic Chanting Active: Focusing "${mantras[selectedMantra].name}" at 432Hz vibration...`);
+    addLog(
+      'Night 1 Initiated: Dipping stones into Panchamrut (Raw milk, honey, sacred Ganges water).'
+    );
+    addLog(
+      `Vedic Chanting Active: Focusing "${mantras[selectedMantra].name}" at 432Hz vibration...`
+    );
   };
 
   const resetRitual = () => {
@@ -95,7 +119,6 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-20 font-sans">
-      
       {/* Editorial Title */}
       <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
         <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-[#A6A18F] font-medium block">
@@ -105,15 +128,15 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
           Vedic Consecration Chamber
         </h2>
         <p className="text-xs text-[#1A1A1A]/70 leading-relaxed font-light">
-          Before taking delivery, our jewelry experiences a mandatory 3-Nights ritual. Interactively witness how we cleanse molecular stress paths in natural geode gems and program them with ancient acoustic mantra frequencies.
+          Before taking delivery, our jewelry experiences a mandatory 3-Nights ritual. Interactively
+          witness how we cleanse molecular stress paths in natural geode gems and program them with
+          ancient acoustic mantra frequencies.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        
         {/* Left column: Setup & choices */}
         <div className="lg:col-span-4 space-y-6">
-          
           {/* select box for product to charge */}
           <div className="p-6 bg-[#F8F6F1] border border-[#D1CEBF] rounded-2xl space-y-4">
             <div>
@@ -187,7 +210,9 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
                       <span className="block font-serif tracking-wider font-light mb-0.5 capitalize text-[13px] text-inherit">
                         {key} Focus Resonance
                       </span>
-                      <span className={`block text-[9px] line-clamp-1 ${isActive ? 'text-[#A6A18F]' : 'text-[#857F75]'}`}>
+                      <span
+                        className={`block text-[9px] line-clamp-1 ${isActive ? 'text-[#A6A18F]' : 'text-[#857F75]'}`}
+                      >
                         {mantras[key].name}
                       </span>
                     </div>
@@ -196,12 +221,10 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
               })}
             </div>
           </div>
-
         </div>
 
         {/* Middle/Right: Interactive Visual Charge bowl or stage */}
         <div className="lg:col-span-8 flex flex-col items-center justify-center space-y-6">
-          
           {/* Main Simulated Area container */}
           <div className="relative aspect-video w-full rounded-3xl border border-[#C5A880]/20 bg-[#151313] shadow-2xl overflow-hidden flex items-center justify-center p-6 min-h-[400px]">
             {/* Background image under-glow */}
@@ -267,7 +290,8 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
               )}
               {ritualState === 'solar' && (
                 <span className="text-[#D4AF37] flex items-center gap-1.5 uppercase">
-                  <Sun className="h-4 w-4 animate-spin text-[#D4AF37]" /> Day 3: Solar Locking active
+                  <Sun className="h-4 w-4 animate-spin text-[#D4AF37]" /> Day 3: Solar Locking
+                  active
                 </span>
               )}
               {ritualState === 'complete' && (
@@ -310,21 +334,31 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
                   </motion.div>
                 )}
 
-                {(ritualState === 'washing' || ritualState === 'moonlight' || ritualState === 'solar') && (
-                  <motion.div
-                    key="running-bracelet"
-                    className="space-y-6"
-                  >
+                {(ritualState === 'washing' ||
+                  ritualState === 'moonlight' ||
+                  ritualState === 'solar') && (
+                  <motion.div key="running-bracelet" className="space-y-6">
                     <div className="relative h-32 w-32 mx-auto">
                       {/* Rotating aura rings */}
-                      <div className="absolute inset-0 rounded-full border border-[#D4AF37]/20 animate-spin" style={{ animationDuration: '8s' }} />
-                      <div className="absolute -inset-4 rounded-full border border-dashed border-white/10 animate-spin" style={{ animationDuration: '14s' }} />
-                      
+                      <div
+                        className="absolute inset-0 rounded-full border border-[#D4AF37]/20 animate-spin"
+                        style={{ animationDuration: '8s' }}
+                      />
+                      <div
+                        className="absolute -inset-4 rounded-full border border-dashed border-white/10 animate-spin"
+                        style={{ animationDuration: '14s' }}
+                      />
+
                       {/* Central pulsating bracelet */}
-                      <div className={`h-full w-full rounded-full overflow-hidden p-2 bg-black/40 border-2 ${
-                        ritualState === 'washing' ? 'border-[#5EB6E6]' :
-                        ritualState === 'moonlight' ? 'border-blue-300 animate-pulse' : 'border-[#D4AF37]'
-                      }`}>
+                      <div
+                        className={`h-full w-full rounded-full overflow-hidden p-2 bg-black/40 border-2 ${
+                          ritualState === 'washing'
+                            ? 'border-[#5EB6E6]'
+                            : ritualState === 'moonlight'
+                              ? 'border-blue-300 animate-pulse'
+                              : 'border-[#D4AF37]'
+                        }`}
+                      >
                         <img
                           src={selectedProduct.imageUrl}
                           alt="Energizing bracelet"
@@ -356,7 +390,7 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
                     <div className="h-14 w-14 rounded-full bg-[#E3EFE0]/15 border border-[#86EFAC]/35 flex items-center justify-center text-[#86EFAC] mx-auto">
                       <CheckCircle className="h-7 w-7" />
                     </div>
-                    
+
                     <div className="p-4 bg-white/5 border border-white/10 rounded-2xl text-center space-y-2.5 font-sans relative">
                       <div className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-mono leading-none">
                         Certificate of Divine Consecration
@@ -367,7 +401,9 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
                       <div className="border-t border-white/10 pt-2 text-[9px] font-mono text-[#A39E96] space-y-1">
                         <div className="flex justify-between">
                           <span>Acoustic Programmed:</span>
-                          <span className="text-[#C5A880] font-semibold uppercase">{selectedMantra}</span>
+                          <span className="text-[#C5A880] font-semibold uppercase">
+                            {selectedMantra}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Mineral Integrity:</span>
@@ -375,7 +411,9 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
                         </div>
                         <div className="flex justify-between">
                           <span>Vedic Signature Ref:</span>
-                          <span className="text-white select-all">STF-{Math.floor(Math.random() * 900000 + 100000)}</span>
+                          <span className="text-white select-all">
+                            STF-{Math.floor(Math.random() * 900000 + 100000)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -385,14 +423,19 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
             </div>
 
             {/* Bottom Progress Bar indicators if active */}
-            {(ritualState === 'washing' || ritualState === 'moonlight' || ritualState === 'solar') && (
+            {(ritualState === 'washing' ||
+              ritualState === 'moonlight' ||
+              ritualState === 'solar') && (
               <div className="absolute bottom-6 left-6 right-6 space-y-1.5 z-10 font-mono">
                 <div className="flex justify-between text-[10px] text-[#A39E96]">
                   <span className="uppercase">Vedic Program Progress</span>
                   <span>{Math.floor(progress)}%</span>
                 </div>
                 <div className="h-1 bg-white/15 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#D4AF37] transition-all duration-75" style={{ width: `${progress}%` }} />
+                  <div
+                    className="h-full bg-[#D4AF37] transition-all duration-75"
+                    style={{ width: `${progress}%` }}
+                  />
                 </div>
               </div>
             )}
@@ -441,7 +484,7 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
               </span>
               <span className="text-[9px] text-[#A6A18F]/70 font-semibold">STATUS: ONLINE</span>
             </div>
-            
+
             <div className="text-[11px] text-[#1A1A1A]/85 space-y-1.5 h-[100px] overflow-y-auto pr-2 select-text leading-relaxed">
               {ritualLogs.length === 0 ? (
                 <div className="text-center py-6 text-xs text-[#1A1A1A]/50">
@@ -449,18 +492,18 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
                 </div>
               ) : (
                 ritualLogs.map((log, idx) => (
-                  <div key={idx} className={`${idx === 0 ? 'text-[#1A1A1A] font-semibold' : 'text-[#1A1A1A]/60'}`}>
+                  <div
+                    key={idx}
+                    className={`${idx === 0 ? 'text-[#1A1A1A] font-semibold' : 'text-[#1A1A1A]/60'}`}
+                  >
                     {log}
                   </div>
                 ))
               )}
             </div>
           </div>
-
         </div>
-
       </div>
-
     </div>
   );
 }

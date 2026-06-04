@@ -1,20 +1,30 @@
+import {
+  Search,
+  Plus,
+  Trash2,
+  Pencil,
+  Download,
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
+} from 'lucide-react';
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Trash2, Pencil, Download, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
+
+import { AddExpenseModal } from './AddExpenseModal';
+import { BulkActions } from './BulkActions';
+import { ConfirmDialog } from './ConfirmDialog';
+import { CsvImport } from './CsvImport';
+import { EditExpenseModal } from './EditExpenseModal';
+import { Pagination } from './Pagination';
 import { EXPENSE_CATEGORIES } from './seedData';
+import type { Expense } from './types';
+import { useBulkSelect } from './useBulkSelect';
+import type { CmsHandlers } from './useCmsHandlers';
+import type { CmsState } from './useCmsState';
 import { useCsvExport } from './useCsvExport';
 import { useSearchFilter } from './useSearchFilter';
 import { useSort } from './useSort';
 import { usePagination } from './usePagination';
-import { Pagination } from './Pagination';
-import { CsvImport } from './CsvImport';
-import { useBulkSelect } from './useBulkSelect';
-import { BulkActions } from './BulkActions';
-import type { CmsState } from './useCmsState';
-import type { CmsHandlers } from './useCmsHandlers';
-import { AddExpenseModal } from './AddExpenseModal';
-import { EditExpenseModal } from './EditExpenseModal';
-import { ConfirmDialog } from './ConfirmDialog';
-import type { Expense } from './types';
 
 interface Props {
   state: CmsState;
@@ -23,28 +33,47 @@ interface Props {
 
 export function ExpensesTab({ state, handlers }: Props) {
   const { expenses } = state;
-  const { createExpense, updateExpense, deleteExpense, importExpenses, bulkDeleteExpenses } = handlers;
+  const { createExpense, updateExpense, deleteExpense, importExpenses, bulkDeleteExpenses } =
+    handlers;
   const { exportExpenses } = useCsvExport();
-  const { search, setSearch, filter, setFilter, results: searched } = useSearchFilter(expenses, {
+  const {
+    search,
+    setSearch,
+    filter,
+    setFilter,
+    results: searched,
+  } = useSearchFilter(expenses, {
     searchFields: ['title', 'notes', 'category'],
     filterField: 'category',
     filterOptions: ['All', ...EXPENSE_CATEGORIES],
     defaultFilter: 'All',
   });
   const { sorted, sortKey, sortDir, requestSort } = useSort(searched);
-  const { page, setPage, perPage, setPerPage, paginated, totalPages, total } = usePagination(sorted);
-  const { selectedIds, isSelected, toggleSelect, selectAll, clearSelection, hasSelection, count: bulkCount } = useBulkSelect(paginated);
+  const { page, setPage, perPage, setPerPage, paginated, totalPages, total } =
+    usePagination(sorted);
+  const {
+    selectedIds,
+    isSelected,
+    toggleSelect,
+    selectAll,
+    clearSelection,
+    hasSelection,
+    count: bulkCount,
+  } = useBulkSelect(paginated);
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
   const [deleting, setDeleting] = useState<Expense | null>(null);
   const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const totalOpex = expenses.reduce((a, c) => a + c.amount, 0);
-  const categoryTotals: Record<string, number> = expenses.reduce<Record<string, number>>((acc, c) => {
-    const prev = acc[c.category] ?? 0;
-    acc[c.category] = prev + c.amount;
-    return acc;
-  }, {});
+  const categoryTotals: Record<string, number> = expenses.reduce<Record<string, number>>(
+    (acc, c) => {
+      const prev = acc[c.category] ?? 0;
+      acc[c.category] = prev + c.amount;
+      return acc;
+    },
+    {}
+  );
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -66,7 +95,9 @@ export function ExpensesTab({ state, handlers }: Props) {
                 key={c}
                 onClick={() => setFilter(c)}
                 className={`cursor-pointer px-3 py-1.5 rounded-lg transition-all ${
-                  filter === c ? 'bg-white text-ink shadow-sm' : 'text-clay hover:text-ink hover:bg-mist/30'
+                  filter === c
+                    ? 'bg-white text-ink shadow-sm'
+                    : 'text-clay hover:text-ink hover:bg-mist/30'
                 }`}
               >
                 {c === 'All' ? 'All' : c.split(' ')[0]}
@@ -115,12 +146,12 @@ export function ExpensesTab({ state, handlers }: Props) {
                       className="cursor-pointer accent-ink"
                     />
                   </th>
-                  {([
+                  {[
                     { key: 'id' as const, label: 'SERIAL ID' },
                     { key: 'title' as const, label: 'PURIFYING WORK DESCRIPTOR' },
                     { key: 'category' as const, label: 'CATEGORY' },
                     { key: 'amount' as const, label: 'COST (INR)', align: 'right' as const },
-                  ]).map((col) => (
+                  ].map((col) => (
                     <th
                       key={col.key}
                       onClick={() => requestSort(col.key)}
@@ -129,7 +160,11 @@ export function ExpensesTab({ state, handlers }: Props) {
                       <span className="inline-flex items-center gap-1">
                         {col.label}
                         {sortKey === col.key ? (
-                          sortDir === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
+                          sortDir === 'asc' ? (
+                            <ChevronUp className="h-3 w-3" />
+                          ) : (
+                            <ChevronDown className="h-3 w-3" />
+                          )
                         ) : (
                           <ChevronsUpDown className="h-3 w-3 opacity-40" />
                         )}
@@ -142,13 +177,19 @@ export function ExpensesTab({ state, handlers }: Props) {
               <tbody className="divide-y divide-cream">
                 {paginated.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide">
+                    <td
+                      colSpan={6}
+                      className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide"
+                    >
                       No logged consecration charges found.
                     </td>
                   </tr>
                 ) : (
                   paginated.map((exp) => (
-                    <tr key={exp.id} className={`hover:bg-cream/10 transition-all ${isSelected(exp.id) ? 'bg-cream/40' : ''}`}>
+                    <tr
+                      key={exp.id}
+                      className={`hover:bg-cream/10 transition-all ${isSelected(exp.id) ? 'bg-cream/40' : ''}`}
+                    >
                       <td className="p-4 md:p-5">
                         <input
                           type="checkbox"
@@ -160,14 +201,18 @@ export function ExpensesTab({ state, handlers }: Props) {
                       <td className="p-4 md:p-5 font-mono text-gold-muted font-bold">{exp.id}</td>
                       <td className="p-4 md:p-5 space-y-0.5">
                         <span className="block font-medium text-ink">{exp.title}</span>
-                        <span className="text-[10px] text-clay font-light leading-snug">{exp.notes}</span>
+                        <span className="text-[10px] text-clay font-light leading-snug">
+                          {exp.notes}
+                        </span>
                       </td>
                       <td className="p-4 md:p-5">
                         <span className="inline-block bg-cream text-clay border border-stone/45 font-mono text-[10px] tracking-wide px-2.5 py-0.5 rounded leading-normal">
                           {exp.category}
                         </span>
                       </td>
-                      <td className="p-4 md:p-5 text-right font-mono font-bold text-ink">₹{exp.amount.toLocaleString('en-IN')}</td>
+                      <td className="p-4 md:p-5 text-right font-mono font-bold text-ink">
+                        ₹{exp.amount.toLocaleString('en-IN')}
+                      </td>
                       <td className="p-4 md:p-5 text-center">
                         <div className="flex items-center justify-center gap-1.5">
                           <button
@@ -206,7 +251,9 @@ export function ExpensesTab({ state, handlers }: Props) {
 
         <div className="lg:col-span-4 bg-white border border-stone rounded-3xl p-6 space-y-6 shadow-sm self-start">
           <div className="border-b border-cream pb-4">
-            <span className="text-[8px] font-mono tracking-[0.25em] text-gold-muted uppercase font-bold block">Integrity checks stats</span>
+            <span className="text-[8px] font-mono tracking-[0.25em] text-gold-muted uppercase font-bold block">
+              Integrity checks stats
+            </span>
             <h3 className="font-serif text-base text-ink">Operational Allocations</h3>
           </div>
 
@@ -216,11 +263,16 @@ export function ExpensesTab({ state, handlers }: Props) {
               return (
                 <div key={cat} className="space-y-1.5">
                   <div className="flex items-center justify-between font-mono text-[10px]">
-                    <span className="text-ink font-medium uppercase font-sans tracking-wide leading-none">{cat}</span>
+                    <span className="text-ink font-medium uppercase font-sans tracking-wide leading-none">
+                      {cat}
+                    </span>
                     <span className="text-gold-muted font-bold">{pct}%</span>
                   </div>
                   <div className="h-2 w-full bg-cream rounded-full overflow-hidden border border-stone/10">
-                    <div className="h-full bg-ink rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                    <div
+                      className="h-full bg-ink rounded-full transition-all duration-500"
+                      style={{ width: `${pct}%` }}
+                    />
                   </div>
                   <span className="block text-[10px] text-gold-muted font-mono text-left">
                     ₹{amount.toLocaleString('en-IN')} logged in aggregate
@@ -231,10 +283,12 @@ export function ExpensesTab({ state, handlers }: Props) {
           </div>
 
           <div className="pt-4 border-t border-cream/60 bg-cream/25 p-4 rounded-xl border border-dashed border-stone/50 text-center space-y-1">
-            <span className="block text-[8px] font-mono text-gold-muted uppercase tracking-widest font-bold">Operating Budget lock</span>
+            <span className="block text-[8px] font-mono text-gold-muted uppercase tracking-widest font-bold">
+              Operating Budget lock
+            </span>
             <p className="text-[10px] text-ink/75 leading-relaxed font-sans font-light">
-              Aura purity investments are fully programmed within monthly profit constraints, ensuring robust high-fashion
-              manufacturing success.
+              Aura purity investments are fully programmed within monthly profit constraints,
+              ensuring robust high-fashion manufacturing success.
             </p>
           </div>
         </div>

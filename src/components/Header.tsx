@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { PageId } from '../types';
 import { ShoppingBag, Sparkles, Menu, X, Compass, BookOpen, Clock, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect } from 'react';
+
+import { PageId } from '../types';
 
 interface HeaderProps {
   currentPage: PageId;
@@ -56,7 +57,7 @@ export default function Header({
     { id: 'zodiac-calculator', label: 'Zodiac Alignment' },
     { id: 'charging-station', label: 'Vedic Charge Chamber' },
     { id: 'encyclopedia', label: 'Crystal Codex' },
-    { id: 'about', label: 'Astrological Legacy' }
+    { id: 'about', label: 'Astrological Legacy' },
   ] as const;
 
   return (
@@ -64,14 +65,16 @@ export default function Header({
       {/* Astrological Announcement Ribbon */}
       <div className="bg-[#1A1A1A] py-2 text-center text-[9px] tracking-[0.25em] font-mono text-[#F8F6F1]/90 uppercase flex items-center justify-center gap-1.5 md:gap-3 px-4 border-b border-[#D1CEBF]/20">
         <Sparkles className="h-3 w-3 animate-pulse text-[#A6A18F]" />
-        <span>Vedic Cleansing Active: <span className="text-[#A6A18F] font-semibold">{muhurtaTime}</span></span>
+        <span>
+          Vedic Cleansing Active:{' '}
+          <span className="text-[#A6A18F] font-semibold">{muhurtaTime}</span>
+        </span>
         <span className="hidden md:inline text-[#F8F6F1]/30">|</span>
         <span className="hidden md:inline text-[#F8F6F1]/70">{astronomicalCycle}</span>
       </div>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
-          
           {/* Universal Collapsible Burger Menu Toggle Button */}
           <div className="flex items-center w-1/4 justify-start">
             <button
@@ -138,7 +141,7 @@ export default function Header({
             onClick={() => setIsMobileMenuOpen(true)}
             className="fixed left-0 top-1/3 -translate-y-1/2 z-30 flex flex-col items-center gap-3 bg-[#1A1A1A] hover:bg-[#322D2C] text-[#F8F6F1] border-y border-r border-[#D1CEBF]/35 py-5 px-2 rounded-r-2xl shadow-2xl transition-all duration-200 cursor-pointer group active:scale-95"
           >
-            <div 
+            <div
               className="font-mono text-[8px] tracking-[0.25em] uppercase font-bold text-[#A6A18F] group-hover:text-white transition-colors"
               style={{ writingMode: 'vertical-lr' }}
             >
@@ -211,17 +214,19 @@ export default function Header({
                       <span className="font-mono text-[9px] tracking-wider text-[#A6A18F] font-semibold select-none w-5">
                         0{index + 1}
                       </span>
-                      <span className={`font-serif text-lg sm:text-xl font-light tracking-wide transition-colors ${
-                        isActive 
-                          ? 'text-[#C5A880] font-semibold' 
-                          : 'text-[#1A1A1A] group-hover:text-[#C5A880]'
-                      }`}>
+                      <span
+                        className={`font-serif text-lg sm:text-xl font-light tracking-wide transition-colors ${
+                          isActive
+                            ? 'text-[#C5A880] font-semibold'
+                            : 'text-[#1A1A1A] group-hover:text-[#C5A880]'
+                        }`}
+                      >
                         {item.label}
                       </span>
                       {isActive && (
-                        <motion.span 
-                          layoutId="drawer-active-dot" 
-                          className="h-1.5 w-1.5 rounded-full bg-[#C5A880] self-center ml-2 shrink-0 animate-pulse" 
+                        <motion.span
+                          layoutId="drawer-active-dot"
+                          className="h-1.5 w-1.5 rounded-full bg-[#C5A880] self-center ml-2 shrink-0 animate-pulse"
                         />
                       )}
                     </button>

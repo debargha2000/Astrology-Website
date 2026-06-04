@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import { Product, CartItem, WebsiteContent } from './types';
+
 import { PRODUCTS, DEFAULT_WEBSITE_CONTENT } from './data';
+import { Product, CartItem, WebsiteContent } from './types';
 
 interface AppState {
   products: Product[];
@@ -8,7 +9,15 @@ interface AppState {
   websiteContent: WebsiteContent;
   isCartOpen: boolean;
   selectedProduct: Product | null;
-  currentPage: 'home' | 'shop' | 'zodiac-calculator' | 'charging-station' | 'encyclopedia' | 'about' | 'checkout' | 'cms';
+  currentPage:
+    | 'home'
+    | 'shop'
+    | 'zodiac-calculator'
+    | 'charging-station'
+    | 'encyclopedia'
+    | 'about'
+    | 'checkout'
+    | 'cms';
 
   // Actions
   setProducts: (products: Product[]) => void;
@@ -35,37 +44,39 @@ export const useAppStore = create<AppState>((set, get) => ({
   setCartItems: (cartItems) => set({ cartItems }),
   setWebsiteContent: (content) => set({ websiteContent: content }),
   toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
-  setIsCartOpen: (open) => set((state) => (state.isCartOpen === open ? state : { isCartOpen: open })),
+  setIsCartOpen: (open) =>
+    set((state) => (state.isCartOpen === open ? state : { isCartOpen: open })),
   setSelectedProduct: (product) => set({ selectedProduct: product }),
   setCurrentPage: (page) => set({ currentPage: page }),
 
   addToCart: (product) => {
     const { cartItems } = get();
-    const existingItem = cartItems.find(item => item.product.id === product.id);
+    const existingItem = cartItems.find((item) => item.product.id === product.id);
 
     if (existingItem) {
       set({
-        cartItems: cartItems.map(item =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
+        cartItems: cartItems.map((item) =>
+          item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        ),
       });
     } else {
       set({
-        cartItems: [...cartItems, {
-          product,
-          quantity: 1,
-          size: 'standard-unisex',
-          personalizedCertification: false
-        }]
+        cartItems: [
+          ...cartItems,
+          {
+            product,
+            quantity: 1,
+            size: 'standard-unisex',
+            personalizedCertification: false,
+          },
+        ],
       });
     }
   },
 
   removeFromCart: (productId) => {
     set({
-      cartItems: get().cartItems.filter(item => item.product.id !== productId)
+      cartItems: get().cartItems.filter((item) => item.product.id !== productId),
     });
   },
 
@@ -75,12 +86,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       get().removeFromCart(productId);
     } else {
       set({
-        cartItems: get().cartItems.map(item =>
-          item.product.id === productId
-            ? { ...item, quantity }
-            : item
-        )
+        cartItems: get().cartItems.map((item) =>
+          item.product.id === productId ? { ...item, quantity } : item
+        ),
       });
     }
-  }
+  },
 }));

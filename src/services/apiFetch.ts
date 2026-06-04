@@ -18,7 +18,8 @@ let csrfTokenFetchPromise: Promise<string | null> | null = null;
 const UNSAFE_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 function isExternalUrl(input: RequestInfo | URL): boolean {
-  const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
+  const url =
+    typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
   return /^https?:\/\//i.test(url);
 }
 
@@ -71,7 +72,12 @@ export async function apiFetch(
     ...(headers as Record<string, string> | undefined),
   };
 
-  if (body !== undefined && body !== null && !(body instanceof FormData) && !finalHeaders['Content-Type']) {
+  if (
+    body !== undefined &&
+    body !== null &&
+    !(body instanceof FormData) &&
+    !finalHeaders['Content-Type']
+  ) {
     finalHeaders['Content-Type'] = 'application/json';
   }
 

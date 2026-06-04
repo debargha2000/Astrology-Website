@@ -1,5 +1,5 @@
-import React, { useRef, useCallback } from 'react';
 import { Bold, Italic, Underline, List, ListOrdered, Link, Heading2 } from 'lucide-react';
+import React, { useRef, useCallback } from 'react';
 
 interface Props {
   value: string;
@@ -8,7 +8,12 @@ interface Props {
   rows?: number;
 }
 
-export function RichTextEditor({ value, onChange, placeholder = 'Write here...', rows = 6 }: Props) {
+export function RichTextEditor({
+  value,
+  onChange,
+  placeholder = 'Write here...',
+  rows = 6,
+}: Props) {
   const editorRef = useRef<HTMLDivElement>(null);
 
   const execCmd = useCallback((command: string, val?: string) => {
@@ -23,27 +28,38 @@ export function RichTextEditor({ value, onChange, placeholder = 'Write here...',
     }
   }, [onChange]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'b' && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      execCmd('bold');
-    }
-    if (e.key === 'i' && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      execCmd('italic');
-    }
-    if (e.key === 'u' && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      execCmd('underline');
-    }
-  }, [execCmd]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'b' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        execCmd('bold');
+      }
+      if (e.key === 'i' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        execCmd('italic');
+      }
+      if (e.key === 'u' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        execCmd('underline');
+      }
+    },
+    [execCmd]
+  );
 
   const addLink = useCallback(() => {
     const url = prompt('Enter URL:');
     if (url) execCmd('createLink', url);
   }, [execCmd]);
 
-  const ToolButton = ({ onClick, children, title }: { onClick: () => void; children: React.ReactNode; title: string }) => (
+  const ToolButton = ({
+    onClick,
+    children,
+    title,
+  }: {
+    onClick: () => void;
+    children: React.ReactNode;
+    title: string;
+  }) => (
     <button
       type="button"
       onClick={onClick}

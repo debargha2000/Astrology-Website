@@ -19,8 +19,9 @@
  * is verified via HMAC signature instead.
  */
 
-import type { Request, Response, NextFunction, RequestHandler } from 'express';
 import crypto from 'crypto';
+
+import type { Request, Response, NextFunction, RequestHandler } from 'express';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
@@ -53,7 +54,12 @@ export interface CsrfOptions {
 }
 
 export function createCsrfProtection(options: CsrfOptions): RequestHandler {
-  const { cookieSecret, exemptPaths = new Set(), cookieKey = COOKIE_KEY, tokenHeader = TOKEN_HEADER } = options;
+  const {
+    cookieSecret,
+    exemptPaths = new Set(),
+    cookieKey = COOKIE_KEY,
+    tokenHeader = TOKEN_HEADER,
+  } = options;
   const headerLower = tokenHeader.toLowerCase();
 
   return function csrfProtection(req: Request, res: Response, next: NextFunction): void {
@@ -85,7 +91,12 @@ export function createCsrfProtection(options: CsrfOptions): RequestHandler {
   };
 }
 
-function attachTokenGenerator(req: Request, res: Response, cookieKey: string, cookieSecret: string): void {
+function attachTokenGenerator(
+  req: Request,
+  res: Response,
+  cookieKey: string,
+  cookieSecret: string
+): void {
   req.csrfToken = () => {
     const existing = req.signedCookies?.[cookieKey] as string | undefined;
     if (existing) return existing;

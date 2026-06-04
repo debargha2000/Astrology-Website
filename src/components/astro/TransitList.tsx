@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import type { TransitAspect } from '../../types';
-import { ASPECT_MEANINGS } from '../../lib/interpretations';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { ASPECT_MEANINGS } from '../../lib/interpretations';
+import type { TransitAspect } from '../../types';
 
 const ASPECT_SYMBOLS: Record<string, string> = {
   conjunction: '☌',
@@ -71,7 +72,9 @@ export function TransitList({ transits, className = '' }: TransitListProps) {
       <div className="divide-y divide-white/5 max-h-[320px] overflow-y-auto">
         {transits.map((t, i) => {
           const aspectKey = ASPECT_KEY_MAP[t.aspect] || capitalize(t.aspect);
-          const meaning = ASPECT_MEANINGS[`${t.natalPlanet}-${aspectKey}`] || ASPECT_MEANINGS[`${t.transitPlanet}-${aspectKey}`];
+          const meaning =
+            ASPECT_MEANINGS[`${t.natalPlanet}-${aspectKey}`] ||
+            ASPECT_MEANINGS[`${t.transitPlanet}-${aspectKey}`];
           const isOpen = expanded.has(i);
           return (
             <div key={i}>
@@ -80,7 +83,9 @@ export function TransitList({ transits, className = '' }: TransitListProps) {
                 onClick={() => meaning && toggle(i)}
                 className={`w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left ${meaning ? 'hover:bg-white/[0.02] cursor-pointer' : 'cursor-default'}`}
               >
-                <span className={`text-base w-6 text-center ${ASPECT_COLORS[t.aspect] || 'text-[#A6A18F]'}`}>
+                <span
+                  className={`text-base w-6 text-center ${ASPECT_COLORS[t.aspect] || 'text-[#A6A18F]'}`}
+                >
                   {ASPECT_SYMBOLS[t.aspect] || '•'}
                 </span>
                 <div className="flex-1 min-w-0">
@@ -91,20 +96,27 @@ export function TransitList({ transits, className = '' }: TransitListProps) {
                     {t.aspect} {t.orb.toFixed(1)}° orb
                   </div>
                 </div>
-                <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded ${
-                  t.aspect === 'conjunction' ? 'bg-[#C5A880]/20 text-[#C5A880]' :
-                  t.aspect === 'opposition' ? 'bg-[#EF4444]/20 text-[#EF4444]' :
-                  t.aspect === 'trine' ? 'bg-[#3B82F6]/20 text-[#3B82F6]' :
-                  t.aspect === 'square' ? 'bg-[#F97316]/20 text-[#F97316]' :
-                  'bg-[#10B981]/20 text-[#10B981]'
-                }`}>
+                <span
+                  className={`text-[8px] font-mono px-1.5 py-0.5 rounded ${
+                    t.aspect === 'conjunction'
+                      ? 'bg-[#C5A880]/20 text-[#C5A880]'
+                      : t.aspect === 'opposition'
+                        ? 'bg-[#EF4444]/20 text-[#EF4444]'
+                        : t.aspect === 'trine'
+                          ? 'bg-[#3B82F6]/20 text-[#3B82F6]'
+                          : t.aspect === 'square'
+                            ? 'bg-[#F97316]/20 text-[#F97316]'
+                            : 'bg-[#10B981]/20 text-[#10B981]'
+                  }`}
+                >
                   {t.aspect}
                 </span>
-                {meaning && (
-                  isOpen
-                    ? <ChevronDown className="h-3.5 w-3.5 text-[#A6A18F] flex-shrink-0" />
-                    : <ChevronRight className="h-3.5 w-3.5 text-[#A6A18F]/50 flex-shrink-0" />
-                )}
+                {meaning &&
+                  (isOpen ? (
+                    <ChevronDown className="h-3.5 w-3.5 text-[#A6A18F] flex-shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5 text-[#A6A18F]/50 flex-shrink-0" />
+                  ))}
               </button>
               {isOpen && meaning && (
                 <div className="px-4 pb-3 pl-12 -mt-1">

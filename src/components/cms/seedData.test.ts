@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import {
   INITIAL_INVOICES,
   INITIAL_VENDORS,
@@ -7,12 +8,18 @@ import {
   TASK_STATUSES,
   INVOICE_STATUSES,
   EXPENSE_CATEGORIES,
-  GMAIL_TEMPLATES
+  GMAIL_TEMPLATES,
 } from './seedData';
 
 describe('CMS seed data invariants', () => {
   it('does not leak the old Signtific India brand', () => {
-    const all = JSON.stringify({ INITIAL_INVOICES, INITIAL_VENDORS, INITIAL_EXPENSES, INITIAL_TASKS, GMAIL_TEMPLATES });
+    const all = JSON.stringify({
+      INITIAL_INVOICES,
+      INITIAL_VENDORS,
+      INITIAL_EXPENSES,
+      INITIAL_TASKS,
+      GMAIL_TEMPLATES,
+    });
     expect(all).not.toMatch(/signtific/i);
   });
 

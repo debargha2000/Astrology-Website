@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from 'react';
+
 import type { Vendor } from './types';
 
 interface Props {
@@ -52,7 +53,9 @@ export function AddVendorModal({ onClose, onSubmit }: Props) {
             className="space-y-4 text-xs"
           >
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Mine / Artisan Name</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Mine / Artisan Name
+              </label>
               <input
                 type="text"
                 required
@@ -64,7 +67,9 @@ export function AddVendorModal({ onClose, onSubmit }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Primary Contact</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Primary Contact
+                </label>
                 <input
                   type="text"
                   required
@@ -75,7 +80,9 @@ export function AddVendorModal({ onClose, onSubmit }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Origin Basin</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Origin Basin
+                </label>
                 <input
                   type="text"
                   required
@@ -87,7 +94,9 @@ export function AddVendorModal({ onClose, onSubmit }: Props) {
               </div>
             </div>
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Category</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Category
+              </label>
               <input
                 type="text"
                 placeholder="e.g. Crystalline Raw Geodes, Mountings"
@@ -98,7 +107,9 @@ export function AddVendorModal({ onClose, onSubmit }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Crystals Shipped</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Crystals Shipped
+                </label>
                 <input
                   type="text"
                   placeholder="e.g. High Grade Quartz beads"
@@ -108,7 +119,9 @@ export function AddVendorModal({ onClose, onSubmit }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Lead Time</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Lead Time
+                </label>
                 <input
                   type="text"
                   placeholder="e.g. 5 Days"

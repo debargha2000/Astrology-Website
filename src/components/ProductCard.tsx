@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { Product } from '../types';
 import { Star, Flame, Eye, ShoppingCart, Check } from 'lucide-react';
 import { motion } from 'motion/react';
+import React from 'react';
+
+import { Product } from '../types';
 
 interface ProductCardProps {
   product: Product;
@@ -16,13 +17,18 @@ interface ProductCardProps {
   key?: string;
 }
 
-export default function ProductCard({ product, onViewDetails, onAddToCart, isAdded }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  onViewDetails,
+  onAddToCart,
+  isAdded,
+}: ProductCardProps) {
   // Format currency in INR
   const formatINR = (value: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(value);
   };
 

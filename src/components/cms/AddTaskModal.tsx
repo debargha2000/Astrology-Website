@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from 'react';
+
 import { TASK_STATUSES, PRIORITIES } from './seedData';
 import type { Task } from './types';
 
 interface Props {
   onClose: () => void;
-  onSubmit: (form: { title: string; status: Task['status']; priority: Task['priority']; assignee: string; daysLeft: string }) => Promise<void>;
+  onSubmit: (form: {
+    title: string;
+    status: Task['status'];
+    priority: Task['priority'];
+    assignee: string;
+    daysLeft: string;
+  }) => Promise<void>;
 }
 
 export function AddTaskModal({ onClose, onSubmit }: Props) {
@@ -45,7 +52,9 @@ export function AddTaskModal({ onClose, onSubmit }: Props) {
             className="space-y-4 text-xs"
           >
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Sprinted Work Subject</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Sprinted Work Subject
+              </label>
               <input
                 type="text"
                 required
@@ -57,7 +66,9 @@ export function AddTaskModal({ onClose, onSubmit }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Responsible Assignee</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Responsible Assignee
+                </label>
                 <input
                   type="text"
                   required
@@ -68,7 +79,9 @@ export function AddTaskModal({ onClose, onSubmit }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Days Allotted</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Days Allotted
+                </label>
                 <input
                   type="number"
                   required
@@ -81,7 +94,9 @@ export function AddTaskModal({ onClose, onSubmit }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Priority</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Priority
+                </label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as Task['priority'])}
@@ -95,7 +110,9 @@ export function AddTaskModal({ onClose, onSubmit }: Props) {
                 </select>
               </div>
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Phase Lane</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Phase Lane
+                </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as Task['status'])}

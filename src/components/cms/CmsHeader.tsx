@@ -1,5 +1,17 @@
+import {
+  LogOut,
+  Compass,
+  FileText,
+  Users,
+  DollarSign,
+  CheckSquare,
+  Send,
+  Box,
+  Sparkles,
+  Terminal,
+} from 'lucide-react';
 import React from 'react';
-import { LogOut, Compass, FileText, Users, DollarSign, CheckSquare, Send, Box, Sparkles, Terminal } from 'lucide-react';
+
 import type { CmsSubTab } from './types';
 
 const TABS: { key: CmsSubTab; label: string; icon: React.ReactNode }[] = [
@@ -10,9 +22,13 @@ const TABS: { key: CmsSubTab; label: string; icon: React.ReactNode }[] = [
   { key: 'tasks', label: 'tasks', icon: <CheckSquare className="h-3.5 w-3.5" /> },
   { key: 'gmail', label: 'Gmail', icon: <Send className="h-3.5 w-3.5 text-gold" /> },
   { key: 'products', label: 'Products', icon: <Box className="h-3.5 w-3.5 text-gold" /> },
-  { key: 'site', label: 'Site builder', icon: <Sparkles className="h-3.5 w-3.5 text-emerald-600" /> },
+  {
+    key: 'site',
+    label: 'Site builder',
+    icon: <Sparkles className="h-3.5 w-3.5 text-emerald-600" />,
+  },
   { key: 'logs', label: 'Logs', icon: <Terminal className="h-3.5 w-3.5" /> },
-  { key: 'astro', label: 'Astrology', icon: <Sparkles className="h-3.5 w-3.5 text-[#C5A880]" /> }
+  { key: 'astro', label: 'Astrology', icon: <Sparkles className="h-3.5 w-3.5 text-[#C5A880]" /> },
 ];
 
 interface Props {
@@ -31,14 +47,17 @@ export function CmsHeader({ googleUser, activeTab, onTabChange, onLogout }: Prop
             <Sparkles className="h-3 w-3 text-gold-muted" /> INTERNAL STAFF ONLY
           </span>
           <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[10px] font-mono text-gold-muted font-bold uppercase tracking-wider">Operational Engine Live</span>
+          <span className="text-[10px] font-mono text-gold-muted font-bold uppercase tracking-wider">
+            Operational Engine Live
+          </span>
         </div>
         <h1 className="font-serif text-3xl font-light text-ink tracking-wide">
           Aura & Stone <span className="font-semibold text-gold-muted">CMS Portal</span>
         </h1>
         <p className="text-xs text-ink/60 max-w-2xl leading-relaxed font-light">
-          An all-in-one content, commerce, and operations suite designed for business success. Program crystal batches,
-          track mineral supply chains, record purifying expenses, and verify global Vedic invoices.
+          An all-in-one content, commerce, and operations suite designed for business success.
+          Program crystal batches, track mineral supply chains, record purifying expenses, and
+          verify global Vedic invoices.
         </p>
 
         {googleUser && (

@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage } from '../../lib/firebase';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+
+import { storage } from '../../lib/firebase';
 
 interface Props {
   value: string;
@@ -72,7 +73,9 @@ export function ImageUpload({ value, onChange, folder = 'uploads', label = 'Imag
 
   return (
     <div className="space-y-2">
-      <label className="block text-clay font-mono text-[10px] uppercase font-bold">{label} URL *</label>
+      <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+        {label} URL *
+      </label>
 
       {value && (
         <div className="relative group">
@@ -94,7 +97,10 @@ export function ImageUpload({ value, onChange, folder = 'uploads', label = 'Imag
       )}
 
       <div
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragOver(true);
+        }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}

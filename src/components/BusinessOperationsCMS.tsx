@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { useCmsAuth, useCmsData } from './cms/useCmsState';
-import { useCmsHandlers } from './cms/useCmsHandlers';
-import { useToast } from './cms/useToast';
-import { ToastContainer } from './cms/Toast';
+
+import { AstroTab } from './cms/AstroTab';
 import { AuthGate } from './cms/AuthGate';
 import { CmsHeader } from './cms/CmsHeader';
 import { DashboardTab } from './cms/DashboardTab';
-import { InvoicesTab } from './cms/InvoicesTab';
-import { VendorsTab } from './cms/VendorsTab';
 import { ExpensesTab } from './cms/ExpensesTab';
 import { TasksTab } from './cms/TasksTab';
 import { GmailTab } from './cms/GmailTab';
+import { InvoicesTab } from './cms/InvoicesTab';
 import { ProductsTab } from './cms/ProductsTab';
-import { SiteTab } from './cms/SiteTab';
 import { LogsTab } from './cms/LogsTab';
-import { AstroTab } from './cms/AstroTab';
+import { SiteTab } from './cms/SiteTab';
+import { ToastContainer } from './cms/Toast';
 import type { CmsSubTab } from './cms/types';
+import { useCmsHandlers } from './cms/useCmsHandlers';
+import { useCmsAuth, useCmsData } from './cms/useCmsState';
+import { useToast } from './cms/useToast';
+import { VendorsTab } from './cms/VendorsTab';
 
 interface BusinessOperationsCMSProps {
   onDataChange?: () => void;
@@ -37,7 +38,13 @@ export default function BusinessOperationsCMS(_props: BusinessOperationsCMSProps
   }, [auth.isAuthenticated, data]);
 
   if (!auth.isAuthenticated) {
-    return <AuthGate authError={auth.authError} isAuthLoading={auth.isAuthLoading} onLogin={auth.login} />;
+    return (
+      <AuthGate
+        authError={auth.authError}
+        isAuthLoading={auth.isAuthLoading}
+        onLogin={auth.login}
+      />
+    );
   }
 
   return (

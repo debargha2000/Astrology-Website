@@ -1,10 +1,24 @@
+import {
+  Sparkles,
+  Search,
+  Plus,
+  Save,
+  Trash2,
+  Sun,
+  Moon,
+  Star,
+  Compass,
+  Database,
+  X,
+  Edit3,
+} from 'lucide-react';
 import React, { useState, useMemo } from 'react';
-import { Sparkles, Search, Plus, Save, Trash2, Sun, Moon, Star, Compass, Database, X, Edit3 } from 'lucide-react';
+
 import { ConfirmDialog } from './ConfirmDialog';
-import { useToast } from './useToast';
-import type { CmsState } from './useCmsState';
-import type { CmsHandlers } from './useCmsHandlers';
 import type { AstroContent, AstroContentType } from './types';
+import type { CmsHandlers } from './useCmsHandlers';
+import type { CmsState } from './useCmsState';
+import { useToast } from './useToast';
 
 type Section = AstroContentType;
 
@@ -43,7 +57,10 @@ export function AstroTab({ state, handlers }: Props) {
     if (!search.trim()) return sectionEntries;
     const q = search.toLowerCase();
     return sectionEntries.filter(
-      (e) => e.title.toLowerCase().includes(q) || e.key.toLowerCase().includes(q) || e.interpretation.toLowerCase().includes(q)
+      (e) =>
+        e.title.toLowerCase().includes(q) ||
+        e.key.toLowerCase().includes(q) ||
+        e.interpretation.toLowerCase().includes(q)
     );
   }, [sectionEntries, search]);
 
@@ -99,7 +116,9 @@ export function AstroTab({ state, handlers }: Props) {
 
   const totalByType = useMemo(() => {
     const counts: Record<Section, number> = { planet: 0, ascendant: 0, aspect: 0, nakshatra: 0 };
-    astroContent.forEach((e) => { counts[e.type]++; });
+    astroContent.forEach((e) => {
+      counts[e.type]++;
+    });
     return counts;
   }, [astroContent]);
 
@@ -115,7 +134,8 @@ export function AstroTab({ state, handlers }: Props) {
             Natal Chart <span className="font-semibold text-gold-muted">Interpretations</span>
           </h2>
           <p className="text-xs text-ink/60 max-w-2xl leading-relaxed font-light">
-            Edit the interpretive text shown in the natal chart result tiles (Sun/Moon/planet placements, ascendants, transit aspects, and nakshatras).
+            Edit the interpretive text shown in the natal chart result tiles (Sun/Moon/planet
+            placements, ascendants, transit aspects, and nakshatras).
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -145,7 +165,12 @@ export function AstroTab({ state, handlers }: Props) {
           return (
             <button
               key={s.id}
-              onClick={() => { setSection(s.id); setSearch(''); setShowAddForm(false); cancelEdit(); }}
+              onClick={() => {
+                setSection(s.id);
+                setSearch('');
+                setShowAddForm(false);
+                cancelEdit();
+              }}
               className={`px-4 py-2.5 rounded-xl font-mono text-[10px] uppercase tracking-widest font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 active
                   ? 'bg-ink text-amber-200 shadow-sm'
@@ -154,7 +179,9 @@ export function AstroTab({ state, handlers }: Props) {
             >
               <Icon className="h-3.5 w-3.5" />
               {s.label}
-              <span className={`px-1.5 py-0.5 rounded text-[8px] ${active ? 'bg-amber-200/20 text-amber-200' : 'bg-cream text-clay'}`}>
+              <span
+                className={`px-1.5 py-0.5 rounded text-[8px] ${active ? 'bg-amber-200/20 text-amber-200' : 'bg-cream text-clay'}`}
+              >
                 {totalByType[s.id]}
               </span>
             </button>
@@ -185,17 +212,29 @@ export function AstroTab({ state, handlers }: Props) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block font-mono text-[9px] text-clay uppercase tracking-widest font-bold mb-1">Key</label>
+              <label className="block font-mono text-[9px] text-clay uppercase tracking-widest font-bold mb-1">
+                Key
+              </label>
               <input
                 type="text"
                 value={newKey}
                 onChange={(e) => setNewKey(e.target.value)}
-                placeholder={section === 'planet' ? 'e.g. Sun-Leo' : section === 'ascendant' ? 'e.g. Pisces' : section === 'aspect' ? 'e.g. Sun-Conjunction' : 'e.g. Rohini'}
+                placeholder={
+                  section === 'planet'
+                    ? 'e.g. Sun-Leo'
+                    : section === 'ascendant'
+                      ? 'e.g. Pisces'
+                      : section === 'aspect'
+                        ? 'e.g. Sun-Conjunction'
+                        : 'e.g. Rohini'
+                }
                 className="w-full px-3 py-2 bg-cream border border-stone rounded-lg text-xs font-mono outline-none focus:border-ink"
               />
             </div>
             <div>
-              <label className="block font-mono text-[9px] text-clay uppercase tracking-widest font-bold mb-1">Title</label>
+              <label className="block font-mono text-[9px] text-clay uppercase tracking-widest font-bold mb-1">
+                Title
+              </label>
               <input
                 type="text"
                 value={newTitle}
@@ -206,7 +245,9 @@ export function AstroTab({ state, handlers }: Props) {
             </div>
           </div>
           <div>
-            <label className="block font-mono text-[9px] text-clay uppercase tracking-widest font-bold mb-1">Interpretation</label>
+            <label className="block font-mono text-[9px] text-clay uppercase tracking-widest font-bold mb-1">
+              Interpretation
+            </label>
             <textarea
               value={newInterpretation}
               onChange={(e) => setNewInterpretation(e.target.value)}
@@ -217,7 +258,12 @@ export function AstroTab({ state, handlers }: Props) {
           </div>
           <div className="flex justify-end gap-2">
             <button
-              onClick={() => { setShowAddForm(false); setNewKey(''); setNewTitle(''); setNewInterpretation(''); }}
+              onClick={() => {
+                setShowAddForm(false);
+                setNewKey('');
+                setNewTitle('');
+                setNewInterpretation('');
+              }}
               className="px-3 py-1.5 text-clay hover:text-ink font-mono text-[10px] uppercase tracking-widest font-bold cursor-pointer"
             >
               Cancel
@@ -237,7 +283,9 @@ export function AstroTab({ state, handlers }: Props) {
         <div className="bg-cream border border-stone rounded-2xl p-10 text-center">
           <Sparkles className="h-10 w-10 text-gold-muted/40 mx-auto mb-3" />
           <h4 className="font-serif text-lg text-ink mb-1">
-            {astroContent.length === 0 ? 'No interpretations saved yet' : 'No entries match your search'}
+            {astroContent.length === 0
+              ? 'No interpretations saved yet'
+              : 'No entries match your search'}
           </h4>
           <p className="text-xs text-clay max-w-md mx-auto mb-4">
             {astroContent.length === 0
@@ -264,7 +312,9 @@ export function AstroTab({ state, handlers }: Props) {
               {isEditing ? (
                 <div className="space-y-3">
                   <div>
-                    <label className="block font-mono text-[9px] text-clay uppercase tracking-widest font-bold mb-1">Title</label>
+                    <label className="block font-mono text-[9px] text-clay uppercase tracking-widest font-bold mb-1">
+                      Title
+                    </label>
                     <input
                       type="text"
                       value={editTitle}
@@ -273,7 +323,9 @@ export function AstroTab({ state, handlers }: Props) {
                     />
                   </div>
                   <div>
-                    <label className="block font-mono text-[9px] text-clay uppercase tracking-widest font-bold mb-1">Interpretation</label>
+                    <label className="block font-mono text-[9px] text-clay uppercase tracking-widest font-bold mb-1">
+                      Interpretation
+                    </label>
                     <textarea
                       value={editInterpretation}
                       onChange={(ev) => setEditInterpretation(ev.target.value)}
@@ -304,7 +356,13 @@ export function AstroTab({ state, handlers }: Props) {
                       <p className="font-mono text-[9px] text-clay mt-0.5">
                         key: {e.key}
                         {e.updatedAt && (
-                          <span className="ml-2">• updated {new Date(e.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                          <span className="ml-2">
+                            • updated{' '}
+                            {new Date(e.updatedAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </span>
                         )}
                       </p>
                     </div>
@@ -339,7 +397,11 @@ export function AstroTab({ state, handlers }: Props) {
       <ConfirmDialog
         open={!!confirmDelete}
         title="Delete Interpretation"
-        message={confirmDelete ? `Permanently delete "${confirmDelete.title}"? This will remove the custom interpretation from the natal chart result tiles.` : ''}
+        message={
+          confirmDelete
+            ? `Permanently delete "${confirmDelete.title}"? This will remove the custom interpretation from the natal chart result tiles.`
+            : ''
+        }
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variant="danger"

@@ -1,21 +1,31 @@
+import {
+  Search,
+  Plus,
+  ExternalLink,
+  Pencil,
+  Download,
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
+} from 'lucide-react';
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, ExternalLink, Pencil, Download, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
+
+import { AddInvoiceModal } from './AddInvoiceModal';
+import { BulkActions } from './BulkActions';
+import { ConfirmDialog } from './ConfirmDialog';
+import { CsvImport } from './CsvImport';
+import { EditInvoiceModal } from './EditInvoiceModal';
+import { InvoicePreviewModal } from './InvoicePreviewModal';
+import { Pagination } from './Pagination';
 import { INVOICE_STATUSES } from './seedData';
+import type { Invoice, CmsSubTab } from './types';
+import { useBulkSelect } from './useBulkSelect';
+import type { CmsState } from './useCmsState';
 import { useCsvExport } from './useCsvExport';
 import { useSearchFilter } from './useSearchFilter';
 import { useSort } from './useSort';
 import { usePagination } from './usePagination';
-import { Pagination } from './Pagination';
-import { CsvImport } from './CsvImport';
-import { useBulkSelect } from './useBulkSelect';
-import { BulkActions } from './BulkActions';
-import { ConfirmDialog } from './ConfirmDialog';
-import type { Invoice, CmsSubTab } from './types';
-import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
-import { InvoicePreviewModal } from './InvoicePreviewModal';
-import { AddInvoiceModal } from './AddInvoiceModal';
-import { EditInvoiceModal } from './EditInvoiceModal';
 
 interface Props {
   state: CmsState;
@@ -26,15 +36,30 @@ export function InvoicesTab({ state, handlers }: Props) {
   const { invoices } = state;
   const { createInvoice, updateInvoice, importInvoices, bulkDeleteInvoices } = handlers;
   const { exportInvoices } = useCsvExport();
-  const { search, setSearch, filter, setFilter, results: searched } = useSearchFilter(invoices, {
+  const {
+    search,
+    setSearch,
+    filter,
+    setFilter,
+    results: searched,
+  } = useSearchFilter(invoices, {
     searchFields: ['client', 'item', 'id'],
     filterField: 'status',
     filterOptions: ['All', ...INVOICE_STATUSES],
     defaultFilter: 'All',
   });
   const { sorted, sortKey, sortDir, requestSort } = useSort(searched);
-  const { page, setPage, perPage, setPerPage, paginated, totalPages, total } = usePagination(sorted);
-  const { selectedIds, isSelected, toggleSelect, selectAll, clearSelection, hasSelection, count: bulkCount } = useBulkSelect(paginated);
+  const { page, setPage, perPage, setPerPage, paginated, totalPages, total } =
+    usePagination(sorted);
+  const {
+    selectedIds,
+    isSelected,
+    toggleSelect,
+    selectAll,
+    clearSelection,
+    hasSelection,
+    count: bulkCount,
+  } = useBulkSelect(paginated);
   const [preview, setPreview] = useState<Invoice | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<Invoice | null>(null);
@@ -45,7 +70,9 @@ export function InvoicesTab({ state, handlers }: Props) {
     const pending = invoices
       .filter((i) => i.status === 'Sent' || i.status === 'Draft')
       .reduce((a, c) => a + c.amount, 0);
-    const overdue = invoices.filter((i) => i.status === 'Overdue').reduce((a, c) => a + c.amount, 0);
+    const overdue = invoices
+      .filter((i) => i.status === 'Overdue')
+      .reduce((a, c) => a + c.amount, 0);
     return { paid, pending, overdue, total: invoices.reduce((a, c) => a + c.amount, 0) };
   }, [invoices]);
 
@@ -114,20 +141,36 @@ export function InvoicesTab({ state, handlers }: Props) {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-cream/40 border border-stone rounded-2xl p-4 text-center">
         <div className="py-2">
-          <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold tracking-widest">Revenue Realized</span>
-          <span className="text-xl font-serif font-semibold text-emerald-800">₹{totals.paid.toLocaleString('en-IN')}</span>
+          <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold tracking-widest">
+            Revenue Realized
+          </span>
+          <span className="text-xl font-serif font-semibold text-emerald-800">
+            ₹{totals.paid.toLocaleString('en-IN')}
+          </span>
         </div>
         <div className="py-2 border-l border-stone/40">
-          <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold tracking-widest">Aura Block (Unpaid)</span>
-          <span className="text-xl font-serif font-semibold text-amber-700">₹{totals.pending.toLocaleString('en-IN')}</span>
+          <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold tracking-widest">
+            Aura Block (Unpaid)
+          </span>
+          <span className="text-xl font-serif font-semibold text-amber-700">
+            ₹{totals.pending.toLocaleString('en-IN')}
+          </span>
         </div>
         <div className="py-2 border-l border-stone/40">
-          <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold tracking-widest">Planetary Deficit (Overdue)</span>
-          <span className="text-xl font-serif font-semibold text-red-800 font-bold">₹{totals.overdue.toLocaleString('en-IN')}</span>
+          <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold tracking-widest">
+            Planetary Deficit (Overdue)
+          </span>
+          <span className="text-xl font-serif font-semibold text-red-800 font-bold">
+            ₹{totals.overdue.toLocaleString('en-IN')}
+          </span>
         </div>
         <div className="py-2 border-l border-stone/40">
-          <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold tracking-widest">Total Invoice Registry</span>
-          <span className="text-xl font-serif font-semibold text-ink">₹{totals.total.toLocaleString('en-IN')}</span>
+          <span className="block text-[8px] font-mono text-gold-muted uppercase font-bold tracking-widest">
+            Total Invoice Registry
+          </span>
+          <span className="text-xl font-serif font-semibold text-ink">
+            ₹{totals.total.toLocaleString('en-IN')}
+          </span>
         </div>
       </div>
 
@@ -150,12 +193,12 @@ export function InvoicesTab({ state, handlers }: Props) {
                     className="cursor-pointer accent-ink"
                   />
                 </th>
-                {([
+                {[
                   { key: 'id' as const, label: 'SERIAL ID' },
                   { key: 'client' as const, label: 'PATRON VOYAGER' },
                   { key: 'item' as const, label: 'ASTRONOMICAL ALIGNMENT ITEM' },
                   { key: 'amount' as const, label: 'LEDGER CHARGE', align: 'right' as const },
-                ]).map((col) => (
+                ].map((col) => (
                   <th
                     key={col.key}
                     onClick={() => requestSort(col.key)}
@@ -164,7 +207,11 @@ export function InvoicesTab({ state, handlers }: Props) {
                     <span className="inline-flex items-center gap-1">
                       {col.label}
                       {sortKey === col.key ? (
-                        sortDir === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />
+                        sortDir === 'asc' ? (
+                          <ChevronUp className="h-3 w-3" />
+                        ) : (
+                          <ChevronDown className="h-3 w-3" />
+                        )
                       ) : (
                         <ChevronsUpDown className="h-3 w-3 opacity-40" />
                       )}
@@ -178,13 +225,19 @@ export function InvoicesTab({ state, handlers }: Props) {
             <tbody className="divide-y divide-cream">
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide">
+                  <td
+                    colSpan={7}
+                    className="p-10 text-center font-mono text-xs text-clay uppercase tracking-wide"
+                  >
                     No invoices logged matching filters or searches.
                   </td>
                 </tr>
               ) : (
                 paginated.map((inv) => (
-                  <tr key={inv.id} className={`hover:bg-cream/25 transition-colors ${isSelected(inv.id) ? 'bg-cream/40' : ''}`}>
+                  <tr
+                    key={inv.id}
+                    className={`hover:bg-cream/25 transition-colors ${isSelected(inv.id) ? 'bg-cream/40' : ''}`}
+                  >
                     <td className="p-4 md:p-5">
                       <input
                         type="checkbox"
@@ -197,7 +250,9 @@ export function InvoicesTab({ state, handlers }: Props) {
                     <td className="p-4 md:p-5 font-serif font-medium text-ink">{inv.client}</td>
                     <td className="p-4 md:p-5 space-y-0.5">
                       <span className="block font-medium text-ink">{inv.item}</span>
-                      <span className="text-[10px] text-gold-muted font-mono uppercase">{inv.alignment}</span>
+                      <span className="text-[10px] text-gold-muted font-mono uppercase">
+                        {inv.alignment}
+                      </span>
                     </td>
                     <td className="p-4 md:p-5 text-right font-mono font-bold text-ink">
                       ₹{inv.amount.toLocaleString('en-IN')}

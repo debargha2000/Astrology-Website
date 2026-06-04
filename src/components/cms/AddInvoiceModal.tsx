@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from 'react';
+
 import type { Invoice } from './types';
 
 interface Props {
   onClose: () => void;
-  onSubmit: (form: { client: string; item: string; amount: string; alignment: string; status: Invoice['status'] }) => Promise<void>;
+  onSubmit: (form: {
+    client: string;
+    item: string;
+    amount: string;
+    alignment: string;
+    status: Invoice['status'];
+  }) => Promise<void>;
 }
 
 export function AddInvoiceModal({ onClose, onSubmit }: Props) {
@@ -44,7 +51,9 @@ export function AddInvoiceModal({ onClose, onSubmit }: Props) {
             className="space-y-4 text-xs"
           >
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Patron Voyager Name</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Patron Voyager Name
+              </label>
               <input
                 type="text"
                 required
@@ -55,7 +64,9 @@ export function AddInvoiceModal({ onClose, onSubmit }: Props) {
               />
             </div>
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Attunement Selection Item</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Attunement Selection Item
+              </label>
               <input
                 type="text"
                 required
@@ -66,7 +77,9 @@ export function AddInvoiceModal({ onClose, onSubmit }: Props) {
               />
             </div>
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Astrological Crystal Grid Align</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Astrological Crystal Grid Align
+              </label>
               <input
                 type="text"
                 placeholder="e.g. Money Magnet (Green Aventurine + Citrine)"
@@ -77,7 +90,9 @@ export function AddInvoiceModal({ onClose, onSubmit }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Cost (INR)</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Cost (INR)
+                </label>
                 <input
                   type="number"
                   required
@@ -88,7 +103,9 @@ export function AddInvoiceModal({ onClose, onSubmit }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Initial Status</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Initial Status
+                </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as Invoice['status'])}

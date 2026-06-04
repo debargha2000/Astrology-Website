@@ -1,12 +1,12 @@
-import jwt from 'jsonwebtoken';
 import type { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 
 export function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
   if (!secret || secret.length < 32) {
     throw new Error(
       'FATAL: JWT_SECRET environment variable is missing or too short (min 32 chars). ' +
-      'Generate one with: node -e "console.log(require(\'crypto\').randomBytes(48).toString(\'base64url\'))"'
+        "Generate one with: node -e \"console.log(require('crypto').randomBytes(48).toString('base64url'))\""
     );
   }
   return secret;
@@ -35,7 +35,7 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
     return res.status(500).json({ error: 'Server misconfigured: JWT secret unavailable.' });
   }
 
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {

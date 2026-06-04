@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from 'react';
+
 import { EXPENSE_CATEGORIES } from './seedData';
 
 interface Props {
   onClose: () => void;
-  onSubmit: (form: { title: string; category: string; amount: string; notes: string }) => Promise<void>;
+  onSubmit: (form: {
+    title: string;
+    category: string;
+    amount: string;
+    notes: string;
+  }) => Promise<void>;
 }
 
 export function AddExpenseModal({ onClose, onSubmit }: Props) {
@@ -43,7 +49,9 @@ export function AddExpenseModal({ onClose, onSubmit }: Props) {
             className="space-y-4 text-xs"
           >
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Expenditure Descriptor</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Expenditure Descriptor
+              </label>
               <input
                 type="text"
                 required
@@ -55,7 +63,9 @@ export function AddExpenseModal({ onClose, onSubmit }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Cost (INR)</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Cost (INR)
+                </label>
                 <input
                   type="number"
                   required
@@ -66,7 +76,9 @@ export function AddExpenseModal({ onClose, onSubmit }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Category</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Category
+                </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
@@ -81,7 +93,9 @@ export function AddExpenseModal({ onClose, onSubmit }: Props) {
               </div>
             </div>
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Notes</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Notes
+              </label>
               <textarea
                 rows={3}
                 placeholder="e.g. Attuned thread materials for sealing certificates"

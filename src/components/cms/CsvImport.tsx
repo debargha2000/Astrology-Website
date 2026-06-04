@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
 import { Upload, FileText, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import React, { useRef, useState } from 'react';
 
 interface CsvImportProps {
   entityLabel: string;
@@ -39,7 +39,10 @@ function parseCsv(text: string): { headers: string[]; rows: Record<string, strin
 
 export function CsvImport({ entityLabel, requiredFields, onImport }: CsvImportProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [preview, setPreview] = useState<{ headers: string[]; rows: Record<string, string>[] } | null>(null);
+  const [preview, setPreview] = useState<{
+    headers: string[];
+    rows: Record<string, string>[];
+  } | null>(null);
   const [importing, setImporting] = useState(false);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
 
@@ -64,7 +67,10 @@ export function CsvImport({ entityLabel, requiredFields, onImport }: CsvImportPr
     setResult(null);
     try {
       await onImport(preview.rows);
-      setResult({ success: true, message: `Successfully imported ${preview.rows.length} ${entityLabel}.` });
+      setResult({
+        success: true,
+        message: `Successfully imported ${preview.rows.length} ${entityLabel}.`,
+      });
       setPreview(null);
     } catch (err: any) {
       setResult({ success: false, message: err.message || 'Import failed.' });
@@ -73,19 +79,11 @@ export function CsvImport({ entityLabel, requiredFields, onImport }: CsvImportPr
     }
   };
 
-  const missingFields = preview
-    ? requiredFields.filter((f) => !preview.headers.includes(f))
-    : [];
+  const missingFields = preview ? requiredFields.filter((f) => !preview.headers.includes(f)) : [];
 
   return (
     <div className="space-y-3">
-      <input
-        ref={inputRef}
-        type="file"
-        accept=".csv"
-        onChange={handleFile}
-        className="hidden"
-      />
+      <input ref={inputRef} type="file" accept=".csv" onChange={handleFile} className="hidden" />
       <button
         onClick={() => inputRef.current?.click()}
         disabled={importing}
@@ -96,12 +94,18 @@ export function CsvImport({ entityLabel, requiredFields, onImport }: CsvImportPr
       </button>
 
       {result && (
-        <div className={`p-3 rounded-xl text-xs font-mono flex items-center gap-2 ${
-          result.success
-            ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-            : 'bg-red-50 border border-red-200 text-red-800'
-        }`}>
-          {result.success ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertTriangle className="h-4 w-4 shrink-0" />}
+        <div
+          className={`p-3 rounded-xl text-xs font-mono flex items-center gap-2 ${
+            result.success
+              ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+              : 'bg-red-50 border border-red-200 text-red-800'
+          }`}
+        >
+          {result.success ? (
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+          ) : (
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+          )}
           {result.message}
         </div>
       )}
@@ -126,7 +130,9 @@ export function CsvImport({ entityLabel, requiredFields, onImport }: CsvImportPr
               <thead>
                 <tr className="bg-cream">
                   {preview.headers.map((h) => (
-                    <th key={h} className="p-1.5 text-left font-bold text-clay border border-stone">{h}</th>
+                    <th key={h} className="p-1.5 text-left font-bold text-clay border border-stone">
+                      {h}
+                    </th>
                   ))}
                 </tr>
               </thead>
@@ -134,7 +140,9 @@ export function CsvImport({ entityLabel, requiredFields, onImport }: CsvImportPr
                 {preview.rows.slice(0, 5).map((row, i) => (
                   <tr key={i}>
                     {preview.headers.map((h) => (
-                      <td key={h} className="p-1.5 border border-stone text-ink">{row[h]}</td>
+                      <td key={h} className="p-1.5 border border-stone text-ink">
+                        {row[h]}
+                      </td>
                     ))}
                   </tr>
                 ))}
@@ -142,7 +150,9 @@ export function CsvImport({ entityLabel, requiredFields, onImport }: CsvImportPr
             </table>
           </div>
           {preview.rows.length > 5 && (
-            <span className="text-[10px] font-mono text-clay">...and {preview.rows.length - 5} more rows</span>
+            <span className="text-[10px] font-mono text-clay">
+              ...and {preview.rows.length - 5} more rows
+            </span>
           )}
 
           <div className="flex gap-2">

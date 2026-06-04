@@ -1,22 +1,23 @@
 import { initializeApp, FirebaseApp } from 'firebase/app';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, AppCheck } from 'firebase/app-check';
 import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
   onAuthStateChanged,
-  User
+  User,
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
-import { initializeAppCheck, ReCaptchaEnterpriseProvider, AppCheck } from 'firebase/app-check';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyC_66UiN2PZIlbGB3N_aL1QkXFbbse8mg8",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "aura-and-stone.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "aura-and-stone",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "aura-and-stone.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "1044154610844",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:1044154610844:web:f1e257ede905c15ad0e959",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyC_66UiN2PZIlbGB3N_aL1QkXFbbse8mg8',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'aura-and-stone.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'aura-and-stone',
+  storageBucket:
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'aura-and-stone.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '1044154610844',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:1044154610844:web:f1e257ede905c15ad0e959',
 };
 
 const app: FirebaseApp = initializeApp(firebaseConfig);
@@ -39,7 +40,7 @@ if (appCheckSiteKey) {
 } else if (import.meta.env.PROD) {
   console.warn(
     'VITE_FIREBASE_APPCHECK_SITE_KEY is unset. ' +
-    'Firebase services will run without App Check attestation in production.'
+      'Firebase services will run without App Check attestation in production.'
   );
 }
 
@@ -135,7 +136,11 @@ export interface FirestoreErrorInfo {
   };
 }
 
-export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null): never {
+export function handleFirestoreError(
+  error: unknown,
+  operationType: OperationType,
+  path: string | null
+): never {
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
@@ -144,13 +149,14 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
       emailVerified: auth.currentUser?.emailVerified,
       isAnonymous: auth.currentUser?.isAnonymous,
       tenantId: auth.currentUser?.tenantId,
-      providerInfo: auth.currentUser?.providerData?.map(provider => ({
-        providerId: provider.providerId,
-        email: provider.email,
-      })) || []
+      providerInfo:
+        auth.currentUser?.providerData?.map((provider) => ({
+          providerId: provider.providerId,
+          email: provider.email,
+        })) || [],
     },
     operationType,
-    path
+    path,
   };
   console.error('Firestore SEC_RULE Error: ', JSON.stringify(errInfo, null, 2));
   throw new Error(JSON.stringify(errInfo));

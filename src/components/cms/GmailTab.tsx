@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
 import { Send, X, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
 import { googleSignIn } from '../../lib/firebase';
-import { getAccessToken } from './useCmsState';
-import { GMAIL_TEMPLATES } from './seedData';
-import { RichTextEditor } from './RichTextEditor';
-import { getAdminToken } from './types';
 import { apiFetch } from '../../services/apiFetch';
+
+import { RichTextEditor } from './RichTextEditor';
+import { GMAIL_TEMPLATES } from './seedData';
+import { getAdminToken } from './types';
 import type { MailRecord } from './types';
+import { getAccessToken } from './useCmsState';
 import type { CmsState } from './useCmsState';
 
 interface Props {
@@ -16,7 +18,7 @@ interface Props {
 const TEMPLATE_LABELS: Record<string, string> = {
   blessing: 'Crystal Blessing',
   shipping: 'Vedic Dispatch',
-  ledger: 'Ledger Attestation'
+  ledger: 'Ledger Attestation',
 };
 
 export function GmailTab({ state }: Props) {
@@ -35,7 +37,7 @@ export function GmailTab({ state }: Props) {
       if (!token) return;
       try {
         const res = await apiFetch('/api/email-records', {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
           const data = await res.json();
@@ -86,7 +88,8 @@ export function GmailTab({ state }: Props) {
     setStatus(null);
     try {
       const accessToken = await getAccessToken();
-      if (!accessToken) throw new Error('Missing active Google OAuth credentials. Please authorize first.');
+      if (!accessToken)
+        throw new Error('Missing active Google OAuth credentials. Please authorize first.');
 
       const sanitizedRecipient = recipient.replace(/\r?\n|\r/g, ' ').trim();
       const sanitizedSubject = subject.replace(/\r?\n|\r/g, ' ').trim();
@@ -96,7 +99,7 @@ export function GmailTab({ state }: Props) {
         'MIME-Version: 1.0',
         `Subject: ${sanitizedSubject}`,
         '',
-        body
+        body,
       ].join('\r\n');
 
       const encodedMsg = btoa(unescape(encodeURIComponent(mimeMessage)))
@@ -108,14 +111,16 @@ export function GmailTab({ state }: Props) {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ raw: encodedMsg })
+        body: JSON.stringify({ raw: encodedMsg }),
       });
 
       if (!response.ok) {
         const errDetails = await response.json().catch(() => ({}));
-        throw new Error(`Gmail API Gateway rejection: ${errDetails?.error?.message || response.statusText}`);
+        throw new Error(
+          `Gmail API Gateway rejection: ${errDetails?.error?.message || response.statusText}`
+        );
       }
 
       await saveRecord(recipient, subject);
@@ -152,18 +157,25 @@ export function GmailTab({ state }: Props) {
             )}
           </div>
           <h2 className="font-serif text-2xl font-light text-ink">
-            Chamber of <span className="font-semibold text-gold-muted">Electronic Correspondence</span>
+            Chamber of{' '}
+            <span className="font-semibold text-gold-muted">Electronic Correspondence</span>
           </h2>
           <p className="text-xs text-ink/60 max-w-2xl leading-relaxed font-light">
-            Secure electronic dispatch wing for Aura & Stone operations. Draft crystal blessing messages, order dispatches,
-            or attested ledger invoices directly to your global clientele using real Google credentials.
+            Secure electronic dispatch wing for Aura & Stone operations. Draft crystal blessing
+            messages, order dispatches, or attested ledger invoices directly to your global
+            clientele using real Google credentials.
           </p>
         </div>
 
         {googleUser && (
           <div className="flex items-center gap-3 bg-white border border-stone p-3 rounded-2xl shadow-xs self-start md:self-center">
             {googleUser.photoURL ? (
-              <img src={googleUser.photoURL} alt="User Avatar" className="h-9 w-9 rounded-full border border-stone" referrerPolicy="no-referrer" />
+              <img
+                src={googleUser.photoURL}
+                alt="User Avatar"
+                className="h-9 w-9 rounded-full border border-stone"
+                referrerPolicy="no-referrer"
+              />
             ) : (
               <div className="h-9 w-9 rounded-full bg-ink text-white flex items-center justify-center font-serif text-sm">
                 {googleUser.email?.charAt(0).toUpperCase()}
@@ -173,7 +185,9 @@ export function GmailTab({ state }: Props) {
               <p className="text-[11px] font-mono font-bold text-ink max-w-[150px] truncate leading-tight">
                 {googleUser.displayName || 'Authorized operator'}
               </p>
-              <p className="text-[9px] font-mono text-clay truncate max-w-[150px] leading-tight">{googleUser.email}</p>
+              <p className="text-[9px] font-mono text-clay truncate max-w-[150px] leading-tight">
+                {googleUser.email}
+              </p>
             </div>
             <button
               onClick={async () => {
@@ -194,10 +208,12 @@ export function GmailTab({ state }: Props) {
             <Send className="h-8 w-8" />
           </div>
           <div className="space-y-2">
-            <h3 className="font-serif text-xl font-light text-ink tracking-wide">Initiate Secure Google Handshake</h3>
+            <h3 className="font-serif text-xl font-light text-ink tracking-wide">
+              Initiate Secure Google Handshake
+            </h3>
             <p className="text-xs text-clay max-w-md mx-auto leading-relaxed">
-              To comply with security best-practice, Gmail dispatch uses an OAuth scope granted on-demand. Your existing
-              CMS session can continue without this elevated permission.
+              To comply with security best-practice, Gmail dispatch uses an OAuth scope granted
+              on-demand. Your existing CMS session can continue without this elevated permission.
             </p>
           </div>
           <button
@@ -222,11 +238,15 @@ export function GmailTab({ state }: Props) {
           <div className="lg:col-span-7 bg-white border border-stone p-6 sm:p-8 rounded-3xl shadow-xs space-y-6">
             <div className="border-b border-cream pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <span className="text-[9px] font-mono tracking-[0.25em] text-gold-muted uppercase font-bold block">Composer Client</span>
+                <span className="text-[9px] font-mono tracking-[0.25em] text-gold-muted uppercase font-bold block">
+                  Composer Client
+                </span>
                 <h3 className="font-serif text-lg text-ink">Attuned Correspondence Draft</h3>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-clay font-bold uppercase tracking-wider">Template:</span>
+                <span className="text-[10px] font-mono text-clay font-bold uppercase tracking-wider">
+                  Template:
+                </span>
                 <select
                   value={template}
                   onChange={(e) => loadTemplate(e.target.value as keyof typeof GMAIL_TEMPLATES)}
@@ -265,7 +285,9 @@ export function GmailTab({ state }: Props) {
               )}
 
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-mono text-ink uppercase tracking-wider font-bold">Recipient Mailbox</label>
+                <label className="block text-[10px] font-mono text-ink uppercase tracking-wider font-bold">
+                  Recipient Mailbox
+                </label>
                 <input
                   type="email"
                   value={recipient}
@@ -277,7 +299,9 @@ export function GmailTab({ state }: Props) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-mono text-ink uppercase tracking-wider font-bold">Subject Header</label>
+                <label className="block text-[10px] font-mono text-ink uppercase tracking-wider font-bold">
+                  Subject Header
+                </label>
                 <input
                   type="text"
                   value={subject}
@@ -289,7 +313,9 @@ export function GmailTab({ state }: Props) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-mono text-ink uppercase tracking-wider font-bold">Message Body</label>
+                <label className="block text-[10px] font-mono text-ink uppercase tracking-wider font-bold">
+                  Message Body
+                </label>
                 <RichTextEditor
                   value={body}
                   onChange={setBody}
@@ -320,25 +346,33 @@ export function GmailTab({ state }: Props) {
 
           <div className="lg:col-span-5 bg-white border border-stone p-6 rounded-3xl shadow-xs space-y-6 self-start">
             <div>
-              <span className="text-[9px] font-mono tracking-[0.25em] text-gold-muted uppercase font-bold block">Transmission History</span>
+              <span className="text-[9px] font-mono tracking-[0.25em] text-gold-muted uppercase font-bold block">
+                Transmission History
+              </span>
               <h3 className="font-serif text-lg text-ink">Sent Correspondences</h3>
             </div>
             <div className="divide-y divide-cream max-h-[420px] overflow-y-auto pr-1">
               {history.length === 0 ? (
-                <div className="text-center py-12 text-xs font-mono text-clay">No digital correspondence sent during this operational session.</div>
+                <div className="text-center py-12 text-xs font-mono text-clay">
+                  No digital correspondence sent during this operational session.
+                </div>
               ) : (
                 history.map((item, idx) => (
                   <div key={item.id || idx} className="py-4 space-y-2 first:pt-0 last:pb-0">
                     <div className="flex justify-between items-start gap-2">
                       <div className="space-y-0.5">
-                        <span className="text-xs font-sans font-medium text-ink">{item.clientName}</span>
+                        <span className="text-xs font-sans font-medium text-ink">
+                          {item.clientName}
+                        </span>
                         <span className="block text-[10px] font-mono text-clay">{item.email}</span>
                       </div>
                       <span className="text-[9.5px] font-mono text-gold-muted bg-cream border border-stone/45 px-2 py-0.5 rounded leading-none whitespace-nowrap">
                         {item.dateStr}
                       </span>
                     </div>
-                    <p className="text-[11px] font-sans text-ink/70 line-clamp-1 italic font-light">"{item.subject}"</p>
+                    <p className="text-[11px] font-sans text-ink/70 line-clamp-1 italic font-light">
+                      "{item.subject}"
+                    </p>
                   </div>
                 ))
               )}

@@ -61,7 +61,7 @@
   "overrides": [
     {
       "files": ["**/*.tsx", "**/*.ts"],
-      "extends": ["plugin/react-hooks/recommended"],
+       "extends": ["plugin:react-hooks/recommended"],
       "plugins": ["react-hooks"]
     }
   ]

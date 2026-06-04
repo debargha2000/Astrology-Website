@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import {
   db as firestoreDb,
   auth as firebaseAuth,
@@ -9,8 +10,11 @@ import {
   initAuth,
   getAccessToken,
   handleFirestoreError,
-  OperationType
+  OperationType,
 } from '../../lib/firebase';
+import { apiFetch } from '../../services/apiFetch';
+
+import { DEFAULT_SITE_FORM } from './seedData';
 import {
   ADMIN_EMAIL,
   clearAdminToken,
@@ -22,10 +26,8 @@ import {
   type Task,
   type Checkpoint,
   type SiteForm,
-  type AstroContent
+  type AstroContent,
 } from './types';
-import { DEFAULT_SITE_FORM } from './seedData';
-import { apiFetch } from '../../services/apiFetch';
 
 export function useCmsAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!getAdminToken());
@@ -38,7 +40,7 @@ export function useCmsAuth() {
     async (user: { email: string | null; uid: string; displayName: string | null }) => {
       const response = await apiFetch('/api/auth/google-login', {
         method: 'POST',
-        body: { email: user.email, uid: user.uid, displayName: user.displayName }
+        body: { email: user.email, uid: user.uid, displayName: user.displayName },
       });
       const data = await response.json();
       if (!response.ok || !data.token) {
@@ -57,7 +59,11 @@ export function useCmsAuth() {
         setGoogleToken(token);
         if (user.email?.toLowerCase() === ADMIN_EMAIL && !getAdminToken()) {
           try {
-            await exchangeForJwt({ email: user.email, uid: user.uid, displayName: user.displayName });
+            await exchangeForJwt({
+              email: user.email,
+              uid: user.uid,
+              displayName: user.displayName,
+            });
             setIsAuthenticated(true);
           } catch (e) {
             console.error('Auto-login token exchange failure:', e);
@@ -85,7 +91,9 @@ export function useCmsAuth() {
       }
       const { user } = result;
       if (user.email?.toLowerCase() !== ADMIN_EMAIL) {
-        setAuthError(`Access Restricted: Only ${ADMIN_EMAIL} is authorized. Logged in as ${user.email}`);
+        setAuthError(
+          `Access Restricted: Only ${ADMIN_EMAIL} is authorized. Logged in as ${user.email}`
+        );
         await firebaseLogout();
         return;
       }
@@ -94,7 +102,9 @@ export function useCmsAuth() {
       setGoogleUser(user);
     } catch (err: any) {
       console.error('Google alignment login failure:', err);
-      setAuthError('Connection anomaly or authentication error occurred during Google verification.');
+      setAuthError(
+        'Connection anomaly or authentication error occurred during Google verification.'
+      );
     } finally {
       setIsAuthLoading(false);
     }
@@ -135,7 +145,7 @@ export function useCmsAuth() {
     setGoogleToken,
     login,
     logout,
-    requestGmailAuthorization
+    requestGmailAuthorization,
   };
 }
 
@@ -231,7 +241,17 @@ export function useCmsData() {
     const headers = { Authorization: `Bearer ${token}` };
 
     try {
-      const [resInvoices, resVendors, resExpenses, resTasks, resLogs, resProducts, resContent, resCheckpoints, resAstro] = await Promise.all([
+      const [
+        resInvoices,
+        resVendors,
+        resExpenses,
+        resTasks,
+        resLogs,
+        resProducts,
+        resContent,
+        resCheckpoints,
+        resAstro,
+      ] = await Promise.all([
         apiFetch('/api/invoices', { headers }),
         apiFetch('/api/vendors', { headers }),
         apiFetch('/api/expenses', { headers }),
@@ -240,7 +260,7 @@ export function useCmsData() {
         apiFetch('/api/products', { headers }),
         apiFetch('/api/website/content', { headers }),
         apiFetch('/api/website/checkpoints', { headers }),
-        apiFetch('/api/astro-content', { headers })
+        apiFetch('/api/astro-content', { headers }),
       ]);
 
       if (resInvoices.status === 401 || resInvoices.status === 403) {
@@ -248,7 +268,17 @@ export function useCmsData() {
         return;
       }
 
-      const [dataInvoices, dataVendors, dataExpenses, dataTasks, dataLogs, dataProducts, dataContent, dataCheckpoints, dataAstro] = await Promise.all([
+      const [
+        dataInvoices,
+        dataVendors,
+        dataExpenses,
+        dataTasks,
+        dataLogs,
+        dataProducts,
+        dataContent,
+        dataCheckpoints,
+        dataAstro,
+      ] = await Promise.all([
         resInvoices.json(),
         resVendors.json(),
         resExpenses.json(),
@@ -257,7 +287,7 @@ export function useCmsData() {
         resProducts.json(),
         resContent.json(),
         resCheckpoints.json(),
-        resAstro.json()
+        resAstro.json(),
       ]);
 
       setInvoices(dataInvoices || []);
@@ -303,7 +333,7 @@ export function useCmsData() {
     setFirestoreSyncLoading,
     firestoreSyncSuccess,
     setFirestoreSyncSuccess,
-    loadData
+    loadData,
   };
 }
 

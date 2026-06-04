@@ -1,11 +1,45 @@
 import React from 'react';
+
 import type { NatalChart } from '../../types';
 
-const SIGNS = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
-const SIGNS_SHORT = [' Ari', ' Tau', ' Gem', ' Can', ' Leo', ' Vir', ' Lib', ' Sco', ' Sag', ' Cap', ' Aqu', ' Pis'];
+const SIGNS = [
+  'Aries',
+  'Taurus',
+  'Gemini',
+  'Cancer',
+  'Leo',
+  'Virgo',
+  'Libra',
+  'Scorpio',
+  'Sagittarius',
+  'Capricorn',
+  'Aquarius',
+  'Pisces',
+];
+const SIGNS_SHORT = [
+  ' Ari',
+  ' Tau',
+  ' Gem',
+  ' Can',
+  ' Leo',
+  ' Vir',
+  ' Lib',
+  ' Sco',
+  ' Sag',
+  ' Cap',
+  ' Aqu',
+  ' Pis',
+];
 const PLANET_GLYPHS: Record<string, string> = {
-  Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂',
-  Jupiter: '♃', Saturn: '♄', Rahu: '☊', Ketu: '☋',
+  Sun: '☉',
+  Moon: '☽',
+  Mercury: '☿',
+  Venus: '♀',
+  Mars: '♂',
+  Jupiter: '♃',
+  Saturn: '♄',
+  Rahu: '☊',
+  Ketu: '☋',
 };
 
 interface NatalChartWheelProps {
@@ -49,7 +83,15 @@ export function NatalChartWheel({ chart, className = '' }: NatalChartWheelProps)
     <div className={`relative ${className}`}>
       <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full max-w-[320px] mx-auto">
         {/* Background circle */}
-        <circle cx={cx} cy={cy} r={outerR + 10} fill="#1C1A18" stroke="#C5A880" strokeWidth="0.5" opacity="0.5" />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={outerR + 10}
+          fill="#1C1A18"
+          stroke="#C5A880"
+          strokeWidth="0.5"
+          opacity="0.5"
+        />
 
         {/* Outer ring - zodiac signs */}
         {SIGNS.map((sign, i) => {
@@ -72,7 +114,8 @@ export function NatalChartWheel({ chart, className = '' }: NatalChartWheelProps)
                 opacity="0.6"
               />
               <text
-                x={tx} y={ty}
+                x={tx}
+                y={ty}
                 textAnchor="middle"
                 dominantBaseline="central"
                 fill="#C5A880"
@@ -87,20 +130,23 @@ export function NatalChartWheel({ chart, className = '' }: NatalChartWheelProps)
         })}
 
         {/* House cusp lines */}
-        {chart.houseCusps.length > 0 && chart.houseCusps.map((cusp, i) => {
-          const [x, y] = lonToXY(cusp, innerR);
-          return (
-            <line
-              key={`house-${i}`}
-              x1={cx} y1={cy}
-              x2={x} y2={y}
-              stroke="#C5A880"
-              strokeWidth="0.3"
-              opacity="0.3"
-              strokeDasharray="2,2"
-            />
-          );
-        })}
+        {chart.houseCusps.length > 0 &&
+          chart.houseCusps.map((cusp, i) => {
+            const [x, y] = lonToXY(cusp, innerR);
+            return (
+              <line
+                key={`house-${i}`}
+                x1={cx}
+                y1={cy}
+                x2={x}
+                y2={y}
+                stroke="#C5A880"
+                strokeWidth="0.3"
+                opacity="0.3"
+                strokeDasharray="2,2"
+              />
+            );
+          })}
 
         {/* Ascendant line */}
         {(() => {
@@ -120,11 +166,22 @@ export function NatalChartWheel({ chart, className = '' }: NatalChartWheelProps)
             const diff = Math.abs(((p1.lon - p2.lon + 180) % 360) - 180);
             let color = 'transparent';
             let width = 0;
-            if (diff < 8) { color = '#C5A880'; width = 0.5; }
-            else if (Math.abs(diff - 180) < 8) { color = '#EF4444'; width = 0.5; }
-            else if (Math.abs(diff - 120) < 6) { color = '#3B82F6'; width = 0.4; }
-            else if (Math.abs(diff - 90) < 6) { color = '#F97316'; width = 0.4; }
-            else if (Math.abs(diff - 60) < 4) { color = '#10B981'; width = 0.3; }
+            if (diff < 8) {
+              color = '#C5A880';
+              width = 0.5;
+            } else if (Math.abs(diff - 180) < 8) {
+              color = '#EF4444';
+              width = 0.5;
+            } else if (Math.abs(diff - 120) < 6) {
+              color = '#3B82F6';
+              width = 0.4;
+            } else if (Math.abs(diff - 90) < 6) {
+              color = '#F97316';
+              width = 0.4;
+            } else if (Math.abs(diff - 60) < 4) {
+              color = '#10B981';
+              width = 0.3;
+            }
 
             if (width === 0) return null;
             const [x1, y1] = lonToXY(p1.lon, planetR - 10);
@@ -132,7 +189,10 @@ export function NatalChartWheel({ chart, className = '' }: NatalChartWheelProps)
             return (
               <line
                 key={`aspect-${i}-${j}`}
-                x1={x1} y1={y1} x2={x2} y2={y2}
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
                 stroke={color}
                 strokeWidth={width}
                 opacity="0.4"
@@ -146,9 +206,18 @@ export function NatalChartWheel({ chart, className = '' }: NatalChartWheelProps)
           const [px, py] = lonToXY(p.lon, planetR);
           return (
             <g key={p.name}>
-              <circle cx={px} cy={py} r="10" fill="#1C1A18" stroke="#C5A880" strokeWidth="0.5" opacity="0.8" />
+              <circle
+                cx={px}
+                cy={py}
+                r="10"
+                fill="#1C1A18"
+                stroke="#C5A880"
+                strokeWidth="0.5"
+                opacity="0.8"
+              />
               <text
-                x={px} y={py}
+                x={px}
+                y={py}
                 textAnchor="middle"
                 dominantBaseline="central"
                 fill="#FAF8F5"

@@ -1,13 +1,14 @@
-import React, { useState, useMemo } from 'react';
 import { Plus, Clock, Award, Compass, CheckCircle2, Pencil, Trash2, Search } from 'lucide-react';
-import { TASK_STATUSES } from './seedData';
-import { useSearchFilter } from './useSearchFilter';
-import type { CmsState } from './useCmsState';
-import type { CmsHandlers } from './useCmsHandlers';
+import React, { useState, useMemo } from 'react';
+
 import { AddTaskModal } from './AddTaskModal';
-import { EditTaskModal } from './EditTaskModal';
 import { ConfirmDialog } from './ConfirmDialog';
+import { EditTaskModal } from './EditTaskModal';
+import { TASK_STATUSES } from './seedData';
 import type { Task } from './types';
+import type { CmsHandlers } from './useCmsHandlers';
+import type { CmsState } from './useCmsState';
+import { useSearchFilter } from './useSearchFilter';
 
 interface Props {
   state: CmsState;
@@ -18,13 +19,17 @@ const STAGE_ICONS: Record<string, React.ReactNode> = {
   Backlog: <Clock className="h-4 w-4 text-gold-muted" />,
   'Water Cleanse': <Award className="h-4 w-4 text-blue-500" />,
   'Moon Bath Bathing': <Compass className="h-4 w-4 text-purple-600" />,
-  'Sealed / Composed': <CheckCircle2 className="h-4 w-4 text-emerald-800" />
+  'Sealed / Composed': <CheckCircle2 className="h-4 w-4 text-emerald-800" />,
 };
 
 export function TasksTab({ state, handlers }: Props) {
   const { tasks } = state;
   const { createTask, moveTask, updateTask, deleteTask } = handlers;
-  const { search, setSearch, results: searchedTasks } = useSearchFilter(tasks, {
+  const {
+    search,
+    setSearch,
+    results: searchedTasks,
+  } = useSearchFilter(tasks, {
     searchFields: ['title', 'assignee', 'id'],
   });
   const [showAdd, setShowAdd] = useState(false);
@@ -37,8 +42,8 @@ export function TasksTab({ state, handlers }: Props) {
         <div className="space-y-1">
           <h3 className="font-serif text-lg text-ink">Attunement & Solder Sprint Board</h3>
           <p className="text-xs text-clay font-light">
-            Transition pure mineral stones through their required chronological purification stages to lock high
-            manifestation frequencies.
+            Transition pure mineral stones through their required chronological purification stages
+            to lock high manifestation frequencies.
           </p>
         </div>
         <button
@@ -64,7 +69,10 @@ export function TasksTab({ state, handlers }: Props) {
         {TASK_STATUSES.map((stage) => {
           const stageTasks = searchedTasks.filter((t) => t.status === stage);
           return (
-            <div key={stage} className="bg-cream/50 border border-stone rounded-3xl p-4 flex flex-col min-h-[420px] max-h-[550px] overflow-hidden">
+            <div
+              key={stage}
+              className="bg-cream/50 border border-stone rounded-3xl p-4 flex flex-col min-h-[420px] max-h-[550px] overflow-hidden"
+            >
               <div className="flex items-center justify-between pb-3 border-b border-stone/40 mb-4 px-1 shrink-0">
                 <span className="font-serif text-sm text-ink font-semibold flex items-center gap-2">
                   {STAGE_ICONS[stage]}
@@ -81,9 +89,14 @@ export function TasksTab({ state, handlers }: Props) {
                   </div>
                 ) : (
                   stageTasks.map((task) => (
-                    <div key={task.id} className="bg-white border border-stone rounded-2xl p-4 space-y-4 shadow-xs hover:shadow-md transition-shadow select-text">
+                    <div
+                      key={task.id}
+                      className="bg-white border border-stone rounded-2xl p-4 space-y-4 shadow-xs hover:shadow-md transition-shadow select-text"
+                    >
                       <div className="flex items-start justify-between">
-                        <span className="font-mono text-[9px] text-gold-muted font-bold">{task.id}</span>
+                        <span className="font-mono text-[9px] text-gold-muted font-bold">
+                          {task.id}
+                        </span>
                         <span
                           className={`font-mono text-[8.5px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded leading-none ${
                             task.priority === 'High'
@@ -101,7 +114,9 @@ export function TasksTab({ state, handlers }: Props) {
                       </h4>
                       <div className="flex items-end justify-between pt-3 border-t border-cream text-[10px] font-mono text-clay">
                         <div className="space-y-0.5">
-                          <span className="block text-[8px] font-mono uppercase text-clay">Assignee</span>
+                          <span className="block text-[8px] font-mono uppercase text-clay">
+                            Assignee
+                          </span>
                           <strong className="text-ink text-[9.5px]">{task.assignee}</strong>
                         </div>
                         <span className="text-[8px] tracking-wide text-amber-900 bg-amber-50 px-1 py-0.5 rounded leading-none">

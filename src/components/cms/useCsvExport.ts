@@ -48,7 +48,17 @@ export function useCsvExport() {
   }, []);
 
   const exportVendors = useCallback((vendors: any[]) => {
-    const headers = ['ID', 'Name', 'Contact', 'Origin', 'Category', 'Lead Time', 'Lead Gems', 'Rating', 'Status'];
+    const headers = [
+      'ID',
+      'Name',
+      'Contact',
+      'Origin',
+      'Category',
+      'Lead Time',
+      'Lead Gems',
+      'Rating',
+      'Status',
+    ];
     const rows = vendors.map((v) => [
       toCsvValue(v.id),
       toCsvValue(v.name),

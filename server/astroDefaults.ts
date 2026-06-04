@@ -1,4 +1,8 @@
-import { PLANET_INTERPRETATIONS, ASCENDANT_INTERPRETATIONS, ASPECT_MEANINGS } from '../src/lib/interpretations';
+import {
+  PLANET_INTERPRETATIONS,
+  ASCENDANT_INTERPRETATIONS,
+  ASPECT_MEANINGS,
+} from '../src/lib/interpretations';
 import { NAKSHATRA_DATA } from '../src/lib/nakshatraData';
 
 export function buildAstroDefaults() {

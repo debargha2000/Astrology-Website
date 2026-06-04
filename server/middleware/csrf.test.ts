@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import express, { Request, Response, NextFunction } from 'express';
 import cookieParser from 'cookie-parser';
+import express, { Request, Response, NextFunction } from 'express';
 import request from 'supertest';
+import { describe, it, expect, beforeEach } from 'vitest';
+
 import { createCsrfProtection } from './csrf';
 
 const COOKIE_SECRET = 'test-cookie-secret-please-change';
@@ -50,7 +51,9 @@ describe('csrf middleware', () => {
   it('allows POST with matching token and cookie', async () => {
     const getRes = await request(app).get('/api/csrf-token');
     const token = getRes.body.csrfToken as string;
-    const cookie = (getRes.headers['set-cookie'] as string[]).find((c) => c.startsWith('_csrf='))!.split(';')[0];
+    const cookie = (getRes.headers['set-cookie'] as string[])
+      .find((c) => c.startsWith('_csrf='))!
+      .split(';')[0];
 
     const res = await request(app)
       .post('/api/echo')
@@ -63,7 +66,9 @@ describe('csrf middleware', () => {
 
   it('rejects POST with missing token', async () => {
     const getRes = await request(app).get('/api/csrf-token');
-    const cookie = (getRes.headers['set-cookie'] as string[]).find((c) => c.startsWith('_csrf='))!.split(';')[0];
+    const cookie = (getRes.headers['set-cookie'] as string[])
+      .find((c) => c.startsWith('_csrf='))!
+      .split(';')[0];
 
     const res = await request(app).post('/api/echo').set('Cookie', cookie).send({});
     expect(res.status).toBe(403);
@@ -71,7 +76,9 @@ describe('csrf middleware', () => {
 
   it('rejects POST with mismatched token', async () => {
     const getRes = await request(app).get('/api/csrf-token');
-    const cookie = (getRes.headers['set-cookie'] as string[]).find((c) => c.startsWith('_csrf='))!.split(';')[0];
+    const cookie = (getRes.headers['set-cookie'] as string[])
+      .find((c) => c.startsWith('_csrf='))!
+      .split(';')[0];
 
     const res = await request(app)
       .post('/api/echo')

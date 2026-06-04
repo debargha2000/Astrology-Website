@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from 'react';
+
 import type { Vendor } from './types';
 
 interface Props {
@@ -35,18 +36,30 @@ export function EditVendorModal({ vendor, onClose, onSubmit }: Props) {
         >
           <div className="flex items-center justify-between border-b border-cream pb-4 mb-6">
             <h3 className="font-serif text-lg text-ink">Edit Vendor</h3>
-            <button onClick={onClose} className="text-clay hover:text-ink p-2 leading-none">✕</button>
+            <button onClick={onClose} className="text-clay hover:text-ink p-2 leading-none">
+              ✕
+            </button>
           </div>
           <form
             onSubmit={async (e) => {
               e.preventDefault();
-              await onSubmit(vendor.id, { name, contact, origin, category, leadTime, leadGems, status });
+              await onSubmit(vendor.id, {
+                name,
+                contact,
+                origin,
+                category,
+                leadTime,
+                leadGems,
+                status,
+              });
               onClose();
             }}
             className="space-y-4 text-xs"
           >
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Mine / Artisan Name</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Mine / Artisan Name
+              </label>
               <input
                 type="text"
                 required
@@ -57,7 +70,9 @@ export function EditVendorModal({ vendor, onClose, onSubmit }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Primary Contact</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Primary Contact
+                </label>
                 <input
                   type="text"
                   required
@@ -67,7 +82,9 @@ export function EditVendorModal({ vendor, onClose, onSubmit }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Origin Basin</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Origin Basin
+                </label>
                 <input
                   type="text"
                   required
@@ -78,7 +95,9 @@ export function EditVendorModal({ vendor, onClose, onSubmit }: Props) {
               </div>
             </div>
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Category</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Category
+              </label>
               <input
                 type="text"
                 value={category}
@@ -88,7 +107,9 @@ export function EditVendorModal({ vendor, onClose, onSubmit }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Crystals Shipped</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Crystals Shipped
+                </label>
                 <input
                   type="text"
                   value={leadGems}
@@ -97,7 +118,9 @@ export function EditVendorModal({ vendor, onClose, onSubmit }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Lead Time</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Lead Time
+                </label>
                 <input
                   type="text"
                   value={leadTime}
@@ -107,7 +130,9 @@ export function EditVendorModal({ vendor, onClose, onSubmit }: Props) {
               </div>
             </div>
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Status</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Status
+              </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as Vendor['status'])}

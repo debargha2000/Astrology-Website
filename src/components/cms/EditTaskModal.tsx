@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from 'react';
+
 import { TASK_STATUSES, PRIORITIES } from './seedData';
 import type { Task } from './types';
 
@@ -34,18 +35,28 @@ export function EditTaskModal({ task, onClose, onSubmit }: Props) {
         >
           <div className="flex items-center justify-between border-b border-cream pb-4 mb-6">
             <h3 className="font-serif text-lg text-ink">Edit Task</h3>
-            <button onClick={onClose} className="text-clay hover:text-ink p-2 leading-none">✕</button>
+            <button onClick={onClose} className="text-clay hover:text-ink p-2 leading-none">
+              ✕
+            </button>
           </div>
           <form
             onSubmit={async (e) => {
               e.preventDefault();
-              await onSubmit(task.id, { title, assignee, daysLeft: parseInt(daysLeft) || 0, priority, status });
+              await onSubmit(task.id, {
+                title,
+                assignee,
+                daysLeft: parseInt(daysLeft) || 0,
+                priority,
+                status,
+              });
               onClose();
             }}
             className="space-y-4 text-xs"
           >
             <div>
-              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Sprinted Work Subject</label>
+              <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                Sprinted Work Subject
+              </label>
               <input
                 type="text"
                 required
@@ -56,7 +67,9 @@ export function EditTaskModal({ task, onClose, onSubmit }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Responsible Assignee</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Responsible Assignee
+                </label>
                 <input
                   type="text"
                   required
@@ -66,7 +79,9 @@ export function EditTaskModal({ task, onClose, onSubmit }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Days Allotted</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Days Allotted
+                </label>
                 <input
                   type="number"
                   required
@@ -78,26 +93,34 @@ export function EditTaskModal({ task, onClose, onSubmit }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Priority</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Priority
+                </label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as Task['priority'])}
                   className="w-full bg-cream/45 border border-stone rounded-xl px-4 py-3 text-xs outline-none focus:border-ink text-ink font-bold"
                 >
                   {PRIORITIES.map((p) => (
-                    <option key={p} value={p}>{p}</option>
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">Phase Lane</label>
+                <label className="block text-[8px] font-mono uppercase text-clay mb-1 font-semibold">
+                  Phase Lane
+                </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as Task['status'])}
                   className="w-full bg-cream/45 border border-stone rounded-xl px-4 py-3 text-xs outline-none focus:border-ink text-ink font-bold"
                 >
                   {TASK_STATUSES.map((s) => (
-                    <option key={s} value={s}>{s}</option>
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
                   ))}
                 </select>
               </div>

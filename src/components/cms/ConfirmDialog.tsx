@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { AlertTriangle, Info, Trash2, RefreshCw } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import React, { useEffect } from 'react';
 
 interface Props {
   open: boolean;
@@ -67,9 +67,7 @@ export function ConfirmDialog({
             className="relative bg-white border border-stone rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl"
           >
             <div className="flex items-start gap-4 mb-6">
-              <div className={`shrink-0 p-2.5 rounded-xl border ${v.bg}`}>
-                {v.icon}
-              </div>
+              <div className={`shrink-0 p-2.5 rounded-xl border ${v.bg}`}>{v.icon}</div>
               <div className="space-y-2 min-w-0">
                 <h3 className="font-serif text-lg text-ink font-semibold">{title}</h3>
                 <p className="text-xs text-clay leading-relaxed font-sans">{message}</p>

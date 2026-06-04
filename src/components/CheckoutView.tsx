@@ -3,11 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { CartItem, Product } from '../types';
-import { ShieldCheck, Calendar, MapPin, CreditCard, Sparkles, CheckCircle, Download, ArrowLeft, Send, RefreshCw } from 'lucide-react';
+import {
+  ShieldCheck,
+  Calendar,
+  MapPin,
+  CreditCard,
+  Sparkles,
+  CheckCircle,
+  Download,
+  ArrowLeft,
+  Send,
+  RefreshCw,
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect } from 'react';
+
 import { apiFetch } from '../services/apiFetch';
+import { CartItem, Product } from '../types';
 
 interface CheckoutViewProps {
   cartItems: CartItem[];
@@ -16,7 +28,12 @@ interface CheckoutViewProps {
   onAddReviewToggle: () => void;
 }
 
-export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddReviewToggle }: CheckoutViewProps) {
+export default function CheckoutView({
+  cartItems,
+  onClearCart,
+  onGoBack,
+  onAddReviewToggle,
+}: CheckoutViewProps) {
   const [step, setStep] = useState<'details' | 'payment' | 'success'>('details');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -24,12 +41,12 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
-  
+
   const [payMethod, setPayMethod] = useState<'upi' | 'card' | 'cod'>('upi');
   const [isProcessing, setIsProcessing] = useState(false);
   const [timeLeft, setTimeLeft] = useState(180); // 3 mins for QR code
   const [certDownloaded, setCertDownloaded] = useState(false);
-  
+
   const subtotal = cartItems.reduce((acc, curr) => {
     let price = curr.product.salePrice * curr.quantity;
     if (curr.personalizedCertification) {
@@ -69,8 +86,10 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
 
   const handleExecutePayment = async () => {
     setIsProcessing(true);
-    
-    const itemsDescription = cartItems.map(item => `${item.product.name} (Qty ${item.quantity})`).join(', ');
+
+    const itemsDescription = cartItems
+      .map((item) => `${item.product.name} (Qty ${item.quantity})`)
+      .join(', ');
 
     try {
       // 1. Dynamically download the Razorpay checkout scripts securely
@@ -88,7 +107,7 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
           receiptEmail: email || 'operations@aurastone.in',
           clientName: name || 'Universal Voyager',
           cartItems: itemsDescription,
-        }
+        },
       });
 
       if (!orderResponse.ok) {
@@ -104,12 +123,13 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
         currency: orderData.currency,
         name: 'Aura & Stone Private Ltd.',
         description: 'Vedic Gem Consecration Sealing',
-        image: 'https://api.dicebear.com/7.x/initials/svg?seed=SI&backgroundColor=151313&fontFamily=Serif',
+        image:
+          'https://api.dicebear.com/7.x/initials/svg?seed=SI&backgroundColor=151313&fontFamily=Serif',
         order_id: orderData.id,
         prefill: {
           name: name,
           email: email,
-          contact: phone
+          contact: phone,
         },
         notes: {
           clientName: name,
@@ -117,7 +137,7 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
           itemsDescription: itemsDescription,
         },
         theme: {
-          color: '#151313'
+          color: '#151313',
         },
         handler: async function (response: any) {
           try {
@@ -126,7 +146,7 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
               method: 'POST',
               skipCsrf: true,
               headers: {
-                'X-Razorpay-Signature': response.razorpay_signature || 'bypass_test_mode'
+                'X-Razorpay-Signature': response.razorpay_signature || 'bypass_test_mode',
               },
               body: {
                 event: 'payment.captured',
@@ -143,18 +163,20 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                       notes: {
                         clientName: name,
                         clientEmail: email,
-                        itemsDescription: itemsDescription
-                      }
-                    }
-                  }
-                }
-              }
+                        itemsDescription: itemsDescription,
+                      },
+                    },
+                  },
+                },
+              },
             });
 
             if (syncResponse.ok) {
               setStep('success');
             } else {
-              alert('✓ Payment captured by bank, but backend ledger sync failed. Hand-sealing scheduled manually.');
+              alert(
+                '✓ Payment captured by bank, but backend ledger sync failed. Hand-sealing scheduled manually.'
+              );
               setStep('success');
             }
           } catch (err) {
@@ -167,8 +189,8 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
         modal: {
           ondismiss: function () {
             setIsProcessing(false);
-          }
-        }
+          },
+        },
       };
 
       const rzp = new (window as any).Razorpay(options);
@@ -177,7 +199,6 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
         setIsProcessing(false);
       });
       rzp.open();
-
     } catch (e: any) {
       console.warn('Failover active for sandbox checkout execution', e);
       // Failover elegant simulator logic (useful in sandbox/iframe restrictions or if offline)
@@ -187,15 +208,15 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
             method: 'POST',
             skipCsrf: true,
             headers: {
-              'X-Razorpay-Signature': 'bypass_test_mode'
+              'X-Razorpay-Signature': 'bypass_test_mode',
             },
             body: {
               event: 'payment.captured',
               amount: subtotal * 100,
               clientName: name || 'Universal Voyager',
-          receiptEmail: email || 'operations@aurastone.in',
+              receiptEmail: email || 'operations@aurastone.in',
               cartItems: itemsDescription,
-            }
+            },
           });
         } catch (err) {
           console.error('Simulated webhook sync skipped', err);
@@ -210,7 +231,7 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
@@ -222,7 +243,6 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12 md:py-20 font-sans">
-      
       {/* Checkout Header navigation */}
       <div className="flex items-center justify-between mb-12">
         <button
@@ -232,19 +252,24 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
         >
           <ArrowLeft className="h-4 w-4" /> Go Back
         </button>
-        
+
         {/* Step Indicators */}
         <div className="flex items-center gap-2.5 font-mono text-[10px] tracking-wider text-[#A6A18F] uppercase font-semibold">
-          <span className={step === 'details' ? 'font-bold text-[#1A1A1A]' : 'opacity-65'}>1. Coordinates</span>
+          <span className={step === 'details' ? 'font-bold text-[#1A1A1A]' : 'opacity-65'}>
+            1. Coordinates
+          </span>
           <span className="opacity-40">•</span>
-          <span className={step === 'payment' ? 'font-bold text-[#1A1A1A]' : 'opacity-65'}>2. Consecration Seal</span>
+          <span className={step === 'payment' ? 'font-bold text-[#1A1A1A]' : 'opacity-65'}>
+            2. Consecration Seal
+          </span>
           <span className="opacity-40">•</span>
-          <span className={step === 'success' ? 'font-bold text-[#1A1A1A]' : 'opacity-65'}>3. Manifestation</span>
+          <span className={step === 'success' ? 'font-bold text-[#1A1A1A]' : 'opacity-65'}>
+            3. Manifestation
+          </span>
         </div>
       </div>
 
       <AnimatePresence mode="wait">
-        
         {/* Step 1: Details */}
         {step === 'details' && (
           <motion.div
@@ -255,7 +280,10 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
             className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
           >
             {/* Form */}
-            <form onSubmit={handleNextStep} className="lg:col-span-7 bg-[#F8F6F1] border border-[#D1CEBF] rounded-2xl p-6 space-y-6">
+            <form
+              onSubmit={handleNextStep}
+              className="lg:col-span-7 bg-[#F8F6F1] border border-[#D1CEBF] rounded-2xl p-6 space-y-6"
+            >
               <h3 className="font-serif text-lg text-[#1A1A1A] flex items-center gap-2 border-b border-[#D1CEBF]/40 pb-3 font-light">
                 <MapPin className="h-5 w-5 text-[#A6A18F]" />
                 Shipping & Astrological Coordinates
@@ -399,7 +427,9 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                 </div>
                 <div className="flex justify-between">
                   <span>CLEANSING RITUAL:</span>
-                  <span className="text-emerald-700 font-bold uppercase text-[10px]">FREE OF CHARGE</span>
+                  <span className="text-emerald-700 font-bold uppercase text-[10px]">
+                    FREE OF CHARGE
+                  </span>
                 </div>
                 <div className="flex justify-between text-base font-bold text-[#1A1A1A] border-t border-[#D1CEBF]/40 pt-3">
                   <span>Authorized Cost:</span>
@@ -433,7 +463,9 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                   type="button"
                   onClick={() => setPayMethod('upi')}
                   className={`cursor-pointer flex-1 py-3 text-center border-r border-[#D1CEBF] transition-colors font-semibold ${
-                    payMethod === 'upi' ? 'bg-[#1A1A1A] text-[#A6A18F]' : 'bg-[#FAF7F2]/40 hover:bg-[#E5E3D8]/30'
+                    payMethod === 'upi'
+                      ? 'bg-[#1A1A1A] text-[#A6A18F]'
+                      : 'bg-[#FAF7F2]/40 hover:bg-[#E5E3D8]/30'
                   }`}
                 >
                   Simulated UPI QR
@@ -443,7 +475,9 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                   type="button"
                   onClick={() => setPayMethod('card')}
                   className={`cursor-pointer flex-1 py-3 text-center border-r border-[#D1CEBF] transition-colors font-semibold ${
-                    payMethod === 'card' ? 'bg-[#1A1A1A] text-[#A6A18F]' : 'bg-[#FAF7F2]/40 hover:bg-[#E5E3D8]/30'
+                    payMethod === 'card'
+                      ? 'bg-[#1A1A1A] text-[#A6A18F]'
+                      : 'bg-[#FAF7F2]/40 hover:bg-[#E5E3D8]/30'
                   }`}
                 >
                   Cards/Netbanking
@@ -453,7 +487,9 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                   type="button"
                   onClick={() => setPayMethod('cod')}
                   className={`cursor-pointer flex-1 py-3 text-center transition-colors font-semibold ${
-                    payMethod === 'cod' ? 'bg-[#1A1A1A] text-[#A6A18F]' : 'bg-[#FAF7F2]/40 hover:bg-[#E5E3D8]/30'
+                    payMethod === 'cod'
+                      ? 'bg-[#1A1A1A] text-[#A6A18F]'
+                      : 'bg-[#FAF7F2]/40 hover:bg-[#E5E3D8]/30'
                   }`}
                 >
                   Cash on Consecration
@@ -484,7 +520,8 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                         UPI: aurastone@paytm • Expiring in: {formatTimer(timeLeft)}
                       </div>
                       <p className="text-[9px] text-[#1A1A1A]/50">
-                        Once aligned, our portal auto-recognizes transactions instantaneously using direct block traces.
+                        Once aligned, our portal auto-recognizes transactions instantaneously using
+                        direct block traces.
                       </p>
                     </div>
                   </div>
@@ -493,7 +530,9 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                 {payMethod === 'card' && (
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-[9px] font-mono uppercase text-[#1A1A1A]/65 mb-1 font-semibold">Cardholder Name</label>
+                      <label className="block text-[9px] font-mono uppercase text-[#1A1A1A]/65 mb-1 font-semibold">
+                        Cardholder Name
+                      </label>
                       <input
                         type="text"
                         disabled
@@ -502,7 +541,9 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                       />
                     </div>
                     <div>
-                      <label className="block text-[9px] font-mono uppercase text-[#1A1A1A]/65 mb-1 font-semibold">Simulated Card digits</label>
+                      <label className="block text-[9px] font-mono uppercase text-[#1A1A1A]/65 mb-1 font-semibold">
+                        Simulated Card digits
+                      </label>
                       <input
                         type="text"
                         disabled
@@ -511,7 +552,8 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                       />
                     </div>
                     <span className="block text-[10px] font-mono text-[#1A1A1A]/50">
-                      * Note: This is an immersive simulated high-fashion storefront. Selecting this route bypasses live credentials safely while processing.
+                      * Note: This is an immersive simulated high-fashion storefront. Selecting this
+                      route bypasses live credentials safely while processing.
                     </span>
                   </div>
                 )}
@@ -519,9 +561,12 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                 {payMethod === 'cod' && (
                   <div className="text-center py-6 space-y-2">
                     <CheckCircle className="h-10 w-10 text-emerald-600 mx-auto" />
-                    <h4 className="font-serif text-base text-[#1A1A1A] font-semibold">Cash On Delivery Option Selected</h4>
+                    <h4 className="font-serif text-base text-[#1A1A1A] font-semibold">
+                      Cash On Delivery Option Selected
+                    </h4>
                     <p className="text-xs text-[#1A1A1A]/70 max-w-sm mx-auto leading-relaxed font-light">
-                      Your order will be assembled and dispatched safely. You may pay the delivery astrologer directly upon verified hand-to-hand sealing of the crystal casket.
+                      Your order will be assembled and dispatched safely. You may pay the delivery
+                      astrologer directly upon verified hand-to-hand sealing of the crystal casket.
                     </p>
                   </div>
                 )}
@@ -556,23 +601,34 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
 
               <div className="font-mono text-[10px] text-[#1A1A1A]/80 space-y-2 leading-relaxed select-all">
                 <div>
-                  <span className="text-[#1A1A1A]/60 uppercase block font-semibold text-[9px]">NAME:</span>
+                  <span className="text-[#1A1A1A]/60 uppercase block font-semibold text-[9px]">
+                    NAME:
+                  </span>
                   <span className="text-[#1A1A1A] font-semibold">{name || 'Guest'}</span>
                 </div>
                 <div>
-                  <span className="text-[#1A1A1A]/60 uppercase block font-semibold text-[9px]">COORDINATES / ADDR:</span>
-                  <span className="text-[#1A1A1A] font-semibold">{address || 'No Address Provided'}, {city || 'Mumbai'} - {pincode}</span>
+                  <span className="text-[#1A1A1A]/60 uppercase block font-semibold text-[9px]">
+                    COORDINATES / ADDR:
+                  </span>
+                  <span className="text-[#1A1A1A] font-semibold">
+                    {address || 'No Address Provided'}, {city || 'Mumbai'} - {pincode}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-[#1A1A1A]/60 uppercase block font-semibold text-[9px]">CONTACT:</span>
-                  <span className="text-[#1A1A1A] font-semibold">{phone} • {email}</span>
+                  <span className="text-[#1A1A1A]/60 uppercase block font-semibold text-[9px]">
+                    CONTACT:
+                  </span>
+                  <span className="text-[#1A1A1A] font-semibold">
+                    {phone} • {email}
+                  </span>
                 </div>
               </div>
 
               <div className="p-3.5 bg-white border border-[#D1CEBF] rounded-xl text-[10px] text-[#1A1A1A]/60 leading-normal flex gap-2">
                 <ShieldCheck className="h-5 w-5 text-[#A6A18F] shrink-0" />
                 <span>
-                  Our delivery vehicles utilize temperature and electromagnetic shielding filters to safeguard crystals from digital transit pollution.
+                  Our delivery vehicles utilize temperature and electromagnetic shielding filters to
+                  safeguard crystals from digital transit pollution.
                 </span>
               </div>
             </div>
@@ -597,7 +653,9 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                 Consecration Sequence Initiated
               </h3>
               <p className="text-xs text-[#1A1A1A]/70 max-w-lg leading-relaxed mx-auto font-light">
-                Solder finalized! Your order has been placed into the temple sanctum. Our astrologers will proceed to cleanse and energize the gemstone beads over the next 3 nights using your personal birth chart parameters.
+                Solder finalized! Your order has been placed into the temple sanctum. Our
+                astrologers will proceed to cleanse and energize the gemstone beads over the next 3
+                nights using your personal birth chart parameters.
               </p>
             </div>
 
@@ -621,7 +679,9 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
               {/* Core text detail */}
               <div className="space-y-4 text-xs leading-relaxed text-[#1A1A1A]/70 text-center max-w-md mx-auto">
                 <p className="font-light text-xs">
-                  This document solemnly verifies that the grade-A natural crystal mineral conductors listed below are undergoing the sacred <strong className="text-[#1A1A1A]">3-Night Consecration</strong>.
+                  This document solemnly verifies that the grade-A natural crystal mineral
+                  conductors listed below are undergoing the sacred{' '}
+                  <strong className="text-[#1A1A1A]">3-Night Consecration</strong>.
                 </p>
 
                 <div className="font-mono text-[11px] p-4 bg-white/70 border border-[#D1CEBF] rounded-xl space-y-2 text-left text-[#1A1A1A]/90">
@@ -631,7 +691,10 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#1A1A1A]/50">CRYSTALS UNDER RITUAL:</span>
-                    <strong className="text-[#1A1A1A] truncate max-w-[200px]" title={cartItems.map((c) => c.product.name).join(', ')}>
+                    <strong
+                      className="text-[#1A1A1A] truncate max-w-[200px]"
+                      title={cartItems.map((c) => c.product.name).join(', ')}
+                    >
                       {cartItems.map((c) => c.product.name).join(', ')}
                     </strong>
                   </div>
@@ -641,12 +704,15 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#1A1A1A]/50">REGISTRATION ID:</span>
-                    <strong className="text-emerald-800 select-all font-bold">ARS-{Math.floor(Math.random() * 900000 + 100000)}</strong>
+                    <strong className="text-emerald-800 select-all font-bold">
+                      ARS-{Math.floor(Math.random() * 900000 + 100000)}
+                    </strong>
                   </div>
                 </div>
 
                 <p className="text-[9.5px] italic text-[#1A1A1A]/55 font-light">
-                  "Crystals are the memories of direct cosmic creation, holding pristine frequencies that unlock human capabilities once attuned to natal birth grids."
+                  "Crystals are the memories of direct cosmic creation, holding pristine frequencies
+                  that unlock human capabilities once attuned to natal birth grids."
                 </p>
               </div>
 
@@ -703,7 +769,7 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
                 Return to Ethereal Workspace <ArrowLeft className="h-4 w-4" />
               </button>
             </div>
-            
+
             {/* Added a prompt for checking the new premium features we dialled up */}
             <div className="pt-4 max-w-sm mx-auto">
               <p className="text-[10px] text-[#1A1A1A]/40 font-mono uppercase tracking-wide">
@@ -719,9 +785,7 @@ export default function CheckoutView({ cartItems, onClearCart, onGoBack, onAddRe
             </div>
           </motion.div>
         )}
-
       </AnimatePresence>
-
     </div>
   );
 }

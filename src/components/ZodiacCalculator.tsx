@@ -3,27 +3,57 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { 
-  ZODIAC_DATA, PRODUCTS,
-  ZODIAC_ARIES_IMAGE, ZODIAC_TAURUS_IMAGE, ZODIAC_GEMINI_IMAGE, ZODIAC_CANCER_IMAGE,
-  ZODIAC_LEO_IMAGE, ZODIAC_VIRGO_IMAGE, ZODIAC_LIBRA_IMAGE, ZODIAC_SCORPIO_IMAGE,
-  ZODIAC_SAGITTARIUS_IMAGE, ZODIAC_CAPRICORN_IMAGE, ZODIAC_AQUARIUS_IMAGE, ZODIAC_PISCES_IMAGE
-} from '../data';
-import { Product, BirthDetails, NatalChart } from '../types';
-import { computeNatalChart } from '../lib/astro';
-import { PLANET_INTERPRETATIONS, ASCENDANT_INTERPRETATIONS } from '../lib/interpretations';
-import { BirthDetailsForm } from './astro/BirthDetailsForm';
-import { NatalChartWheel } from './astro/NatalChartWheel';
-import { PlanetTable } from './astro/PlanetTable';
-import { NakshatraBadge } from './astro/NakshatraBadge';
-import { TransitList } from './astro/TransitList';
-import { 
-  Sparkles, Calendar, User, Compass, TrendingUp, ShieldAlert, 
-  ArrowRight, Zap, RefreshCw, Star, Info, Sun, Moon, 
-  Flame, Wind, Droplet, Gem, ShieldCheck, Heart, Compass as OrbitIcon, LucideIcon 
+import {
+  Sparkles,
+  Calendar,
+  User,
+  Compass,
+  TrendingUp,
+  ShieldAlert,
+  ArrowRight,
+  Zap,
+  RefreshCw,
+  Star,
+  Info,
+  Sun,
+  Moon,
+  Flame,
+  Wind,
+  Droplet,
+  Gem,
+  ShieldCheck,
+  Heart,
+  Compass as OrbitIcon,
+  LucideIcon,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from 'react';
+
+import {
+  ZODIAC_DATA,
+  PRODUCTS,
+  ZODIAC_ARIES_IMAGE,
+  ZODIAC_TAURUS_IMAGE,
+  ZODIAC_GEMINI_IMAGE,
+  ZODIAC_CANCER_IMAGE,
+  ZODIAC_LEO_IMAGE,
+  ZODIAC_VIRGO_IMAGE,
+  ZODIAC_LIBRA_IMAGE,
+  ZODIAC_SCORPIO_IMAGE,
+  ZODIAC_SAGITTARIUS_IMAGE,
+  ZODIAC_CAPRICORN_IMAGE,
+  ZODIAC_AQUARIUS_IMAGE,
+  ZODIAC_PISCES_IMAGE,
+} from '../data';
+import { computeNatalChart } from '../lib/astro';
+import { PLANET_INTERPRETATIONS, ASCENDANT_INTERPRETATIONS } from '../lib/interpretations';
+import { Product, BirthDetails, NatalChart } from '../types';
+
+import { BirthDetailsForm } from './astro/BirthDetailsForm';
+import { NakshatraBadge } from './astro/NakshatraBadge';
+import { NatalChartWheel } from './astro/NatalChartWheel';
+import { PlanetTable } from './astro/PlanetTable';
+import { TransitList } from './astro/TransitList';
 
 interface ZodiacCalculatorProps {
   onViewProduct: (product: Product) => void;
@@ -31,7 +61,11 @@ interface ZodiacCalculatorProps {
   cartProducts: string[];
 }
 
-export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProducts }: ZodiacCalculatorProps) {
+export default function ZodiacCalculator({
+  onViewProduct,
+  onAddToCart,
+  cartProducts,
+}: ZodiacCalculatorProps) {
   const [birthDetails, setBirthDetails] = useState<BirthDetails>({ name: '', birthDate: '' });
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
   const [isAligning, setIsAligning] = useState(false);
@@ -40,27 +74,128 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
 
   // Exact coordinates matching zodiac signs for rotational math
   const signsList = [
-    { name: 'Aries', dateRange: 'Mar 21 - Apr 19', symbol: '♈', element: 'Fire', color: '#EF4444', angle: 0, image: ZODIAC_ARIES_IMAGE },
-    { name: 'Taurus', dateRange: 'Apr 20 - May 20', symbol: '♉', element: 'Earth', color: '#10B981', angle: 30, image: ZODIAC_TAURUS_IMAGE },
-    { name: 'Gemini', dateRange: 'May 21 - Jun 20', symbol: '♊', element: 'Air', color: '#3B82F6', angle: 60, image: ZODIAC_GEMINI_IMAGE },
-    { name: 'Cancer', dateRange: 'Jun 21 - Jul 22', symbol: '♋', element: 'Water', color: '#06B6D4', angle: 90, image: ZODIAC_CANCER_IMAGE },
-    { name: 'Leo', dateRange: 'Jul 23 - Aug 22', symbol: '♌', element: 'Fire', color: '#F59E0B', angle: 120, image: ZODIAC_LEO_IMAGE },
-    { name: 'Virgo', dateRange: 'Aug 23 - Sep 22', symbol: '♍', element: 'Earth', color: '#059669', angle: 150, image: ZODIAC_VIRGO_IMAGE },
-    { name: 'Libra', dateRange: 'Sep 23 - Oct 22', symbol: '♎', element: 'Air', color: '#60A5FA', angle: 180, image: ZODIAC_LIBRA_IMAGE },
-    { name: 'Scorpio', dateRange: 'Oct 23 - Nov 21', symbol: '♏', element: 'Water', color: '#6366F1', angle: 210, image: ZODIAC_SCORPIO_IMAGE },
-    { name: 'Sagittarius', dateRange: 'Nov 22 - Dec 21', symbol: '♐', element: 'Fire', color: '#D97706', angle: 240, image: ZODIAC_SAGITTARIUS_IMAGE },
-    { name: 'Capricorn', dateRange: 'Dec 22 - Jan 19', symbol: '♑', element: 'Earth', color: '#4B5563', angle: 270, image: ZODIAC_CAPRICORN_IMAGE },
-    { name: 'Aquarius', dateRange: 'Jan 20 - Feb 18', symbol: '♒', element: 'Air', color: '#2563EB', angle: 300, image: ZODIAC_AQUARIUS_IMAGE },
-    { name: 'Pisces', dateRange: 'Feb 19 - Mar 20', symbol: '♓', element: 'Water', color: '#0891B2', angle: 330, image: ZODIAC_PISCES_IMAGE }
+    {
+      name: 'Aries',
+      dateRange: 'Mar 21 - Apr 19',
+      symbol: '♈',
+      element: 'Fire',
+      color: '#EF4444',
+      angle: 0,
+      image: ZODIAC_ARIES_IMAGE,
+    },
+    {
+      name: 'Taurus',
+      dateRange: 'Apr 20 - May 20',
+      symbol: '♉',
+      element: 'Earth',
+      color: '#10B981',
+      angle: 30,
+      image: ZODIAC_TAURUS_IMAGE,
+    },
+    {
+      name: 'Gemini',
+      dateRange: 'May 21 - Jun 20',
+      symbol: '♊',
+      element: 'Air',
+      color: '#3B82F6',
+      angle: 60,
+      image: ZODIAC_GEMINI_IMAGE,
+    },
+    {
+      name: 'Cancer',
+      dateRange: 'Jun 21 - Jul 22',
+      symbol: '♋',
+      element: 'Water',
+      color: '#06B6D4',
+      angle: 90,
+      image: ZODIAC_CANCER_IMAGE,
+    },
+    {
+      name: 'Leo',
+      dateRange: 'Jul 23 - Aug 22',
+      symbol: '♌',
+      element: 'Fire',
+      color: '#F59E0B',
+      angle: 120,
+      image: ZODIAC_LEO_IMAGE,
+    },
+    {
+      name: 'Virgo',
+      dateRange: 'Aug 23 - Sep 22',
+      symbol: '♍',
+      element: 'Earth',
+      color: '#059669',
+      angle: 150,
+      image: ZODIAC_VIRGO_IMAGE,
+    },
+    {
+      name: 'Libra',
+      dateRange: 'Sep 23 - Oct 22',
+      symbol: '♎',
+      element: 'Air',
+      color: '#60A5FA',
+      angle: 180,
+      image: ZODIAC_LIBRA_IMAGE,
+    },
+    {
+      name: 'Scorpio',
+      dateRange: 'Oct 23 - Nov 21',
+      symbol: '♏',
+      element: 'Water',
+      color: '#6366F1',
+      angle: 210,
+      image: ZODIAC_SCORPIO_IMAGE,
+    },
+    {
+      name: 'Sagittarius',
+      dateRange: 'Nov 22 - Dec 21',
+      symbol: '♐',
+      element: 'Fire',
+      color: '#D97706',
+      angle: 240,
+      image: ZODIAC_SAGITTARIUS_IMAGE,
+    },
+    {
+      name: 'Capricorn',
+      dateRange: 'Dec 22 - Jan 19',
+      symbol: '♑',
+      element: 'Earth',
+      color: '#4B5563',
+      angle: 270,
+      image: ZODIAC_CAPRICORN_IMAGE,
+    },
+    {
+      name: 'Aquarius',
+      dateRange: 'Jan 20 - Feb 18',
+      symbol: '♒',
+      element: 'Air',
+      color: '#2563EB',
+      angle: 300,
+      image: ZODIAC_AQUARIUS_IMAGE,
+    },
+    {
+      name: 'Pisces',
+      dateRange: 'Feb 19 - Mar 20',
+      symbol: '♓',
+      element: 'Water',
+      color: '#0891B2',
+      angle: 330,
+      image: ZODIAC_PISCES_IMAGE,
+    },
   ];
 
   const getElementIcon = (element: string): LucideIcon => {
     switch (element.toLowerCase()) {
-      case 'fire': return Flame;
-      case 'air': return Wind;
-      case 'water': return Droplet;
-      case 'earth': return Gem;
-      default: return Compass;
+      case 'fire':
+        return Flame;
+      case 'air':
+        return Wind;
+      case 'water':
+        return Droplet;
+      case 'earth':
+        return Gem;
+      default:
+        return Compass;
     }
   };
 
@@ -86,7 +221,7 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
     setIsAligning(true);
     setShowResult(false);
     setNatalChart(null);
-    
+
     setTimeout(() => {
       const dateParts = birthDetails.birthDate.split('-');
       const month = dateParts[1] || '01';
@@ -130,8 +265,10 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
   const currentRotationAngle = activeSignMeta ? -activeSignMeta.angle : 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-20 font-sans" id="zodiac-portal-section">
-      
+    <div
+      className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-20 font-sans"
+      id="zodiac-portal-section"
+    >
       {/* Immersive Luxury Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4 mb-20 relative">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C5A880]/10 border border-[#C5A880]/20 mb-2">
@@ -145,35 +282,32 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
         </h2>
         <div className="h-px w-20 bg-gradient-to-r from-transparent via-[#C5A880] to-transparent mx-auto my-3" />
         <p className="text-sm text-[#1A1A1A]/70 leading-relaxed font-light max-w-2xl mx-auto">
-          Every individual’s birth moment establishes distinct micro-electromagnetic vectors. Discover which minerals physically harmonize with your ruling planets and bridge energetic deficiencies.
+          Every individual’s birth moment establishes distinct micro-electromagnetic vectors.
+          Discover which minerals physically harmonize with your ruling planets and bridge energetic
+          deficiencies.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-        
         {/* Left Side: Celestial Coordinates & Sign Selectors */}
         <div className="lg:col-span-5 space-y-8" id="celestial-inputs-column">
-          
           {/* Beautiful Vedic Coordinate Intake Card */}
           <div className="bg-[#FAF8F5] border border-[#E5E0D5] hover:border-[#C5A880]/50 rounded-2xl p-6 md:p-8 shadow-sm transition-all relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(#C5A880_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none" />
-            
+
             <h3 className="font-serif text-xl text-[#1A1A1A] mb-6 flex items-center gap-3">
               <span className="p-2 bg-[#C5A880]/10 rounded-xl text-[#C5A880]">
                 <Compass className="h-5 w-5 animate-spin-slow" />
               </span>
               Enter Natal Coordinates
             </h3>
-            
+
             <form onSubmit={handleCalculate} className="space-y-5">
-              <BirthDetailsForm
-                value={birthDetails}
-                onChange={setBirthDetails}
-                showName={true}
-              />
+              <BirthDetailsForm value={birthDetails} onChange={setBirthDetails} showName={true} />
 
               <p className="text-[10px] text-[#857F75] italic text-center">
-                Add birth time and place for a complete natal chart (ascendant, moon sign, nakshatra, transits).
+                Add birth time and place for a complete natal chart (ascendant, moon sign,
+                nakshatra, transits).
               </p>
 
               <button
@@ -206,7 +340,7 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
               </span>
               <span className="text-[9px] font-mono text-[#C5A880]">12 Vedic Constellations</span>
             </div>
-            
+
             <div className="grid grid-cols-4 gap-2.5">
               {signsList.map((sign) => {
                 const isSelected = selectedSign === sign.name;
@@ -229,12 +363,14 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                         <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#C5A880]"></span>
                       </span>
                     )}
-                    
-                    <div className={`relative h-11 w-11 rounded-full mb-1.5 overflow-hidden border ${
-                      isSelected 
-                        ? 'border-[#C5A880] bg-[#1E1A16] shadow-[0_0_8px_rgba(197,168,128,0.4)] scale-110' 
-                        : 'border-[#E5E0D5] bg-[#1A1A1A] group-hover:border-[#C5A880]/60 group-hover:scale-105'
-                    } transition-all duration-300`}>
+
+                    <div
+                      className={`relative h-11 w-11 rounded-full mb-1.5 overflow-hidden border ${
+                        isSelected
+                          ? 'border-[#C5A880] bg-[#1E1A16] shadow-[0_0_8px_rgba(197,168,128,0.4)] scale-110'
+                          : 'border-[#E5E0D5] bg-[#1A1A1A] group-hover:border-[#C5A880]/60 group-hover:scale-105'
+                      } transition-all duration-300`}
+                    >
                       <img
                         src={sign.image}
                         alt={`${sign.name} symbol`}
@@ -242,20 +378,22 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                         className="h-full w-full object-cover"
                       />
                     </div>
-                    <span className="text-[9px] font-mono tracking-wider uppercase font-semibold">{sign.name}</span>
-                    <span className="text-[7px] text-[#A6A18F]/80 font-medium scale-[0.9] mt-0.5">{sign.dateRange.split(' - ')[0]}</span>
+                    <span className="text-[9px] font-mono tracking-wider uppercase font-semibold">
+                      {sign.name}
+                    </span>
+                    <span className="text-[7px] text-[#A6A18F]/80 font-medium scale-[0.9] mt-0.5">
+                      {sign.dateRange.split(' - ')[0]}
+                    </span>
                   </button>
                 );
               })}
             </div>
           </div>
-
         </div>
 
         {/* Right Side: Astro Diagnostics Space & Radial Wheel */}
         <div className="lg:col-span-7" id="diagnostic-dashboard-column">
           <AnimatePresence mode="wait">
-            
             {/* 1. CALCULATING INTENSE VEDIC TRANSITS SCREEN */}
             {isAligning && (
               <motion.div
@@ -268,7 +406,7 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
               >
                 {/* Backdrop starlight nodes */}
                 <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
-                
+
                 {/* Rotating Astronomical Ring Setup */}
                 <div className="relative h-44 w-44 flex items-center justify-center">
                   {/* Outer spinning astrolabe */}
@@ -312,7 +450,7 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                   <div className="absolute inset-4 rounded-full border border-[#E5E0D5]/50 border-dashed" />
                   <div className="absolute inset-12 rounded-full border border-[#C5A880]/20 animate-spin-slow" />
                   <div className="absolute inset-24 rounded-full border border-[#E5E0D5]/60" />
-                  
+
                   {/* Subtle radiating grid layout representing stellar houses */}
                   {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => (
                     <div
@@ -337,7 +475,9 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                     Personalized Alignment Matrix
                   </h4>
                   <p className="text-xs text-[#5E5950] max-w-sm mx-auto leading-relaxed">
-                    Please submit your coordinates above or click a zodiac medallion. Our system will generate a beautiful custom astral aspect map, planetary energy scores, and your consecrated crystal jewelry prescriptions.
+                    Please submit your coordinates above or click a zodiac medallion. Our system
+                    will generate a beautiful custom astral aspect map, planetary energy scores, and
+                    your consecrated crystal jewelry prescriptions.
                   </p>
                 </div>
               </motion.div>
@@ -383,7 +523,9 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                   {/* Planet & Element Pills with bespoke icons */}
                   <div className="flex flex-wrap gap-2">
                     <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1C1A18] border border-[#C5A880]/30 text-[#C5A880] text-[10px] font-mono tracking-widest uppercase">
-                      {React.createElement(getElementIcon(activeSignData.element), { className: 'h-3 w-3 text-[#C5A880]' })}
+                      {React.createElement(getElementIcon(activeSignData.element), {
+                        className: 'h-3 w-3 text-[#C5A880]',
+                      })}
                       Element: {activeSignData.element}
                     </div>
                     <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1C1A18] border border-[#FAF8F5]/10 text-white text-[10px] font-mono tracking-widest uppercase">
@@ -394,21 +536,30 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                 </div>
 
                 {/* Dynamic Planetary Energy Balance Chart */}
-                <div className="space-y-4" id="planetary-harmonic-meters bg-[#1C1A18]/50 p-6 rounded-2xl border border-white/5">
+                <div
+                  className="space-y-4"
+                  id="planetary-harmonic-meters bg-[#1C1A18]/50 p-6 rounded-2xl border border-white/5"
+                >
                   <div className="flex items-center justify-between">
                     <h5 className="text-[10px] font-mono uppercase tracking-widest text-[#C5A880] flex items-center gap-1.5 font-bold">
                       <Star className="h-3.5 w-3.5 text-[#C5A880] animate-pulse" />
                       Planetary Harmonic balance Index
                     </h5>
-                    <span className="text-[9px] font-mono text-[#FAF8F5]/50">Microspectral Energy Resonance</span>
+                    <span className="text-[9px] font-mono text-[#FAF8F5]/50">
+                      Microspectral Energy Resonance
+                    </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Index Item: Wealth */}
                     <div className="bg-[#1C1A18] p-4 rounded-xl border border-white/5 space-y-1.5 hover:border-[#C5A880]/20 transition-all">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs font-mono text-[#FAF8F5]/80">Wealth Manifestation (L1)</span>
-                        <span className="text-xs font-mono text-[#C5A880] font-bold">{activeSignData.energyScore.wealth}%</span>
+                        <span className="text-xs font-mono text-[#FAF8F5]/80">
+                          Wealth Manifestation (L1)
+                        </span>
+                        <span className="text-xs font-mono text-[#C5A880] font-bold">
+                          {activeSignData.energyScore.wealth}%
+                        </span>
                       </div>
                       <div className="h-1.5 bg-[#FAF8F5]/10 rounded-full overflow-hidden relative">
                         <motion.div
@@ -420,15 +571,23 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                       </div>
                       <div className="flex justify-between text-[8px] font-mono text-[#A6A18F]/50">
                         <span>Defined Static Node</span>
-                        <span>{activeSignData.energyScore.wealth > 90 ? 'Highly Receptive' : 'Optimal Path'}</span>
+                        <span>
+                          {activeSignData.energyScore.wealth > 90
+                            ? 'Highly Receptive'
+                            : 'Optimal Path'}
+                        </span>
                       </div>
                     </div>
 
                     {/* Index Item: Protection */}
                     <div className="bg-[#1C1A18] p-4 rounded-xl border border-white/5 space-y-1.5 hover:border-[#C5A880]/20 transition-all">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs font-mono text-[#FAF8F5]/80">Aura Protection Index</span>
-                        <span className="text-xs font-mono text-[#C5A880] font-bold">{activeSignData.energyScore.protection}%</span>
+                        <span className="text-xs font-mono text-[#FAF8F5]/80">
+                          Aura Protection Index
+                        </span>
+                        <span className="text-xs font-mono text-[#C5A880] font-bold">
+                          {activeSignData.energyScore.protection}%
+                        </span>
                       </div>
                       <div className="h-1.5 bg-[#FAF8F5]/10 rounded-full overflow-hidden relative">
                         <motion.div
@@ -440,15 +599,23 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                       </div>
                       <div className="flex justify-between text-[8px] font-mono text-[#A6A18F]/50">
                         <span>Environmental Deflection</span>
-                        <span>{activeSignData.energyScore.protection > 90 ? 'Heavy Armor' : 'Secured Core'}</span>
+                        <span>
+                          {activeSignData.energyScore.protection > 90
+                            ? 'Heavy Armor'
+                            : 'Secured Core'}
+                        </span>
                       </div>
                     </div>
 
                     {/* Index Item: Career */}
                     <div className="bg-[#1C1A18] p-4 rounded-xl border border-white/5 space-y-1.5 hover:border-[#C5A880]/20 transition-all">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs font-mono text-[#FAF8F5]/80">Career Status and Fame Node</span>
-                        <span className="text-xs font-mono text-[#C5A880] font-bold">{activeSignData.energyScore.career}%</span>
+                        <span className="text-xs font-mono text-[#FAF8F5]/80">
+                          Career Status and Fame Node
+                        </span>
+                        <span className="text-xs font-mono text-[#C5A880] font-bold">
+                          {activeSignData.energyScore.career}%
+                        </span>
                       </div>
                       <div className="h-1.5 bg-[#FAF8F5]/10 rounded-full overflow-hidden relative">
                         <motion.div
@@ -460,15 +627,23 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                       </div>
                       <div className="flex justify-between text-[8px] font-mono text-[#A6A18F]/50">
                         <span>Solar-House Transit</span>
-                        <span>{activeSignData.energyScore.career > 90 ? 'Extreme Authority' : 'Ascending Phase'}</span>
+                        <span>
+                          {activeSignData.energyScore.career > 90
+                            ? 'Extreme Authority'
+                            : 'Ascending Phase'}
+                        </span>
                       </div>
                     </div>
 
                     {/* Index Item: Clarity */}
                     <div className="bg-[#1C1A18] p-4 rounded-xl border border-white/5 space-y-1.5 hover:border-[#C5A880]/20 transition-all">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs font-mono text-[#FAF8F5]/80">Prana / Emotional Balance</span>
-                        <span className="text-xs font-mono text-[#C5A880] font-bold">{activeSignData.energyScore.clarity}%</span>
+                        <span className="text-xs font-mono text-[#FAF8F5]/80">
+                          Prana / Emotional Balance
+                        </span>
+                        <span className="text-xs font-mono text-[#C5A880] font-bold">
+                          {activeSignData.energyScore.clarity}%
+                        </span>
                       </div>
                       <div className="h-1.5 bg-[#FAF8F5]/10 rounded-full overflow-hidden relative">
                         <motion.div
@@ -480,7 +655,11 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                       </div>
                       <div className="flex justify-between text-[8px] font-mono text-[#A6A18F]/50">
                         <span>Neurological Meridian</span>
-                        <span>{activeSignData.energyScore.clarity > 90 ? 'Deep Peace' : 'Balanced Center'}</span>
+                        <span>
+                          {activeSignData.energyScore.clarity > 90
+                            ? 'Deep Peace'
+                            : 'Balanced Center'}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -521,7 +700,9 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                         </span>
                         <div className="h-px bg-gradient-to-r from-[#C5A880]/20 to-transparent mb-1" />
                         <div className="flex items-center gap-3 mb-1.5">
-                          <span className="text-2xl font-serif text-[#FAF8F5]">{natalChart.moon.sign}</span>
+                          <span className="text-2xl font-serif text-[#FAF8F5]">
+                            {natalChart.moon.sign}
+                          </span>
                           <span className="text-xs font-mono text-[#A6A18F]">
                             {natalChart.moon.degree.toFixed(1)}°
                           </span>
@@ -532,16 +713,25 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                           )}
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono text-[#A6A18F]">House {natalChart.moon.house}</span>
+                          <span className="text-[10px] font-mono text-[#A6A18F]">
+                            House {natalChart.moon.house}
+                          </span>
                           <span className="text-[#A6A18F]/30">•</span>
-                          <NakshatraBadge nakshatra={natalChart.nakshatra.name} symbol={natalChart.nakshatra.symbol} />
+                          <NakshatraBadge
+                            nakshatra={natalChart.nakshatra.name}
+                            symbol={natalChart.nakshatra.symbol}
+                          />
                         </div>
                         <p className="text-xs text-[#FAF8F5]/85 leading-relaxed font-light mt-2">
-                          {PLANET_INTERPRETATIONS.Moon?.[natalChart.moon.sign] || `Moon in ${natalChart.moon.sign} with ${natalChart.nakshatra.name} nakshatra.`}
+                          {PLANET_INTERPRETATIONS.Moon?.[natalChart.moon.sign] ||
+                            `Moon in ${natalChart.moon.sign} with ${natalChart.nakshatra.name} nakshatra.`}
                         </p>
                         {natalChart.nakshatra.interpretation && (
                           <p className="text-[11px] text-[#FAF8F5]/65 leading-relaxed font-light italic mt-1.5 pt-1.5 border-t border-white/5">
-                            <span className="text-[#C5A880] not-italic font-bold">{natalChart.nakshatra.name}</span> — {natalChart.nakshatra.interpretation}
+                            <span className="text-[#C5A880] not-italic font-bold">
+                              {natalChart.nakshatra.name}
+                            </span>{' '}
+                            — {natalChart.nakshatra.interpretation}
                           </p>
                         )}
                       </div>
@@ -553,13 +743,16 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                         </span>
                         <div className="h-px bg-gradient-to-r from-[#C5A880]/20 to-transparent mb-1" />
                         <div className="flex items-center gap-3 mb-1.5">
-                          <span className="text-2xl font-serif text-[#FAF8F5]">{natalChart.ascendant.sign}</span>
+                          <span className="text-2xl font-serif text-[#FAF8F5]">
+                            {natalChart.ascendant.sign}
+                          </span>
                           <span className="text-xs font-mono text-[#A6A18F]">
                             {natalChart.ascendant.degree.toFixed(1)}°
                           </span>
                         </div>
                         <p className="text-xs text-[#FAF8F5]/85 leading-relaxed font-light mt-2">
-                          {ASCENDANT_INTERPRETATIONS[natalChart.ascendant.sign] || 'Your outward persona and first impression. The Ascendant shapes how others perceive you and how you navigate the world.'}
+                          {ASCENDANT_INTERPRETATIONS[natalChart.ascendant.sign] ||
+                            'Your outward persona and first impression. The Ascendant shapes how others perceive you and how you navigate the world.'}
                         </p>
                       </div>
                     </div>
@@ -572,7 +765,10 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                 )}
 
                 {/* Lucky Pillars block */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-2" id="lucky-pillars-section">
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-2"
+                  id="lucky-pillars-section"
+                >
                   {/* Lucky Colors Pill container */}
                   <div className="bg-[#1C1A18] p-4 rounded-xl border border-white/5 flex flex-col justify-between">
                     <span className="text-[10px] font-mono text-[#A6A18F] uppercase tracking-wider block mb-2">
@@ -581,29 +777,64 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                     <div className="flex gap-3">
                       {activeSignData.luckyColors.map((colorName, idx) => (
                         <div key={idx} className="flex items-center gap-1.5">
-                          <span 
+                          <span
                             className="h-3 w-3 rounded-full border border-white/20 shadow-inner"
-                            style={{ 
-                              backgroundColor: colorName.toLowerCase().includes('gold') ? '#D97706' :
-                                               colorName.toLowerCase().includes('red') ? '#DC2626' :
-                                               colorName.toLowerCase().includes('emerald') ? '#059669' :
-                                               colorName.toLowerCase().includes('champagne') ? '#F3E5AB' :
-                                               colorName.toLowerCase().includes('citron') ? '#EAB308' :
-                                               colorName.toLowerCase().includes('mint') ? '#10B981' :
-                                               colorName.toLowerCase().includes('pearl') ? '#E2E8F0' :
-                                               colorName.toLowerCase().includes('silver') ? '#94A3B8' :
-                                               colorName.toLowerCase().includes('blue') ? '#2563EB' :
-                                               colorName.toLowerCase().includes('orange') ? '#F97316' :
-                                               colorName.toLowerCase().includes('bronze') ? '#CD7F32' :
-                                               colorName.toLowerCase().includes('slate') ? '#475569' :
-                                               colorName.toLowerCase().includes('pink') ? '#EC4899' :
-                                               colorName.toLowerCase().includes('crimson') ? '#991B1B' :
-                                               colorName.toLowerCase().includes('black') ? '#09090B' :
-                                               colorName.toLowerCase().includes('plum') ? '#581C87' :
-                                               colorName.toLowerCase().includes('saffron') ? '#F97316' :
-                                               colorName.toLowerCase().includes('indigo') ? '#4338CA' :
-                                               colorName.toLowerCase().includes('yellow') ? '#EAB308' :
-                                               colorName.toLowerCase().includes('charcoal') ? '#334155' : '#C5A880' 
+                            style={{
+                              backgroundColor: colorName.toLowerCase().includes('gold')
+                                ? '#D97706'
+                                : colorName.toLowerCase().includes('red')
+                                  ? '#DC2626'
+                                  : colorName.toLowerCase().includes('emerald')
+                                    ? '#059669'
+                                    : colorName.toLowerCase().includes('champagne')
+                                      ? '#F3E5AB'
+                                      : colorName.toLowerCase().includes('citron')
+                                        ? '#EAB308'
+                                        : colorName.toLowerCase().includes('mint')
+                                          ? '#10B981'
+                                          : colorName.toLowerCase().includes('pearl')
+                                            ? '#E2E8F0'
+                                            : colorName.toLowerCase().includes('silver')
+                                              ? '#94A3B8'
+                                              : colorName.toLowerCase().includes('blue')
+                                                ? '#2563EB'
+                                                : colorName.toLowerCase().includes('orange')
+                                                  ? '#F97316'
+                                                  : colorName.toLowerCase().includes('bronze')
+                                                    ? '#CD7F32'
+                                                    : colorName.toLowerCase().includes('slate')
+                                                      ? '#475569'
+                                                      : colorName.toLowerCase().includes('pink')
+                                                        ? '#EC4899'
+                                                        : colorName
+                                                              .toLowerCase()
+                                                              .includes('crimson')
+                                                          ? '#991B1B'
+                                                          : colorName
+                                                                .toLowerCase()
+                                                                .includes('black')
+                                                            ? '#09090B'
+                                                            : colorName
+                                                                  .toLowerCase()
+                                                                  .includes('plum')
+                                                              ? '#581C87'
+                                                              : colorName
+                                                                    .toLowerCase()
+                                                                    .includes('saffron')
+                                                                ? '#F97316'
+                                                                : colorName
+                                                                      .toLowerCase()
+                                                                      .includes('indigo')
+                                                                  ? '#4338CA'
+                                                                  : colorName
+                                                                        .toLowerCase()
+                                                                        .includes('yellow')
+                                                                    ? '#EAB308'
+                                                                    : colorName
+                                                                          .toLowerCase()
+                                                                          .includes('charcoal')
+                                                                      ? '#334155'
+                                                                      : '#C5A880',
                             }}
                           />
                           <span className="text-xs font-light text-[#FAF8F5]/90">{colorName}</span>
@@ -619,8 +850,8 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                     </span>
                     <div className="flex gap-2">
                       {activeSignData.luckyNumbers.map((num) => (
-                        <span 
-                          key={num} 
+                        <span
+                          key={num}
                           className="h-6 px-2.5 rounded border border-[#C5A880]/30 text-xs font-mono text-[#C5A880] flex items-center justify-center font-bold bg-[#FAF8F5]/5 shadow-sm"
                         >
                           {num}
@@ -631,7 +862,10 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                 </div>
 
                 {/* Strengths & Weaknesses Detailed Vedic Chart */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6" id="psychic-vibrations-analysis">
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                  id="psychic-vibrations-analysis"
+                >
                   {/* High Vibrants */}
                   <div className="bg-[#1C1A18] p-5 rounded-xl border border-white/5 space-y-3">
                     <span className="text-[10px] font-mono uppercase tracking-widest text-[#10B981] flex items-center gap-1.5 font-bold">
@@ -640,8 +874,11 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                     <div className="h-px bg-gradient-to-r from-[#10B981]/20 to-transparent mb-1" />
                     <ul className="space-y-2 text-xs text-[#FAF8F5]/85">
                       {activeSignData.strengths.map((str, idx) => (
-                        <li key={idx} className="flex items-center gap-2 font-light hover:text-[#10B981] transition-all">
-                          <span className="text-[#10B981] text-md leading-none">•</span> 
+                        <li
+                          key={idx}
+                          className="flex items-center gap-2 font-light hover:text-[#10B981] transition-all"
+                        >
+                          <span className="text-[#10B981] text-md leading-none">•</span>
                           <span>{str}</span>
                         </li>
                       ))}
@@ -656,8 +893,11 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                     <div className="h-px bg-gradient-to-r from-[#EF4444]/20 to-transparent mb-1" />
                     <ul className="space-y-2 text-xs text-[#FAF8F5]/85">
                       {activeSignData.challenges.map((cha, idx) => (
-                        <li key={idx} className="flex items-center gap-2 font-light hover:text-[#EF4444] transition-all">
-                          <span className="text-[#EF4444] text-md leading-none">•</span> 
+                        <li
+                          key={idx}
+                          className="flex items-center gap-2 font-light hover:text-[#EF4444] transition-all"
+                        >
+                          <span className="text-[#EF4444] text-md leading-none">•</span>
                           <span>{cha}</span>
                         </li>
                       ))}
@@ -678,7 +918,10 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                 </div>
 
                 {/* Recommended Products Vedic Showcase */}
-                <div className="space-y-4 pt-6 border-t border-[#FAF8F5]/10" id="prescribed-artifacts-shop">
+                <div
+                  className="space-y-4 pt-6 border-t border-[#FAF8F5]/10"
+                  id="prescribed-artifacts-shop"
+                >
                   <div className="flex items-center justify-between">
                     <h6 className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#A6A18F] font-bold">
                       Resonant Vedic Jewelry Consecrations:
@@ -687,7 +930,7 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                       100% Aura Coherent
                     </span>
                   </div>
-                  
+
                   <div className="space-y-3">
                     {recommendedProducts.map((prod) => (
                       <div
@@ -695,8 +938,8 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                         key={prod.id}
                         className="bg-[#1C1A18] hover:bg-white/5 border border-white/5 hover:border-[#C5A880]/30 p-4 rounded-xl flex items-center justify-between gap-4 transition-all duration-300 group shadow-sm hover:shadow-md"
                       >
-                        <div 
-                          className="flex items-center gap-4 cursor-pointer" 
+                        <div
+                          className="flex items-center gap-4 cursor-pointer"
                           onClick={() => onViewProduct(prod)}
                         >
                           <div className="relative h-12 w-12 rounded-lg overflow-hidden border border-[#C5A880]/20 flex-shrink-0 group-hover:border-[#C5A880] transition-colors">
@@ -733,15 +976,11 @@ export default function ZodiacCalculator({ onViewProduct, onAddToCart, cartProdu
                     ))}
                   </div>
                 </div>
-
               </motion.div>
             )}
-
           </AnimatePresence>
         </div>
-
       </div>
-
     </div>
   );
 }

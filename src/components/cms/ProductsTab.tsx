@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
 import { Plus, Trash2, Box, Compass } from 'lucide-react';
-import { DEFAULT_PRODUCT_FORM } from './seedData';
-import { ImageUpload } from './ImageUpload';
+import React, { useState } from 'react';
+
 import { ConfirmDialog } from './ConfirmDialog';
+import { ImageUpload } from './ImageUpload';
 import { RichTextEditor } from './RichTextEditor';
+import { DEFAULT_PRODUCT_FORM } from './seedData';
 import type { ProductForm } from './types';
-import type { CmsState } from './useCmsState';
 import type { CmsHandlers } from './useCmsHandlers';
+import type { CmsState } from './useCmsState';
 
 interface Props {
   state: CmsState;
@@ -19,7 +20,7 @@ function newProductForm(): ProductForm {
   return {
     ...DEFAULT_PRODUCT_FORM,
     id: `prod-${Date.now()}`,
-    specifications: { ...DEFAULT_PRODUCT_FORM.specifications }
+    specifications: { ...DEFAULT_PRODUCT_FORM.specifications },
   };
 }
 
@@ -29,8 +30,10 @@ function fromExisting(p: any): ProductForm {
     ...p,
     benefits: Array.isArray(p.benefits) ? p.benefits.join('\n') : p.benefits || '',
     crystalsUsed: Array.isArray(p.crystalsUsed) ? p.crystalsUsed.join(', ') : p.crystalsUsed || '',
-    zodiacConnection: Array.isArray(p.zodiacConnection) ? p.zodiacConnection.join(', ') : p.zodiacConnection || '',
-    specifications: p.specifications || { ...DEFAULT_PRODUCT_FORM.specifications }
+    zodiacConnection: Array.isArray(p.zodiacConnection)
+      ? p.zodiacConnection.join(', ')
+      : p.zodiacConnection || '',
+    specifications: p.specifications || { ...DEFAULT_PRODUCT_FORM.specifications },
   };
 }
 
@@ -69,7 +72,9 @@ export function ProductsTab({ state, handlers }: Props) {
     <div className="space-y-6 animate-fadeIn font-sans select-text pb-20">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-stone/50 pb-5">
         <div>
-          <span className="text-[10px] font-mono tracking-widest uppercase text-[#C5A880] font-bold">COMMERCE GRID INVENTORY</span>
+          <span className="text-[10px] font-mono tracking-widest uppercase text-[#C5A880] font-bold">
+            COMMERCE GRID INVENTORY
+          </span>
           <h2 className="font-serif text-2xl font-light text-ink">Crystalline Jewelry Catalog</h2>
         </div>
         <button
@@ -106,7 +111,9 @@ export function ProductsTab({ state, handlers }: Props) {
                     />
                     <div className="space-y-1 min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-1.5">
-                        <strong className="text-xs font-serif font-semibold block truncate leading-tight">{prod.name}</strong>
+                        <strong className="text-xs font-serif font-semibold block truncate leading-tight">
+                          {prod.name}
+                        </strong>
                         <span className="text-[9px] font-mono px-2 py-0.5 rounded-full uppercase bg-[#C5A880]/15 text-[#C5A880] shrink-0 font-bold">
                           {prod.category}
                         </span>
@@ -116,8 +123,11 @@ export function ProductsTab({ state, handlers }: Props) {
                           Sale: <span className="font-bold text-gold">₹{prod.salePrice}</span>
                         </span>
                         <span className="text-gray-400">|</span>
-                        <span className={editing?.id === prod.id ? 'text-gray-400' : 'text-gray-500'}>
-                          Stock: <span className="font-bold underline uppercase">{prod.stockStatus}</span>
+                        <span
+                          className={editing?.id === prod.id ? 'text-gray-400' : 'text-gray-500'}
+                        >
+                          Stock:{' '}
+                          <span className="font-bold underline uppercase">{prod.stockStatus}</span>
                         </span>
                       </div>
                       {prod.videoUrl && (
@@ -156,7 +166,10 @@ export function ProductsTab({ state, handlers }: Props) {
 
         <div className="lg:col-span-7">
           {adding || editing ? (
-            <form onSubmit={onSubmit} className="bg-white border-2 border-stone p-6 rounded-3xl shadow-md space-y-6">
+            <form
+              onSubmit={onSubmit}
+              className="bg-white border-2 border-stone p-6 rounded-3xl shadow-md space-y-6"
+            >
               <div className="border-b border-gray-100 pb-4 flex justify-between items-center">
                 <h3 className="font-serif text-lg font-semibold text-ink">
                   {adding ? 'Publish Fresh Creation' : `Modify "${editing?.name}"`}
@@ -172,7 +185,9 @@ export function ProductsTab({ state, handlers }: Props) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-sans text-xs">
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Dynamic Product Name *</label>
+                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                    Dynamic Product Name *
+                  </label>
                   <input
                     type="text"
                     required
@@ -183,13 +198,17 @@ export function ProductsTab({ state, handlers }: Props) {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Catalog SKU *</label>
+                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                    Catalog SKU *
+                  </label>
                   <input
                     type="text"
                     required
                     disabled={!!editing}
                     value={form.id}
-                    onChange={(e) => setForm({ ...form, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
+                    onChange={(e) =>
+                      setForm({ ...form, id: e.target.value.toLowerCase().replace(/\s/g, '-') })
+                    }
                     placeholder="e.g. mercury-abundance-talisman"
                     className="w-full bg-cream/50 disabled:opacity-75 border border-stone p-2.5 rounded-xl font-medium font-mono outline-none focus:border-black"
                   />
@@ -198,7 +217,9 @@ export function ProductsTab({ state, handlers }: Props) {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-sans text-xs">
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Sale Price (₹) *</label>
+                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                    Sale Price (₹) *
+                  </label>
                   <input
                     type="number"
                     required
@@ -208,7 +229,9 @@ export function ProductsTab({ state, handlers }: Props) {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Original Price (₹) *</label>
+                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                    Original Price (₹) *
+                  </label>
                   <input
                     type="number"
                     required
@@ -218,10 +241,14 @@ export function ProductsTab({ state, handlers }: Props) {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Category *</label>
+                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                    Category *
+                  </label>
                   <select
                     value={form.category}
-                    onChange={(e) => setForm({ ...form, category: e.target.value as ProductForm['category'] })}
+                    onChange={(e) =>
+                      setForm({ ...form, category: e.target.value as ProductForm['category'] })
+                    }
                     className="w-full bg-cream border border-stone p-2.5 rounded-xl font-medium font-mono outline-none focus:border-black"
                   >
                     <option value="bracelet">Planetary Bracelet</option>
@@ -233,10 +260,17 @@ export function ProductsTab({ state, handlers }: Props) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-sans text-xs">
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Stock *</label>
+                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                    Stock *
+                  </label>
                   <select
                     value={form.stockStatus}
-                    onChange={(e) => setForm({ ...form, stockStatus: e.target.value as ProductForm['stockStatus'] })}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        stockStatus: e.target.value as ProductForm['stockStatus'],
+                      })
+                    }
                     className="w-full bg-cream border border-stone p-2.5 rounded-xl font-medium outline-none"
                   >
                     <option value="in-stock">IN STOCK</option>
@@ -246,7 +280,9 @@ export function ProductsTab({ state, handlers }: Props) {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Bestseller? *</label>
+                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                    Bestseller? *
+                  </label>
                   <select
                     value={form.isBestSeller ? 'true' : 'false'}
                     onChange={(e) => setForm({ ...form, isBestSeller: e.target.value === 'true' })}
@@ -259,7 +295,9 @@ export function ProductsTab({ state, handlers }: Props) {
               </div>
 
               <div className="space-y-1 font-sans text-xs">
-                <label className="block text-clay font-mono text-[10px] uppercase font-bold">Short Promo Copy</label>
+                <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                  Short Promo Copy
+                </label>
                 <input
                   type="text"
                   value={form.shortDescription || ''}
@@ -269,7 +307,9 @@ export function ProductsTab({ state, handlers }: Props) {
               </div>
 
               <div className="space-y-1 font-sans text-xs">
-                <label className="block text-clay font-mono text-[10px] uppercase font-bold">Full Description *</label>
+                <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                  Full Description *
+                </label>
                 <RichTextEditor
                   value={form.description}
                   onChange={(html) => setForm({ ...form, description: html })}
@@ -288,7 +328,9 @@ export function ProductsTab({ state, handlers }: Props) {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Video URL</label>
+                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                    Video URL
+                  </label>
                   <input
                     type="text"
                     value={form.videoUrl || ''}
@@ -300,25 +342,39 @@ export function ProductsTab({ state, handlers }: Props) {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-sans text-xs">
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Mineral Elements</label>
+                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                    Mineral Elements
+                  </label>
                   <input
                     type="text"
-                    value={Array.isArray(form.crystalsUsed) ? form.crystalsUsed.join(', ') : form.crystalsUsed}
+                    value={
+                      Array.isArray(form.crystalsUsed)
+                        ? form.crystalsUsed.join(', ')
+                        : form.crystalsUsed
+                    }
                     onChange={(e) => setForm({ ...form, crystalsUsed: e.target.value })}
                     className="w-full bg-cream border border-stone p-2.5 rounded-xl font-medium outline-none focus:border-black"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Compatible Signs</label>
+                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                    Compatible Signs
+                  </label>
                   <input
                     type="text"
-                    value={Array.isArray(form.zodiacConnection) ? form.zodiacConnection.join(', ') : form.zodiacConnection}
+                    value={
+                      Array.isArray(form.zodiacConnection)
+                        ? form.zodiacConnection.join(', ')
+                        : form.zodiacConnection
+                    }
                     onChange={(e) => setForm({ ...form, zodiacConnection: e.target.value })}
                     className="w-full bg-cream border border-stone p-2.5 rounded-xl font-medium outline-none focus:border-black"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">Rating (1-5)</label>
+                  <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                    Rating (1-5)
+                  </label>
                   <input
                     type="number"
                     min="1"
@@ -331,7 +387,9 @@ export function ProductsTab({ state, handlers }: Props) {
               </div>
 
               <div className="space-y-1 font-sans text-xs">
-                <label className="block text-clay font-mono text-[10px] uppercase font-bold">Benefits (one per line)</label>
+                <label className="block text-clay font-mono text-[10px] uppercase font-bold">
+                  Benefits (one per line)
+                </label>
                 <textarea
                   rows={3}
                   value={form.benefits}
@@ -354,8 +412,9 @@ export function ProductsTab({ state, handlers }: Props) {
               </div>
               <h3 className="font-serif text-lg font-light text-ink">No Creative Item Selected</h3>
               <p className="text-xs text-clay max-w-sm mx-auto leading-relaxed">
-                Select a curated bracelet or aura shield ring from the live showroom index on the left to edit, or click
-                the <strong>"Publish New Curation"</strong> button above to create a custom product.
+                Select a curated bracelet or aura shield ring from the live showroom index on the
+                left to edit, or click the <strong>"Publish New Curation"</strong> button above to
+                create a custom product.
               </p>
             </div>
           )}

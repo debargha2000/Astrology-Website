@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+
 import ProductCard from '../ProductCard';
 
 vi.mock('motion/react', () => ({
@@ -32,8 +33,8 @@ describe('ProductCard', () => {
       beadCount: 24,
       threadMaterial: 'Elastic',
       origin: 'India',
-      chargeTime: '3 Days'
-    }
+      chargeTime: '3 Days',
+    },
   };
 
   it('renders product name and price', () => {

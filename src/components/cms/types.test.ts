@@ -16,7 +16,7 @@ const localStorageMock = (() => {
     key: (i: number) => Object.keys(store)[i] ?? null,
     get length() {
       return Object.keys(store).length;
-    }
+    },
   };
 })();
 
@@ -28,7 +28,7 @@ import {
   LEGACY_ADMIN_TOKEN_KEYS,
   getAdminToken,
   setAdminToken,
-  clearAdminToken
+  clearAdminToken,
 } from './types';
 
 describe('CMS auth token storage', () => {

@@ -3,13 +3,14 @@
  * Re-exports all domain-specific services for backward compatibility
  */
 import { Product, WebsiteContent } from '../types';
+
 import { apiFetch } from './apiFetch';
-import { invoiceService } from './invoiceService';
-import { vendorService } from './vendorService';
-import { expenseService } from './expenseService';
-import { taskService } from './taskService';
 import { authService } from './authService';
+import { expenseService } from './expenseService';
+import { invoiceService } from './invoiceService';
 import { logService } from './logService';
+import { taskService } from './taskService';
+import { vendorService } from './vendorService';
 
 export { invoiceService, vendorService, expenseService, taskService, authService, logService };
 

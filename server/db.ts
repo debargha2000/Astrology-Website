@@ -1,9 +1,11 @@
 import fs from 'fs';
 import path from 'path';
+
 import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
-import { Product, WebsiteContent, Checkpoint } from '../src/types';
+
 import { PRODUCTS } from '../src/data';
+import { Product, WebsiteContent, Checkpoint } from '../src/types';
 
 // Read config for lazy initialization
 const CONFIG_PATH = path.join(process.cwd(), 'firebase-applet-config.json');
@@ -73,9 +75,7 @@ export function getFirestoreDB() {
       }
     }
     const app = admin.app();
-    firestoreDb = firestoreDatabaseId
-      ? getFirestore(app, firestoreDatabaseId)
-      : getFirestore(app);
+    firestoreDb = firestoreDatabaseId ? getFirestore(app, firestoreDatabaseId) : getFirestore(app);
     return firestoreDb;
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);
@@ -158,41 +158,212 @@ export interface AstroContent {
 const DB_FILE = path.join(process.cwd(), 'database.json');
 
 const INITIAL_INVOICES: Invoice[] = [
-  { id: 'INV-2026-601', client: 'Aarav Mehta', date: '2026-05-24', item: 'Astral Prosperity Bracelet Combo', amount: 8400, status: 'Paid', alignment: 'Money Magnet (Citrine + Pyrite)' },
-  { id: 'INV-2026-602', client: 'Priya Sharma', date: '2026-05-25', item: 'Evil Eye Armour Ring Set', amount: 5900, status: 'Sent', alignment: 'Protection (Black Tourmaline)' },
-  { id: 'INV-2026-603', client: 'Devas Astrographics', date: '2026-05-21', item: 'Mass Calibration (12 Sacred Geodes)', amount: 48000, status: 'Paid', alignment: 'Vedic Grid Alignment' },
-  { id: 'INV-2026-604', client: 'Rohit Khandelwal', date: '2026-05-18', item: 'Crown Clarity Amethyst Special', amount: 9500, status: 'Overdue', alignment: 'Saturn Node Alignment' },
-  { id: 'INV-2026-605', client: 'Kiran Desai', date: '2026-05-26', item: 'Chakra Awakening Gilded Bead Set', amount: 12500, status: 'Draft', alignment: 'Full Alignment' }
+  {
+    id: 'INV-2026-601',
+    client: 'Aarav Mehta',
+    date: '2026-05-24',
+    item: 'Astral Prosperity Bracelet Combo',
+    amount: 8400,
+    status: 'Paid',
+    alignment: 'Money Magnet (Citrine + Pyrite)',
+  },
+  {
+    id: 'INV-2026-602',
+    client: 'Priya Sharma',
+    date: '2026-05-25',
+    item: 'Evil Eye Armour Ring Set',
+    amount: 5900,
+    status: 'Sent',
+    alignment: 'Protection (Black Tourmaline)',
+  },
+  {
+    id: 'INV-2026-603',
+    client: 'Devas Astrographics',
+    date: '2026-05-21',
+    item: 'Mass Calibration (12 Sacred Geodes)',
+    amount: 48000,
+    status: 'Paid',
+    alignment: 'Vedic Grid Alignment',
+  },
+  {
+    id: 'INV-2026-604',
+    client: 'Rohit Khandelwal',
+    date: '2026-05-18',
+    item: 'Crown Clarity Amethyst Special',
+    amount: 9500,
+    status: 'Overdue',
+    alignment: 'Saturn Node Alignment',
+  },
+  {
+    id: 'INV-2026-605',
+    client: 'Kiran Desai',
+    date: '2026-05-26',
+    item: 'Chakra Awakening Gilded Bead Set',
+    amount: 12500,
+    status: 'Draft',
+    alignment: 'Full Alignment',
+  },
 ];
 
 const INITIAL_VENDORS: Vendor[] = [
-  { id: 'VND-301', name: 'Himalayan Fine Quartz Co.', contact: 'Harish Rawat', origin: 'Uttarakhand, India', rating: 5, category: 'Raw Geodes', leadTime: '3 Days', leadGems: 'Clear Quartz & Citrine', status: 'Approved' },
-  { id: 'VND-302', name: 'Uruguayan Amethyst Miner\'s Guild', contact: 'Lucas Silveira', origin: 'Artigas, Uruguay', rating: 5, category: 'Crystalline Clusters', leadTime: '14 Days', leadGems: 'Deep Amethyst', status: 'Approved' },
-  { id: 'VND-303', name: 'Gilded Silver & Thread Artisans', contact: 'Kavita Jewellers', origin: 'Jaipur, India', rating: 4, category: 'Mountings & Elastic Conductors', leadTime: '5 Days', leadGems: '925 Silver Links', status: 'Under Review' },
-  { id: 'VND-304', name: 'Ganges Water Sanctify Source', contact: 'Pandit Shastri Ji', origin: 'Rishikesh, India', rating: 5, category: 'Sanctifying Liquids', leadTime: '2 Days', leadGems: 'Panchamrut & Ganga Jal', status: 'Approved' }
+  {
+    id: 'VND-301',
+    name: 'Himalayan Fine Quartz Co.',
+    contact: 'Harish Rawat',
+    origin: 'Uttarakhand, India',
+    rating: 5,
+    category: 'Raw Geodes',
+    leadTime: '3 Days',
+    leadGems: 'Clear Quartz & Citrine',
+    status: 'Approved',
+  },
+  {
+    id: 'VND-302',
+    name: "Uruguayan Amethyst Miner's Guild",
+    contact: 'Lucas Silveira',
+    origin: 'Artigas, Uruguay',
+    rating: 5,
+    category: 'Crystalline Clusters',
+    leadTime: '14 Days',
+    leadGems: 'Deep Amethyst',
+    status: 'Approved',
+  },
+  {
+    id: 'VND-303',
+    name: 'Gilded Silver & Thread Artisans',
+    contact: 'Kavita Jewellers',
+    origin: 'Jaipur, India',
+    rating: 4,
+    category: 'Mountings & Elastic Conductors',
+    leadTime: '5 Days',
+    leadGems: '925 Silver Links',
+    status: 'Under Review',
+  },
+  {
+    id: 'VND-304',
+    name: 'Ganges Water Sanctify Source',
+    contact: 'Pandit Shastri Ji',
+    origin: 'Rishikesh, India',
+    rating: 5,
+    category: 'Sanctifying Liquids',
+    leadTime: '2 Days',
+    leadGems: 'Panchamrut & Ganga Jal',
+    status: 'Approved',
+  },
 ];
 
 const INITIAL_EXPENSES: Expense[] = [
-  { id: 'EXP-101', title: 'Lunar Cleansing Sandalwood Paste', category: 'Ritual Consecration', amount: 4200, date: '2026-05-20', notes: 'Grown on organic farms in Mysore' },
-  { id: 'EXP-102', title: 'Custom Velvet Protection Pouches', category: 'Packaging', amount: 8500, date: '2026-05-22', notes: 'Saffron-dyed lining for energetic insulation' },
-  { id: 'EXP-103', title: 'Laboratory Geological Verification Fees', category: 'Quality Inspection', amount: 12000, date: '2026-05-24', notes: 'Refractive Index and Mohs Hardness certification batch #411' },
-  { id: 'EXP-104', title: 'Temple Astro-Scholars Commision', category: 'Ritual Consecration', amount: 25000, date: '2026-05-25', notes: 'Bathing chant leaders over moon cycles' },
-  { id: 'EXP-105', title: 'Ganga Jal Sacred Liquid Logistic Refills', category: 'Sourcing & Shipping', amount: 6200, date: '2026-05-18', notes: 'Pure glass canisters from Himalayan descent coordinates' }
+  {
+    id: 'EXP-101',
+    title: 'Lunar Cleansing Sandalwood Paste',
+    category: 'Ritual Consecration',
+    amount: 4200,
+    date: '2026-05-20',
+    notes: 'Grown on organic farms in Mysore',
+  },
+  {
+    id: 'EXP-102',
+    title: 'Custom Velvet Protection Pouches',
+    category: 'Packaging',
+    amount: 8500,
+    date: '2026-05-22',
+    notes: 'Saffron-dyed lining for energetic insulation',
+  },
+  {
+    id: 'EXP-103',
+    title: 'Laboratory Geological Verification Fees',
+    category: 'Quality Inspection',
+    amount: 12000,
+    date: '2026-05-24',
+    notes: 'Refractive Index and Mohs Hardness certification batch #411',
+  },
+  {
+    id: 'EXP-104',
+    title: 'Temple Astro-Scholars Commision',
+    category: 'Ritual Consecration',
+    amount: 25000,
+    date: '2026-05-25',
+    notes: 'Bathing chant leaders over moon cycles',
+  },
+  {
+    id: 'EXP-105',
+    title: 'Ganga Jal Sacred Liquid Logistic Refills',
+    category: 'Sourcing & Shipping',
+    amount: 6200,
+    date: '2026-05-18',
+    notes: 'Pure glass canisters from Himalayan descent coordinates',
+  },
 ];
 
 const INITIAL_TASKS: Task[] = [
-  { id: 'TSK-501', title: 'Wash Batch #409 Clear Quartz in Panchamrut', status: 'Water Cleanse', priority: 'High', assignee: 'Pandit Sharma', daysLeft: 1 },
-  { id: 'TSK-502', title: 'Calibrate Amethyst beads with 432Hz Saturn frequencies', status: 'Moon Bath Bathing', priority: 'High', assignee: 'Shastry Ji', daysLeft: 2 },
-  { id: 'TSK-503', title: 'Review laboratory hardness scores for Green Aventirine arrival', status: 'Backlog', priority: 'Medium', assignee: 'Dr. Vivek Soni', daysLeft: 5 },
-  { id: 'TSK-504', title: 'Seal and pack Aarav Mehta Certified Prosperity Combo', status: 'Sealed / Composed', priority: 'Low', assignee: 'Meera Patel', daysLeft: 0 },
-  { id: 'TSK-505', title: 'Program Solar Warmth on Carnelian material locks', status: 'Moon Bath Bathing', priority: 'Medium', assignee: 'Shastry Ji', daysLeft: 1 },
-  { id: 'TSK-506', title: 'Verify signature holographic seals of Vedic certificate series 900', status: 'Backlog', priority: 'High', assignee: 'Meera Patel', daysLeft: 3 }
+  {
+    id: 'TSK-501',
+    title: 'Wash Batch #409 Clear Quartz in Panchamrut',
+    status: 'Water Cleanse',
+    priority: 'High',
+    assignee: 'Pandit Sharma',
+    daysLeft: 1,
+  },
+  {
+    id: 'TSK-502',
+    title: 'Calibrate Amethyst beads with 432Hz Saturn frequencies',
+    status: 'Moon Bath Bathing',
+    priority: 'High',
+    assignee: 'Shastry Ji',
+    daysLeft: 2,
+  },
+  {
+    id: 'TSK-503',
+    title: 'Review laboratory hardness scores for Green Aventirine arrival',
+    status: 'Backlog',
+    priority: 'Medium',
+    assignee: 'Dr. Vivek Soni',
+    daysLeft: 5,
+  },
+  {
+    id: 'TSK-504',
+    title: 'Seal and pack Aarav Mehta Certified Prosperity Combo',
+    status: 'Sealed / Composed',
+    priority: 'Low',
+    assignee: 'Meera Patel',
+    daysLeft: 0,
+  },
+  {
+    id: 'TSK-505',
+    title: 'Program Solar Warmth on Carnelian material locks',
+    status: 'Moon Bath Bathing',
+    priority: 'Medium',
+    assignee: 'Shastry Ji',
+    daysLeft: 1,
+  },
+  {
+    id: 'TSK-506',
+    title: 'Verify signature holographic seals of Vedic certificate series 900',
+    status: 'Backlog',
+    priority: 'High',
+    assignee: 'Meera Patel',
+    daysLeft: 3,
+  },
 ];
 
 const INITIAL_LOGS: TerminalLog[] = [
-  { id: 'log-1', timestamp: '10:32 AM', message: 'SECURE COGNITIVE LEDGER INITIALIZED: Welcome to Aura & Stone Central Operations.' },
-  { id: 'log-2', timestamp: '10:45 AM', message: 'RITUAL BATCH UPDATE COMPLETED: 12 Pure Citrine conductors advanced to lunar purification stage.' },
-  { id: 'log-3', timestamp: '11:15 AM', message: 'QUALITY CHECK SYSTEM VERIFICATION: Geologist verified Mohs index 7 on raw amethyst crystal bulk VND-302.' }
+  {
+    id: 'log-1',
+    timestamp: '10:32 AM',
+    message: 'SECURE COGNITIVE LEDGER INITIALIZED: Welcome to Aura & Stone Central Operations.',
+  },
+  {
+    id: 'log-2',
+    timestamp: '10:45 AM',
+    message:
+      'RITUAL BATCH UPDATE COMPLETED: 12 Pure Citrine conductors advanced to lunar purification stage.',
+  },
+  {
+    id: 'log-3',
+    timestamp: '11:15 AM',
+    message:
+      'QUALITY CHECK SYSTEM VERIFICATION: Geologist verified Mohs index 7 on raw amethyst crystal bulk VND-302.',
+  },
 ];
 
 const INITIAL_WEBSITE_CONTENT: WebsiteContent = {
@@ -200,13 +371,17 @@ const INITIAL_WEBSITE_CONTENT: WebsiteContent = {
   brandSubtitle: 'Crystalline Astrology',
   heroHeadline: 'The Indian',
   heroHighlight: 'Science of Signs',
-  heroParagraph: 'Fine crystal jewelry engineered from verified planetary minerals. Cleansed, moon bathed, and programmed to your birth chart parameters to create an unshakeable energetic shield.',
-  founderQuote: 'In today’s fast-paced corporate and creative grids, we are continuously bombarded by negative gazes, digital noise, and heavy financial doubt. Aura & Stone was co-conceived because I wanted authentic, laboratory-tested crystal jewelry that looks incredibly sharp and high-fashion while offering robust spiritual protection. We took 75 years of my family\'s ancestral alignment wisdom and made it sleek, minimalistic, and absolute.',
+  heroParagraph:
+    'Fine crystal jewelry engineered from verified planetary minerals. Cleansed, moon bathed, and programmed to your birth chart parameters to create an unshakeable energetic shield.',
+  founderQuote:
+    "In today’s fast-paced corporate and creative grids, we are continuously bombarded by negative gazes, digital noise, and heavy financial doubt. Aura & Stone was co-conceived because I wanted authentic, laboratory-tested crystal jewelry that looks incredibly sharp and high-fashion while offering robust spiritual protection. We took 75 years of my family's ancestral alignment wisdom and made it sleek, minimalistic, and absolute.",
   founderQuoteSubtitle: 'Co-Founder & Chief Vedic Architect, Aura & Stone',
   historyHeadline: 'Ancient Sceptred Science Met Minimalist Form',
-  historyParagraph1: 'Aura & Stone was pioneered in the foothills of Jammu, Kashmir, with a deep, uncompromising mission: to de-mystify ancient Indian gemologies and elevate them to modern standards of luxury, precision, and physical authenticity. Led by three generations of Astro-scholars, we isolate specific minerals (such as green aventurine or Uruguayan amethyst clusters) that possess corresponding atomic frequencies to planetary transit nodes.',
-  historyParagraph2: 'By merging deep Vedic practices with laboratory testing (refractive indexes, geological hardness, chemical matrix formulas), we construct exquisite jewelry talismans that serve as protective and prosperous energy shields for daily corporate movers.',
-  bannerImage: '/src/assets/images/aura_stone_hero_banner_1779793774735.png'
+  historyParagraph1:
+    'Aura & Stone was pioneered in the foothills of Jammu, Kashmir, with a deep, uncompromising mission: to de-mystify ancient Indian gemologies and elevate them to modern standards of luxury, precision, and physical authenticity. Led by three generations of Astro-scholars, we isolate specific minerals (such as green aventurine or Uruguayan amethyst clusters) that possess corresponding atomic frequencies to planetary transit nodes.',
+  historyParagraph2:
+    'By merging deep Vedic practices with laboratory testing (refractive indexes, geological hardness, chemical matrix formulas), we construct exquisite jewelry talismans that serve as protective and prosperous energy shields for daily corporate movers.',
+  bannerImage: '/src/assets/images/aura_stone_hero_banner_1779793774735.png',
 };
 
 interface DatabaseStructure {
@@ -225,6 +400,54 @@ interface DatabaseStructure {
 export class DB {
   private static load(): DatabaseStructure {
     if (IS_PRODUCTION && !fs) {
+      const defaultData: DatabaseStructure = {
+        invoices: INITIAL_INVOICES,
+        vendors: INITIAL_VENDORS,
+        expenses: INITIAL_EXPENSES,
+        tasks: INITIAL_TASKS,
+        terminalLog: INITIAL_LOGS,
+        emailRecords: [],
+        products: PRODUCTS,
+        websiteContent: INITIAL_WEBSITE_CONTENT,
+        checkpoints: [],
+        astroContent: [],
+      };
+      return defaultData;
+    }
+    try {
+      if (fs.existsSync(DB_FILE)) {
+        const fileContent = fs.readFileSync(DB_FILE, 'utf-8');
+        const data = JSON.parse(fileContent) as any;
+        let modified = false;
+        if (!data.products) {
+          data.products = PRODUCTS;
+          modified = true;
+        }
+        if (!data.websiteContent) {
+          data.websiteContent = INITIAL_WEBSITE_CONTENT;
+          modified = true;
+        }
+        if (!data.checkpoints) {
+          data.checkpoints = [];
+          modified = true;
+        }
+        if (!data.emailRecords) {
+          data.emailRecords = [];
+          modified = true;
+        }
+        if (!data.astroContent) {
+          data.astroContent = [];
+          modified = true;
+        }
+        if (modified) {
+          this.save(data);
+        }
+        return data as DatabaseStructure;
+      }
+    } catch (e) {
+      console.error('Error reading index file. Initializing default structures.', e);
+    }
+
     const defaultData: DatabaseStructure = {
       invoices: INITIAL_INVOICES,
       vendors: INITIAL_VENDORS,
@@ -235,56 +458,8 @@ export class DB {
       products: PRODUCTS,
       websiteContent: INITIAL_WEBSITE_CONTENT,
       checkpoints: [],
-      astroContent: []
+      astroContent: [],
     };
-    return defaultData;
-  }
-  try {
-    if (fs.existsSync(DB_FILE)) {
-      const fileContent = fs.readFileSync(DB_FILE, 'utf-8');
-      const data = JSON.parse(fileContent) as any;
-      let modified = false;
-      if (!data.products) {
-        data.products = PRODUCTS;
-        modified = true;
-      }
-      if (!data.websiteContent) {
-        data.websiteContent = INITIAL_WEBSITE_CONTENT;
-        modified = true;
-      }
-      if (!data.checkpoints) {
-        data.checkpoints = [];
-        modified = true;
-      }
-      if (!data.emailRecords) {
-        data.emailRecords = [];
-        modified = true;
-      }
-      if (!data.astroContent) {
-        data.astroContent = [];
-        modified = true;
-      }
-      if (modified) {
-        this.save(data);
-      }
-      return data as DatabaseStructure;
-    }
-  } catch (e) {
-    console.error('Error reading index file. Initializing default structures.', e);
-  }
-
-  const defaultData: DatabaseStructure = {
-    invoices: INITIAL_INVOICES,
-    vendors: INITIAL_VENDORS,
-    expenses: INITIAL_EXPENSES,
-    tasks: INITIAL_TASKS,
-    terminalLog: INITIAL_LOGS,
-    emailRecords: [],
-    products: PRODUCTS,
-    websiteContent: INITIAL_WEBSITE_CONTENT,
-    checkpoints: [],
-    astroContent: []
-  };
     this.save(defaultData);
     return defaultData;
   }
@@ -303,10 +478,14 @@ export class DB {
 
   // General log appender (Sync & Async)
   public static async addLog(message: string): Promise<TerminalLog> {
-    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const timestamp = new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
     const logId = `log-${Date.now()}`;
     const fdb = getFirestoreDB();
-    
+
     if (fdb) {
       try {
         const newLogPayload: TerminalLog = { id: logId, timestamp, message };
@@ -329,7 +508,7 @@ export class DB {
     if (fdb) {
       try {
         const snapshot = await fdb.collection('logs').orderBy('id', 'desc').limit(10).get();
-        return snapshot.docs.map(doc => doc.data() as TerminalLog);
+        return snapshot.docs.map((doc) => doc.data() as TerminalLog);
       } catch (e) {
         // Silently fall back to local storage
       }
@@ -342,8 +521,12 @@ export class DB {
     const fdb = getFirestoreDB();
     if (fdb) {
       try {
-        const snapshot = await fdb.collection('email_records').orderBy('id', 'desc').limit(50).get();
-        return snapshot.docs.map(doc => doc.data() as EmailRecord);
+        const snapshot = await fdb
+          .collection('email_records')
+          .orderBy('id', 'desc')
+          .limit(50)
+          .get();
+        return snapshot.docs.map((doc) => doc.data() as EmailRecord);
       } catch (e) {
         // Silently fall back to local storage
       }
@@ -377,7 +560,7 @@ export class DB {
     if (fdb) {
       try {
         const snapshot = await fdb.collection('astro_content').get();
-        return snapshot.docs.map(doc => doc.data() as AstroContent);
+        return snapshot.docs.map((doc) => doc.data() as AstroContent);
       } catch (e) {
         // Silently fall back to local storage
       }
@@ -385,7 +568,9 @@ export class DB {
     return this.load().astroContent || [];
   }
 
-  public static async upsertAstroContent(entry: Omit<AstroContent, 'id'> & { id?: string }): Promise<AstroContent> {
+  public static async upsertAstroContent(
+    entry: Omit<AstroContent, 'id'> & { id?: string }
+  ): Promise<AstroContent> {
     const id = entry.id || `astro-${entry.type}-${entry.key}-${Date.now()}`;
     const newEntry: AstroContent = { ...entry, id };
 
@@ -425,7 +610,9 @@ export class DB {
     this.save(data);
   }
 
-  public static async bulkUpsertAstroContent(entries: Omit<AstroContent, 'id'>[]): Promise<AstroContent[]> {
+  public static async bulkUpsertAstroContent(
+    entries: Omit<AstroContent, 'id'>[]
+  ): Promise<AstroContent[]> {
     const fdb = getFirestoreDB();
     if (fdb) {
       try {
@@ -462,7 +649,7 @@ export class DB {
     if (fdb) {
       try {
         const snapshot = await fdb.collection('invoices').get();
-        return snapshot.docs.map(doc => doc.data() as Invoice);
+        return snapshot.docs.map((doc) => doc.data() as Invoice);
       } catch (e) {
         // Silently fall back to local storage
       }
@@ -474,14 +661,16 @@ export class DB {
     const customId = `INV-2026-${Math.floor(Math.random() * 900 + 100)}`;
     const newInvoice: Invoice = {
       ...invoice,
-      id: customId
+      id: customId,
     };
 
     const fdb = getFirestoreDB();
     if (fdb) {
       try {
         await fdb.collection('invoices').doc(customId).set(newInvoice);
-        await this.addLog(`Created High-Precision Invoice ${newInvoice.id} for ${newInvoice.client} (₹${newInvoice.amount})`);
+        await this.addLog(
+          `Created High-Precision Invoice ${newInvoice.id} for ${newInvoice.client} (₹${newInvoice.amount})`
+        );
         return newInvoice;
       } catch (e) {
         // Silently fall back to local storage
@@ -491,7 +680,9 @@ export class DB {
     const data = this.load();
     data.invoices = [newInvoice, ...data.invoices];
     this.save(data);
-    await this.addLog(`Created High-Precision Invoice ${newInvoice.id} for ${newInvoice.client} (₹${newInvoice.amount})`);
+    await this.addLog(
+      `Created High-Precision Invoice ${newInvoice.id} for ${newInvoice.client} (₹${newInvoice.amount})`
+    );
     return newInvoice;
   }
 
@@ -504,7 +695,9 @@ export class DB {
     return created;
   }
 
-  public static async bulkCreateExpenses(items: Omit<Expense, 'id' | 'date'>[]): Promise<Expense[]> {
+  public static async bulkCreateExpenses(
+    items: Omit<Expense, 'id' | 'date'>[]
+  ): Promise<Expense[]> {
     const created: Expense[] = [];
     for (const item of items) {
       const exp = await this.addExpense(item);
@@ -513,7 +706,9 @@ export class DB {
     return created;
   }
 
-  public static async bulkCreateVendors(items: Omit<Vendor, 'id' | 'status' | 'rating'>[]): Promise<Vendor[]> {
+  public static async bulkCreateVendors(
+    items: Omit<Vendor, 'id' | 'status' | 'rating'>[]
+  ): Promise<Vendor[]> {
     const created: Vendor[] = [];
     for (const item of items) {
       const vnd = await this.addVendor(item);
@@ -522,7 +717,10 @@ export class DB {
     return created;
   }
 
-  public static async updateInvoice(id: string, updates: Partial<Invoice>): Promise<Invoice | null> {
+  public static async updateInvoice(
+    id: string,
+    updates: Partial<Invoice>
+  ): Promise<Invoice | null> {
     const fdb = getFirestoreDB();
     if (fdb) {
       try {
@@ -542,7 +740,7 @@ export class DB {
     }
 
     const data = this.load();
-    const index = data.invoices.findIndex(i => i.id === id);
+    const index = data.invoices.findIndex((i) => i.id === id);
     if (index > -1) {
       data.invoices[index] = { ...data.invoices[index], ...updates };
       this.save(data);
@@ -566,7 +764,7 @@ export class DB {
 
     const data = this.load();
     const countBefore = data.invoices.length;
-    data.invoices = data.invoices.filter(i => i.id !== id);
+    data.invoices = data.invoices.filter((i) => i.id !== id);
     if (data.invoices.length < countBefore) {
       this.save(data);
       await this.addLog(`Cleared Invoice ${id} from operational ledger.`);
@@ -599,7 +797,7 @@ export class DB {
     if (fdb) {
       try {
         const snapshot = await fdb.collection('vendors').get();
-        return snapshot.docs.map(doc => doc.data() as Vendor);
+        return snapshot.docs.map((doc) => doc.data() as Vendor);
       } catch (e) {
         // Silently fall back to local storage
       }
@@ -613,7 +811,7 @@ export class DB {
       ...vendor,
       id: customId,
       rating: 5,
-      status: 'Approved'
+      status: 'Approved',
     };
 
     const fdb = getFirestoreDB();
@@ -654,7 +852,7 @@ export class DB {
     }
 
     const data = this.load();
-    const index = data.vendors.findIndex(v => v.id === id);
+    const index = data.vendors.findIndex((v) => v.id === id);
     if (index > -1) {
       data.vendors[index] = { ...data.vendors[index], ...updates };
       this.save(data);
@@ -678,8 +876,8 @@ export class DB {
 
     const data = this.load();
     const countBefore = data.vendors.length;
-    const vendorRef = data.vendors.find(v => v.id === id);
-    data.vendors = data.vendors.filter(v => v.id !== id);
+    const vendorRef = data.vendors.find((v) => v.id === id);
+    data.vendors = data.vendors.filter((v) => v.id !== id);
     if (data.vendors.length < countBefore) {
       this.save(data);
       await this.addLog(`Suspended/deleted vendor registration: ${vendorRef?.name || id}`);
@@ -694,7 +892,7 @@ export class DB {
     if (fdb) {
       try {
         const snapshot = await fdb.collection('expenses').get();
-        return snapshot.docs.map(doc => doc.data() as Expense);
+        return snapshot.docs.map((doc) => doc.data() as Expense);
       } catch (e) {
         // Silently fall back to local storage
       }
@@ -728,7 +926,10 @@ export class DB {
     return newExpense;
   }
 
-  public static async updateExpense(id: string, updates: Partial<Expense>): Promise<Expense | null> {
+  public static async updateExpense(
+    id: string,
+    updates: Partial<Expense>
+  ): Promise<Expense | null> {
     const fdb = getFirestoreDB();
     if (fdb) {
       try {
@@ -748,7 +949,7 @@ export class DB {
     }
 
     const data = this.load();
-    const index = data.expenses.findIndex(e => e.id === id);
+    const index = data.expenses.findIndex((e) => e.id === id);
     if (index > -1) {
       data.expenses[index] = { ...data.expenses[index], ...updates };
       this.save(data);
@@ -772,7 +973,7 @@ export class DB {
 
     const data = this.load();
     const countBefore = data.expenses.length;
-    data.expenses = data.expenses.filter(e => e.id !== id);
+    data.expenses = data.expenses.filter((e) => e.id !== id);
     if (data.expenses.length < countBefore) {
       this.save(data);
       await this.addLog(`Removed operational expense log record ID: ${id}`);
@@ -787,7 +988,7 @@ export class DB {
     if (fdb) {
       try {
         const snapshot = await fdb.collection('tasks').get();
-        return snapshot.docs.map(doc => doc.data() as Task);
+        return snapshot.docs.map((doc) => doc.data() as Task);
       } catch (e) {
         // Silently fall back to local storage
       }
@@ -799,7 +1000,7 @@ export class DB {
     const customId = `TSK-${Math.floor(Math.random() * 90 + 500)}`;
     const newTask: Task = {
       ...task,
-      id: customId
+      id: customId,
     };
 
     const fdb = getFirestoreDB();
@@ -840,7 +1041,7 @@ export class DB {
     }
 
     const data = this.load();
-    const index = data.tasks.findIndex(t => t.id === id);
+    const index = data.tasks.findIndex((t) => t.id === id);
     if (index > -1) {
       data.tasks[index].status = status;
       this.save(data);
@@ -870,7 +1071,7 @@ export class DB {
     }
 
     const data = this.load();
-    const index = data.tasks.findIndex(t => t.id === id);
+    const index = data.tasks.findIndex((t) => t.id === id);
     if (index > -1) {
       data.tasks[index] = { ...data.tasks[index], ...updates };
       this.save(data);
@@ -894,7 +1095,7 @@ export class DB {
 
     const data = this.load();
     const countBefore = data.tasks.length;
-    data.tasks = data.tasks.filter(t => t.id !== id);
+    data.tasks = data.tasks.filter((t) => t.id !== id);
     if (data.tasks.length < countBefore) {
       this.save(data);
       await this.addLog(`Cleared astrological task reference ID: ${id}`);
@@ -918,7 +1119,7 @@ export class DB {
           }
           return PRODUCTS;
         }
-        return snapshot.docs.map(doc => doc.data() as Product);
+        return snapshot.docs.map((doc) => doc.data() as Product);
       } catch (e) {
         console.error('Firestore getProducts failure, falling back to local file', e);
       }
@@ -931,7 +1132,9 @@ export class DB {
     if (fdb) {
       try {
         await fdb.collection('products').doc(product.id).set(product);
-        await this.addLog(`Product "${product.name}" (${product.id}) saved and synchronized with Firestore.`);
+        await this.addLog(
+          `Product "${product.name}" (${product.id}) saved and synchronized with Firestore.`
+        );
         return product;
       } catch (e) {
         console.error('Firestore saveProduct error, falling back to local file', e);
@@ -939,7 +1142,7 @@ export class DB {
     }
 
     const data = this.load();
-    const index = data.products.findIndex(p => p.id === product.id);
+    const index = data.products.findIndex((p) => p.id === product.id);
     if (index > -1) {
       data.products[index] = product;
     } else {
@@ -964,8 +1167,8 @@ export class DB {
 
     const data = this.load();
     const countBefore = data.products.length;
-    const prod = data.products.find(p => p.id === id);
-    data.products = data.products.filter(p => p.id !== id);
+    const prod = data.products.find((p) => p.id === id);
+    data.products = data.products.filter((p) => p.id !== id);
     if (data.products.length < countBefore) {
       this.save(data);
       await this.addLog(`Product "${prod?.name || id}" (${id}) removed from local JSON database.`);
@@ -1020,8 +1223,12 @@ export class DB {
     const fdb = getFirestoreDB();
     if (fdb) {
       try {
-        const snapshot = await fdb.collection('checkpoints').orderBy('timestamp', 'desc').limit(25).get();
-        return snapshot.docs.map(doc => doc.data() as Checkpoint);
+        const snapshot = await fdb
+          .collection('checkpoints')
+          .orderBy('timestamp', 'desc')
+          .limit(25)
+          .get();
+        return snapshot.docs.map((doc) => doc.data() as Checkpoint);
       } catch (e) {
         console.error('Firestore getCheckpoints failure, falling back to local file', e);
       }
@@ -1042,7 +1249,7 @@ export class DB {
       title: title || 'Periodic Operational Checkpoint',
       user: user || 'debarghapakhira@gmail.com',
       websiteContent: currentContent,
-      products: currentProducts
+      products: currentProducts,
     };
 
     const fdb = getFirestoreDB();
@@ -1051,7 +1258,7 @@ export class DB {
         await fdb.collection('checkpoints').doc(checkpointId).set(newCheckpoint);
         const snapshot = await fdb.collection('checkpoints').orderBy('timestamp', 'desc').get();
         if (snapshot.size > 25) {
-          const deletePromises = snapshot.docs.slice(25).map(doc => doc.ref.delete());
+          const deletePromises = snapshot.docs.slice(25).map((doc) => doc.ref.delete());
           await Promise.all(deletePromises);
         }
         await this.addLog(`System Rollback Checkpoint Created: "${newCheckpoint.title}"`);
@@ -1088,7 +1295,7 @@ export class DB {
 
     if (!checkpoint) {
       const data = this.load();
-      checkpoint = data.checkpoints?.find(c => c.id === id);
+      checkpoint = data.checkpoints?.find((c) => c.id === id);
     }
 
     if (!checkpoint) {
@@ -1103,7 +1310,7 @@ export class DB {
       try {
         // delete existing products in Firestore and rewrite checkpoint versions
         const snapshot = await fdb.collection('products').get();
-        const deleteBatch = snapshot.docs.map(doc => doc.ref.delete());
+        const deleteBatch = snapshot.docs.map((doc) => doc.ref.delete());
         await Promise.all(deleteBatch);
 
         for (const p of checkpoint.products) {
@@ -1118,7 +1325,9 @@ export class DB {
       this.save(data);
     }
 
-    await this.addLog(`RESTORE ROLLBACK INITIATED: Reverted state to checkpoint [${checkpoint.title}] successfully.`);
+    await this.addLog(
+      `RESTORE ROLLBACK INITIATED: Reverted state to checkpoint [${checkpoint.title}] successfully.`
+    );
     return true;
   }
 }

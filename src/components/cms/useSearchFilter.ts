@@ -7,10 +7,7 @@ interface SearchFilterConfig<T> {
   defaultFilter?: string;
 }
 
-export function useSearchFilter<T>(
-  items: T[],
-  config: SearchFilterConfig<T>
-) {
+export function useSearchFilter<T>(items: T[], config: SearchFilterConfig<T>) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState(config.defaultFilter || 'All');
 
