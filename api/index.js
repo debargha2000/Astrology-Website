@@ -171,33 +171,222 @@ var NAKSHATRA_DATA;
 var init_nakshatraData = __esm({
   "src/lib/nakshatraData.ts"() {
     NAKSHATRA_DATA = [
-      { name: "Ashwini", symbol: "Horse Head", lord: "Ketu", deity: "Ashwini Kumaras", nature: "Swift/Healing", startDegree: 0 },
-      { name: "Bharani", symbol: "Yoni", lord: "Venus", deity: "Yama", nature: "Creative/Transformative", startDegree: 13.333 },
-      { name: "Krittika", symbol: "Razor", lord: "Sun", deity: "Agni", nature: "Purifying/Fierce", startDegree: 26.667 },
-      { name: "Rohini", symbol: "Chariot", lord: "Moon", deity: "Brahma", nature: "Fertile/Indulgent", startDegree: 40 },
-      { name: "Mrigashira", symbol: "Deer Head", lord: "Mars", deity: "Soma", nature: "Searching/Curious", startDegree: 53.333 },
-      { name: "Ardra", symbol: "Teardrop", lord: "Rahu", deity: "Rudra", nature: "Intense/Transformative", startDegree: 66.667 },
-      { name: "Punarvasu", symbol: "Bow and Arrow", lord: "Jupiter", deity: "Aditi", nature: "Renewing/Optimistic", startDegree: 80 },
-      { name: "Pushya", symbol: "Lotus", lord: "Saturn", deity: "Brihaspati", nature: "Nourishing/Spiritual", startDegree: 93.333 },
-      { name: "Ashlesha", symbol: "Serpent", lord: "Mercury", deity: "Naga", nature: "Mystical/Intuitive", startDegree: 106.667 },
-      { name: "Magha", symbol: "Throne", lord: "Ketu", deity: "Pitrs", nature: "Royal/Ancestral", startDegree: 120 },
-      { name: "Purva Phalguni", symbol: "Hammock", lord: "Venus", deity: "Bhaga", nature: "Pleasurable/Creative", startDegree: 133.333 },
-      { name: "Uttara Phalguni", symbol: "Bed", lord: "Sun", deity: "Aryaman", nature: "Patronage/Friendly", startDegree: 146.667 },
-      { name: "Hasta", symbol: "Hand", lord: "Moon", deity: "Savitar", nature: "Skillful/Healing", startDegree: 160 },
-      { name: "Chitra", symbol: "Jewel", lord: "Mars", deity: "Vishvakarma", nature: "Artistic/Bright", startDegree: 173.333 },
-      { name: "Swati", symbol: "Coral", lord: "Rahu", deity: "Vayu", nature: "Independent/Liberal", startDegree: 186.667 },
-      { name: "Vishakha", symbol: "Archway", lord: "Jupiter", deity: "Indra-Agni", nature: "Determined/Goal-oriented", startDegree: 200 },
-      { name: "Anuradha", symbol: "Lotus", lord: "Saturn", deity: "Mitra", nature: "Devoted/Friendship", startDegree: 213.333 },
-      { name: "Jyeshtha", symbol: "Circular Talisman", lord: "Mercury", deity: "Indra", nature: "Senior/Protective", startDegree: 226.667 },
-      { name: "Mula", symbol: "Tied Bunch", lord: "Ketu", deity: "Nirrti", nature: "Investigative/Spiritual", startDegree: 240 },
-      { name: "Purva Ashadha", symbol: "Tusk", lord: "Venus", deity: "Apas", nature: "Invincible/Flowing", startDegree: 253.333 },
-      { name: "Uttara Ashadha", symbol: "Elephant Tusk", lord: "Sun", deity: "Vishvadevas", nature: "Victorious/Universal", startDegree: 266.667 },
-      { name: "Shravana", symbol: "Ear", lord: "Moon", deity: "Vishnu", nature: "Listening/Knowledgeable", startDegree: 280 },
-      { name: "Dhanishta", symbol: "Drum", lord: "Mars", deity: "Vasus", nature: "Wealthy/Musical", startDegree: 293.333 },
-      { name: "Shatabhisha", symbol: "Circle", lord: "Rahu", deity: "Varuna", nature: "Healing/Mysterious", startDegree: 306.667 },
-      { name: "Purva Bhadrapada", symbol: "Sword", lord: "Jupiter", deity: "Aja Ekapada", nature: "Intense/Spiritual", startDegree: 320 },
-      { name: "Uttara Bhadrapada", symbol: "Twin", lord: "Saturn", deity: "Ahir Budhnya", nature: "Deep/Profound", startDegree: 333.333 },
-      { name: "Revati", symbol: "Fish", lord: "Mercury", deity: "Pushan", nature: "Journeying/Nourishing", startDegree: 346.667 }
+      {
+        name: "Ashwini",
+        symbol: "Horse Head",
+        lord: "Ketu",
+        deity: "Ashwini Kumaras",
+        nature: "Swift/Healing",
+        startDegree: 0
+      },
+      {
+        name: "Bharani",
+        symbol: "Yoni",
+        lord: "Venus",
+        deity: "Yama",
+        nature: "Creative/Transformative",
+        startDegree: 13.333
+      },
+      {
+        name: "Krittika",
+        symbol: "Razor",
+        lord: "Sun",
+        deity: "Agni",
+        nature: "Purifying/Fierce",
+        startDegree: 26.667
+      },
+      {
+        name: "Rohini",
+        symbol: "Chariot",
+        lord: "Moon",
+        deity: "Brahma",
+        nature: "Fertile/Indulgent",
+        startDegree: 40
+      },
+      {
+        name: "Mrigashira",
+        symbol: "Deer Head",
+        lord: "Mars",
+        deity: "Soma",
+        nature: "Searching/Curious",
+        startDegree: 53.333
+      },
+      {
+        name: "Ardra",
+        symbol: "Teardrop",
+        lord: "Rahu",
+        deity: "Rudra",
+        nature: "Intense/Transformative",
+        startDegree: 66.667
+      },
+      {
+        name: "Punarvasu",
+        symbol: "Bow and Arrow",
+        lord: "Jupiter",
+        deity: "Aditi",
+        nature: "Renewing/Optimistic",
+        startDegree: 80
+      },
+      {
+        name: "Pushya",
+        symbol: "Lotus",
+        lord: "Saturn",
+        deity: "Brihaspati",
+        nature: "Nourishing/Spiritual",
+        startDegree: 93.333
+      },
+      {
+        name: "Ashlesha",
+        symbol: "Serpent",
+        lord: "Mercury",
+        deity: "Naga",
+        nature: "Mystical/Intuitive",
+        startDegree: 106.667
+      },
+      {
+        name: "Magha",
+        symbol: "Throne",
+        lord: "Ketu",
+        deity: "Pitrs",
+        nature: "Royal/Ancestral",
+        startDegree: 120
+      },
+      {
+        name: "Purva Phalguni",
+        symbol: "Hammock",
+        lord: "Venus",
+        deity: "Bhaga",
+        nature: "Pleasurable/Creative",
+        startDegree: 133.333
+      },
+      {
+        name: "Uttara Phalguni",
+        symbol: "Bed",
+        lord: "Sun",
+        deity: "Aryaman",
+        nature: "Patronage/Friendly",
+        startDegree: 146.667
+      },
+      {
+        name: "Hasta",
+        symbol: "Hand",
+        lord: "Moon",
+        deity: "Savitar",
+        nature: "Skillful/Healing",
+        startDegree: 160
+      },
+      {
+        name: "Chitra",
+        symbol: "Jewel",
+        lord: "Mars",
+        deity: "Vishvakarma",
+        nature: "Artistic/Bright",
+        startDegree: 173.333
+      },
+      {
+        name: "Swati",
+        symbol: "Coral",
+        lord: "Rahu",
+        deity: "Vayu",
+        nature: "Independent/Liberal",
+        startDegree: 186.667
+      },
+      {
+        name: "Vishakha",
+        symbol: "Archway",
+        lord: "Jupiter",
+        deity: "Indra-Agni",
+        nature: "Determined/Goal-oriented",
+        startDegree: 200
+      },
+      {
+        name: "Anuradha",
+        symbol: "Lotus",
+        lord: "Saturn",
+        deity: "Mitra",
+        nature: "Devoted/Friendship",
+        startDegree: 213.333
+      },
+      {
+        name: "Jyeshtha",
+        symbol: "Circular Talisman",
+        lord: "Mercury",
+        deity: "Indra",
+        nature: "Senior/Protective",
+        startDegree: 226.667
+      },
+      {
+        name: "Mula",
+        symbol: "Tied Bunch",
+        lord: "Ketu",
+        deity: "Nirrti",
+        nature: "Investigative/Spiritual",
+        startDegree: 240
+      },
+      {
+        name: "Purva Ashadha",
+        symbol: "Tusk",
+        lord: "Venus",
+        deity: "Apas",
+        nature: "Invincible/Flowing",
+        startDegree: 253.333
+      },
+      {
+        name: "Uttara Ashadha",
+        symbol: "Elephant Tusk",
+        lord: "Sun",
+        deity: "Vishvadevas",
+        nature: "Victorious/Universal",
+        startDegree: 266.667
+      },
+      {
+        name: "Shravana",
+        symbol: "Ear",
+        lord: "Moon",
+        deity: "Vishnu",
+        nature: "Listening/Knowledgeable",
+        startDegree: 280
+      },
+      {
+        name: "Dhanishta",
+        symbol: "Drum",
+        lord: "Mars",
+        deity: "Vasus",
+        nature: "Wealthy/Musical",
+        startDegree: 293.333
+      },
+      {
+        name: "Shatabhisha",
+        symbol: "Circle",
+        lord: "Rahu",
+        deity: "Varuna",
+        nature: "Healing/Mysterious",
+        startDegree: 306.667
+      },
+      {
+        name: "Purva Bhadrapada",
+        symbol: "Sword",
+        lord: "Jupiter",
+        deity: "Aja Ekapada",
+        nature: "Intense/Spiritual",
+        startDegree: 320
+      },
+      {
+        name: "Uttara Bhadrapada",
+        symbol: "Twin",
+        lord: "Saturn",
+        deity: "Ahir Budhnya",
+        nature: "Deep/Profound",
+        startDegree: 333.333
+      },
+      {
+        name: "Revati",
+        symbol: "Fish",
+        lord: "Mercury",
+        deity: "Pushan",
+        nature: "Journeying/Nourishing",
+        startDegree: 346.667
+      }
     ];
   }
 });
@@ -263,11 +452,9 @@ var init_astroDefaults = __esm({
 });
 
 // server/app.ts
+import cookieParser from "cookie-parser";
 import express from "express";
 import helmet from "helmet";
-import cookieParser from "cookie-parser";
-import rateLimit from "express-rate-limit";
-import crypto2 from "crypto";
 
 // server/db.ts
 import fs from "fs";
@@ -387,7 +574,20 @@ var PRODUCTS = [
     category: "combo",
     stockStatus: "low-stock",
     isBestSeller: true,
-    zodiacConnection: ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"],
+    zodiacConnection: [
+      "Aries",
+      "Taurus",
+      "Gemini",
+      "Cancer",
+      "Leo",
+      "Virgo",
+      "Libra",
+      "Scorpio",
+      "Sagittarius",
+      "Capricorn",
+      "Aquarius",
+      "Pisces"
+    ],
     specifications: {
       beadSize: "8mm Faceted Brilliant Spheres",
       beadCount: 24,
@@ -495,11 +695,33 @@ var PRODUCTS = [
       "Diffuses favorite functional essential wellness oils passively across 24 hours.",
       "Restores raw vital energy to clear inexplicable fatigue."
     ],
-    crystalsUsed: ["Amethyst", "Lapis Lazuli", "Sodalite", "Green Aventurine", "Tiger Eye", "Carnelian", "Red Jasper", "Porous Lava Basalt"],
+    crystalsUsed: [
+      "Amethyst",
+      "Lapis Lazuli",
+      "Sodalite",
+      "Green Aventurine",
+      "Tiger Eye",
+      "Carnelian",
+      "Red Jasper",
+      "Porous Lava Basalt"
+    ],
     imageUrl: SEVEN_CHAKRA_IMAGE,
     category: "bracelet",
     stockStatus: "in-stock",
-    zodiacConnection: ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"],
+    zodiacConnection: [
+      "Aries",
+      "Taurus",
+      "Gemini",
+      "Cancer",
+      "Leo",
+      "Virgo",
+      "Libra",
+      "Scorpio",
+      "Sagittarius",
+      "Capricorn",
+      "Aquarius",
+      "Pisces"
+    ],
     specifications: {
       beadSize: "8mm Matched Gems + 10mm Lava",
       beadCount: 22,
@@ -650,37 +872,206 @@ function isFirebaseActive() {
 }
 var DB_FILE = path.join(process.cwd(), "database.json");
 var INITIAL_INVOICES = [
-  { id: "INV-2026-601", client: "Aarav Mehta", date: "2026-05-24", item: "Astral Prosperity Bracelet Combo", amount: 8400, status: "Paid", alignment: "Money Magnet (Citrine + Pyrite)" },
-  { id: "INV-2026-602", client: "Priya Sharma", date: "2026-05-25", item: "Evil Eye Armour Ring Set", amount: 5900, status: "Sent", alignment: "Protection (Black Tourmaline)" },
-  { id: "INV-2026-603", client: "Devas Astrographics", date: "2026-05-21", item: "Mass Calibration (12 Sacred Geodes)", amount: 48e3, status: "Paid", alignment: "Vedic Grid Alignment" },
-  { id: "INV-2026-604", client: "Rohit Khandelwal", date: "2026-05-18", item: "Crown Clarity Amethyst Special", amount: 9500, status: "Overdue", alignment: "Saturn Node Alignment" },
-  { id: "INV-2026-605", client: "Kiran Desai", date: "2026-05-26", item: "Chakra Awakening Gilded Bead Set", amount: 12500, status: "Draft", alignment: "Full Alignment" }
+  {
+    id: "INV-2026-601",
+    client: "Aarav Mehta",
+    date: "2026-05-24",
+    item: "Astral Prosperity Bracelet Combo",
+    amount: 8400,
+    status: "Paid",
+    alignment: "Money Magnet (Citrine + Pyrite)"
+  },
+  {
+    id: "INV-2026-602",
+    client: "Priya Sharma",
+    date: "2026-05-25",
+    item: "Evil Eye Armour Ring Set",
+    amount: 5900,
+    status: "Sent",
+    alignment: "Protection (Black Tourmaline)"
+  },
+  {
+    id: "INV-2026-603",
+    client: "Devas Astrographics",
+    date: "2026-05-21",
+    item: "Mass Calibration (12 Sacred Geodes)",
+    amount: 48e3,
+    status: "Paid",
+    alignment: "Vedic Grid Alignment"
+  },
+  {
+    id: "INV-2026-604",
+    client: "Rohit Khandelwal",
+    date: "2026-05-18",
+    item: "Crown Clarity Amethyst Special",
+    amount: 9500,
+    status: "Overdue",
+    alignment: "Saturn Node Alignment"
+  },
+  {
+    id: "INV-2026-605",
+    client: "Kiran Desai",
+    date: "2026-05-26",
+    item: "Chakra Awakening Gilded Bead Set",
+    amount: 12500,
+    status: "Draft",
+    alignment: "Full Alignment"
+  }
 ];
 var INITIAL_VENDORS = [
-  { id: "VND-301", name: "Himalayan Fine Quartz Co.", contact: "Harish Rawat", origin: "Uttarakhand, India", rating: 5, category: "Raw Geodes", leadTime: "3 Days", leadGems: "Clear Quartz & Citrine", status: "Approved" },
-  { id: "VND-302", name: "Uruguayan Amethyst Miner's Guild", contact: "Lucas Silveira", origin: "Artigas, Uruguay", rating: 5, category: "Crystalline Clusters", leadTime: "14 Days", leadGems: "Deep Amethyst", status: "Approved" },
-  { id: "VND-303", name: "Gilded Silver & Thread Artisans", contact: "Kavita Jewellers", origin: "Jaipur, India", rating: 4, category: "Mountings & Elastic Conductors", leadTime: "5 Days", leadGems: "925 Silver Links", status: "Under Review" },
-  { id: "VND-304", name: "Ganges Water Sanctify Source", contact: "Pandit Shastri Ji", origin: "Rishikesh, India", rating: 5, category: "Sanctifying Liquids", leadTime: "2 Days", leadGems: "Panchamrut & Ganga Jal", status: "Approved" }
+  {
+    id: "VND-301",
+    name: "Himalayan Fine Quartz Co.",
+    contact: "Harish Rawat",
+    origin: "Uttarakhand, India",
+    rating: 5,
+    category: "Raw Geodes",
+    leadTime: "3 Days",
+    leadGems: "Clear Quartz & Citrine",
+    status: "Approved"
+  },
+  {
+    id: "VND-302",
+    name: "Uruguayan Amethyst Miner's Guild",
+    contact: "Lucas Silveira",
+    origin: "Artigas, Uruguay",
+    rating: 5,
+    category: "Crystalline Clusters",
+    leadTime: "14 Days",
+    leadGems: "Deep Amethyst",
+    status: "Approved"
+  },
+  {
+    id: "VND-303",
+    name: "Gilded Silver & Thread Artisans",
+    contact: "Kavita Jewellers",
+    origin: "Jaipur, India",
+    rating: 4,
+    category: "Mountings & Elastic Conductors",
+    leadTime: "5 Days",
+    leadGems: "925 Silver Links",
+    status: "Under Review"
+  },
+  {
+    id: "VND-304",
+    name: "Ganges Water Sanctify Source",
+    contact: "Pandit Shastri Ji",
+    origin: "Rishikesh, India",
+    rating: 5,
+    category: "Sanctifying Liquids",
+    leadTime: "2 Days",
+    leadGems: "Panchamrut & Ganga Jal",
+    status: "Approved"
+  }
 ];
 var INITIAL_EXPENSES = [
-  { id: "EXP-101", title: "Lunar Cleansing Sandalwood Paste", category: "Ritual Consecration", amount: 4200, date: "2026-05-20", notes: "Grown on organic farms in Mysore" },
-  { id: "EXP-102", title: "Custom Velvet Protection Pouches", category: "Packaging", amount: 8500, date: "2026-05-22", notes: "Saffron-dyed lining for energetic insulation" },
-  { id: "EXP-103", title: "Laboratory Geological Verification Fees", category: "Quality Inspection", amount: 12e3, date: "2026-05-24", notes: "Refractive Index and Mohs Hardness certification batch #411" },
-  { id: "EXP-104", title: "Temple Astro-Scholars Commision", category: "Ritual Consecration", amount: 25e3, date: "2026-05-25", notes: "Bathing chant leaders over moon cycles" },
-  { id: "EXP-105", title: "Ganga Jal Sacred Liquid Logistic Refills", category: "Sourcing & Shipping", amount: 6200, date: "2026-05-18", notes: "Pure glass canisters from Himalayan descent coordinates" }
+  {
+    id: "EXP-101",
+    title: "Lunar Cleansing Sandalwood Paste",
+    category: "Ritual Consecration",
+    amount: 4200,
+    date: "2026-05-20",
+    notes: "Grown on organic farms in Mysore"
+  },
+  {
+    id: "EXP-102",
+    title: "Custom Velvet Protection Pouches",
+    category: "Packaging",
+    amount: 8500,
+    date: "2026-05-22",
+    notes: "Saffron-dyed lining for energetic insulation"
+  },
+  {
+    id: "EXP-103",
+    title: "Laboratory Geological Verification Fees",
+    category: "Quality Inspection",
+    amount: 12e3,
+    date: "2026-05-24",
+    notes: "Refractive Index and Mohs Hardness certification batch #411"
+  },
+  {
+    id: "EXP-104",
+    title: "Temple Astro-Scholars Commision",
+    category: "Ritual Consecration",
+    amount: 25e3,
+    date: "2026-05-25",
+    notes: "Bathing chant leaders over moon cycles"
+  },
+  {
+    id: "EXP-105",
+    title: "Ganga Jal Sacred Liquid Logistic Refills",
+    category: "Sourcing & Shipping",
+    amount: 6200,
+    date: "2026-05-18",
+    notes: "Pure glass canisters from Himalayan descent coordinates"
+  }
 ];
 var INITIAL_TASKS = [
-  { id: "TSK-501", title: "Wash Batch #409 Clear Quartz in Panchamrut", status: "Water Cleanse", priority: "High", assignee: "Pandit Sharma", daysLeft: 1 },
-  { id: "TSK-502", title: "Calibrate Amethyst beads with 432Hz Saturn frequencies", status: "Moon Bath Bathing", priority: "High", assignee: "Shastry Ji", daysLeft: 2 },
-  { id: "TSK-503", title: "Review laboratory hardness scores for Green Aventirine arrival", status: "Backlog", priority: "Medium", assignee: "Dr. Vivek Soni", daysLeft: 5 },
-  { id: "TSK-504", title: "Seal and pack Aarav Mehta Certified Prosperity Combo", status: "Sealed / Composed", priority: "Low", assignee: "Meera Patel", daysLeft: 0 },
-  { id: "TSK-505", title: "Program Solar Warmth on Carnelian material locks", status: "Moon Bath Bathing", priority: "Medium", assignee: "Shastry Ji", daysLeft: 1 },
-  { id: "TSK-506", title: "Verify signature holographic seals of Vedic certificate series 900", status: "Backlog", priority: "High", assignee: "Meera Patel", daysLeft: 3 }
+  {
+    id: "TSK-501",
+    title: "Wash Batch #409 Clear Quartz in Panchamrut",
+    status: "Water Cleanse",
+    priority: "High",
+    assignee: "Pandit Sharma",
+    daysLeft: 1
+  },
+  {
+    id: "TSK-502",
+    title: "Calibrate Amethyst beads with 432Hz Saturn frequencies",
+    status: "Moon Bath Bathing",
+    priority: "High",
+    assignee: "Shastry Ji",
+    daysLeft: 2
+  },
+  {
+    id: "TSK-503",
+    title: "Review laboratory hardness scores for Green Aventirine arrival",
+    status: "Backlog",
+    priority: "Medium",
+    assignee: "Dr. Vivek Soni",
+    daysLeft: 5
+  },
+  {
+    id: "TSK-504",
+    title: "Seal and pack Aarav Mehta Certified Prosperity Combo",
+    status: "Sealed / Composed",
+    priority: "Low",
+    assignee: "Meera Patel",
+    daysLeft: 0
+  },
+  {
+    id: "TSK-505",
+    title: "Program Solar Warmth on Carnelian material locks",
+    status: "Moon Bath Bathing",
+    priority: "Medium",
+    assignee: "Shastry Ji",
+    daysLeft: 1
+  },
+  {
+    id: "TSK-506",
+    title: "Verify signature holographic seals of Vedic certificate series 900",
+    status: "Backlog",
+    priority: "High",
+    assignee: "Meera Patel",
+    daysLeft: 3
+  }
 ];
 var INITIAL_LOGS = [
-  { id: "log-1", timestamp: "10:32 AM", message: "SECURE COGNITIVE LEDGER INITIALIZED: Welcome to Aura & Stone Central Operations." },
-  { id: "log-2", timestamp: "10:45 AM", message: "RITUAL BATCH UPDATE COMPLETED: 12 Pure Citrine conductors advanced to lunar purification stage." },
-  { id: "log-3", timestamp: "11:15 AM", message: "QUALITY CHECK SYSTEM VERIFICATION: Geologist verified Mohs index 7 on raw amethyst crystal bulk VND-302." }
+  {
+    id: "log-1",
+    timestamp: "10:32 AM",
+    message: "SECURE COGNITIVE LEDGER INITIALIZED: Welcome to Aura & Stone Central Operations."
+  },
+  {
+    id: "log-2",
+    timestamp: "10:45 AM",
+    message: "RITUAL BATCH UPDATE COMPLETED: 12 Pure Citrine conductors advanced to lunar purification stage."
+  },
+  {
+    id: "log-3",
+    timestamp: "11:15 AM",
+    message: "QUALITY CHECK SYSTEM VERIFICATION: Geologist verified Mohs index 7 on raw amethyst crystal bulk VND-302."
+  }
 ];
 var INITIAL_WEBSITE_CONTENT = {
   brandName: "Aura & Stone",
@@ -772,7 +1163,11 @@ var DB = class {
   }
   // General log appender (Sync & Async)
   static async addLog(message) {
-    const timestamp = (/* @__PURE__ */ new Date()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const timestamp = (/* @__PURE__ */ new Date()).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
     const logId = `log-${Date.now()}`;
     const fdb = getFirestoreDB();
     if (fdb) {
@@ -923,7 +1318,9 @@ var DB = class {
     if (fdb) {
       try {
         await fdb.collection("invoices").doc(customId).set(newInvoice);
-        await this.addLog(`Created High-Precision Invoice ${newInvoice.id} for ${newInvoice.client} (\u20B9${newInvoice.amount})`);
+        await this.addLog(
+          `Created High-Precision Invoice ${newInvoice.id} for ${newInvoice.client} (\u20B9${newInvoice.amount})`
+        );
         return newInvoice;
       } catch (e) {
       }
@@ -931,7 +1328,9 @@ var DB = class {
     const data = this.load();
     data.invoices = [newInvoice, ...data.invoices];
     this.save(data);
-    await this.addLog(`Created High-Precision Invoice ${newInvoice.id} for ${newInvoice.client} (\u20B9${newInvoice.amount})`);
+    await this.addLog(
+      `Created High-Precision Invoice ${newInvoice.id} for ${newInvoice.client} (\u20B9${newInvoice.amount})`
+    );
     return newInvoice;
   }
   static async bulkCreateInvoices(items) {
@@ -1318,7 +1717,9 @@ var DB = class {
     if (fdb) {
       try {
         await fdb.collection("products").doc(product.id).set(product);
-        await this.addLog(`Product "${product.name}" (${product.id}) saved and synchronized with Firestore.`);
+        await this.addLog(
+          `Product "${product.name}" (${product.id}) saved and synchronized with Firestore.`
+        );
         return product;
       } catch (e) {
         console.error("Firestore saveProduct error, falling back to local file", e);
@@ -1482,10 +1883,77 @@ var DB = class {
       data.products = checkpoint.products;
       this.save(data);
     }
-    await this.addLog(`RESTORE ROLLBACK INITIATED: Reverted state to checkpoint [${checkpoint.title}] successfully.`);
+    await this.addLog(
+      `RESTORE ROLLBACK INITIATED: Reverted state to checkpoint [${checkpoint.title}] successfully.`
+    );
     return true;
   }
 };
+
+// server/middleware/csrf.ts
+import crypto from "crypto";
+var SAFE_METHODS = /* @__PURE__ */ new Set(["GET", "HEAD", "OPTIONS"]);
+var TOKEN_HEADER = "x-csrf-token";
+var COOKIE_KEY = "_csrf";
+var TOKEN_BYTES = 32;
+function signToken(secret, cookieSecret2) {
+  return crypto.createHmac("sha256", cookieSecret2).update(secret).digest("hex");
+}
+function safeEqual(a, b) {
+  const aBuf = Buffer.from(a);
+  const bBuf = Buffer.from(b);
+  if (aBuf.length !== bBuf.length) return false;
+  return crypto.timingSafeEqual(aBuf, bBuf);
+}
+function createCsrfProtection(options) {
+  const {
+    cookieSecret: cookieSecret2,
+    exemptPaths = /* @__PURE__ */ new Set(),
+    cookieKey = COOKIE_KEY,
+    tokenHeader = TOKEN_HEADER
+  } = options;
+  const headerLower = tokenHeader.toLowerCase();
+  return function csrfProtection2(req, res, next) {
+    if (exemptPaths.has(req.path)) {
+      attachTokenGenerator(req, res, cookieKey, cookieSecret2);
+      return next();
+    }
+    const method = req.method.toUpperCase();
+    if (SAFE_METHODS.has(method)) {
+      attachTokenGenerator(req, res, cookieKey, cookieSecret2);
+      return next();
+    }
+    const cookieToken = req.signedCookies?.[cookieKey] ?? "";
+    const headerTokenRaw = req.headers[headerLower];
+    const headerToken = Array.isArray(headerTokenRaw) ? headerTokenRaw[0] : headerTokenRaw;
+    if (!cookieToken || !headerToken) {
+      return next(Object.assign(new Error("CSRF token missing"), { code: "EBADCSRFTOKEN" }));
+    }
+    if (!safeEqual(cookieToken, headerToken)) {
+      return next(Object.assign(new Error("CSRF token mismatch"), { code: "EBADCSRFTOKEN" }));
+    }
+    attachTokenGenerator(req, res, cookieKey, cookieSecret2);
+    return next();
+  };
+}
+function attachTokenGenerator(req, res, cookieKey, cookieSecret2) {
+  req.csrfToken = () => {
+    const existing = req.signedCookies?.[cookieKey];
+    if (existing) return existing;
+    const secret = crypto.randomBytes(TOKEN_BYTES).toString("hex");
+    const signed = signToken(secret, cookieSecret2);
+    res.cookie(cookieKey, signed, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      signed: true
+    });
+    return signed;
+  };
+}
+
+// server/routes/astro.routes.ts
+import { Router } from "express";
 
 // server/middleware/auth.ts
 import jwt from "jsonwebtoken";
@@ -1505,7 +1973,7 @@ function authenticateToken(req, res, next) {
   } catch {
     return res.status(500).json({ error: "Server misconfigured: JWT secret unavailable." });
   }
-  const authHeader = req.headers["authorization"];
+  const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) {
     return res.status(401).json({ error: "Missing divine session credentials." });
@@ -1518,9 +1986,285 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
-function signToken(payload) {
+function signToken2(payload) {
   return jwt.sign(payload, getJwtSecret(), { expiresIn: "8h" });
 }
+
+// server/routes/astro.routes.ts
+var router = Router();
+router.get("/", authenticateToken, async (_req, res) => {
+  try {
+    const entries = await DB.getAstroContent();
+    res.json(entries);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+router.post("/", authenticateToken, async (req, res) => {
+  try {
+    const { type, key, title, interpretation, updatedBy } = req.body;
+    if (!type || !key || !title || !interpretation) {
+      return res.status(400).json({ error: "type, key, title, and interpretation are required." });
+    }
+    const validTypes = ["planet", "ascendant", "aspect", "nakshatra"];
+    if (!validTypes.includes(type)) {
+      return res.status(400).json({ error: `type must be one of: ${validTypes.join(", ")}` });
+    }
+    const entry = await DB.upsertAstroContent({
+      type,
+      key,
+      title,
+      interpretation,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      updatedBy: updatedBy || "admin"
+    });
+    res.status(200).json(entry);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+router.put("/:id", authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { type, key, title, interpretation, updatedBy } = req.body;
+    if (!type || !key || !title || !interpretation) {
+      return res.status(400).json({ error: "type, key, title, and interpretation are required." });
+    }
+    const entry = await DB.upsertAstroContent({
+      id,
+      type,
+      key,
+      title,
+      interpretation,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      updatedBy: updatedBy || "admin"
+    });
+    res.status(200).json(entry);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+router.delete("/:id", authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await DB.deleteAstroContent(id);
+    res.status(200).json({ success: true });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+router.post("/bulk-seed", authenticateToken, async (_req, res) => {
+  try {
+    const { buildAstroDefaults: buildAstroDefaults2 } = await Promise.resolve().then(() => (init_astroDefaults(), astroDefaults_exports));
+    const defaults = buildAstroDefaults2();
+    const created = await DB.bulkUpsertAstroContent(defaults);
+    res.status(200).json({ created: created.length, entries: created });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+var astro_routes_default = router;
+
+// server/routes/auth.routes.ts
+import { Router as Router2 } from "express";
+
+// server/config.ts
+var DEFAULT_ADMIN_EMAIL = "debarghapakhira@gmail.com";
+function getAdminEmail() {
+  return (process.env.ADMIN_EMAIL || DEFAULT_ADMIN_EMAIL).toLowerCase();
+}
+
+// server/middleware/limiter.ts
+import rateLimit from "express-rate-limit";
+var authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1e3,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many authentication attempts. Try again later." }
+});
+var paymentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1e3,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many payment requests. Please slow down." }
+});
+
+// server/routes/auth.routes.ts
+var router2 = Router2();
+router2.post("/google-login", authLimiter, async (req, res) => {
+  const { email, uid, displayName } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: "Google email coordinate is required." });
+  }
+  const emailLower = email.toLowerCase();
+  if (emailLower !== getAdminEmail()) {
+    await DB.addLog(
+      `SECURITY AUDIT FAILURE: Unauthorized Google login attempt made by "${emailLower}".`
+    );
+    return res.status(403).json({ error: `Access Denied: ${getAdminEmail()} is the only authorized account.` });
+  }
+  const token = signToken2({
+    id: uid || "google-admin-id",
+    username: emailLower,
+    email: emailLower,
+    role: "admin"
+  });
+  await DB.addLog(
+    `STAFF LOG IN: Google Sign-In completed for "${emailLower}" (${displayName || "N/A"}).`
+  );
+  return res.json({ token, role: "admin", username: emailLower });
+});
+var auth_routes_default = router2;
+
+// server/routes/expense.routes.ts
+import { Router as Router3 } from "express";
+var router3 = Router3();
+router3.get("/", authenticateToken, async (_req, res) => {
+  const expenses = await DB.getExpenses();
+  res.json(expenses);
+});
+router3.post("/", authenticateToken, async (req, res) => {
+  const { title, category, amount, notes } = req.body;
+  if (!title || !amount) {
+    return res.status(400).json({ error: "Title and amount parameters have not been compiled." });
+  }
+  const expense = await DB.addExpense({
+    title,
+    category: category || "Ritual Consecration",
+    amount: Number(amount),
+    notes: notes || ""
+  });
+  res.status(201).json(expense);
+});
+router3.post("/batch", authenticateToken, async (req, res) => {
+  const { items } = req.body;
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: "items array is required." });
+  }
+  const created = await DB.bulkCreateExpenses(
+    items.map((i) => ({
+      title: i.title || "Unknown Expense",
+      category: i.category || "Ritual Consecration",
+      amount: Number(i.amount) || 0,
+      notes: i.notes || ""
+    }))
+  );
+  res.status(201).json({ count: created.length, items: created });
+});
+router3.put("/:id", authenticateToken, async (req, res) => {
+  const { title, category, amount, notes } = req.body;
+  const updates = {};
+  if (title !== void 0) updates.title = title;
+  if (category !== void 0) updates.category = category;
+  if (amount !== void 0) updates.amount = Number(amount);
+  if (notes !== void 0) updates.notes = notes;
+  const updated = await DB.updateExpense(req.params.id, updates);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: "Expense code reference not found." });
+  }
+});
+router3.delete("/:id", authenticateToken, async (req, res) => {
+  const success = await DB.deleteExpense(req.params.id);
+  if (success) {
+    res.json({ message: "Expense records successfully archived." });
+  } else {
+    res.status(404).json({ error: "Expense code reference not found." });
+  }
+});
+router3.delete("/batch", authenticateToken, async (req, res) => {
+  const { ids } = req.body;
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: "ids array is required." });
+  }
+  const deleted = await DB.bulkDeleteExpenses(ids);
+  res.json({ deleted, total: ids.length });
+});
+var expense_routes_default = router3;
+
+// server/routes/invoice.routes.ts
+import { Router as Router4 } from "express";
+var router4 = Router4();
+router4.get("/", authenticateToken, async (_req, res) => {
+  const invoices = await DB.getInvoices();
+  res.json(invoices);
+});
+router4.post("/", authenticateToken, async (req, res) => {
+  const { client, item, amount, status, alignment } = req.body;
+  if (!client || !amount) {
+    return res.status(400).json({ error: "Missing client coordinates or total payment amount." });
+  }
+  const invoice = await DB.addInvoice({
+    client,
+    date: (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
+    item: item || "Planetary Crystal Alignment Package",
+    amount: Number(amount),
+    status: status || "Sent",
+    alignment: alignment || "Universal Alignment"
+  });
+  res.status(201).json(invoice);
+});
+router4.post("/batch", authenticateToken, async (req, res) => {
+  const { items } = req.body;
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: "items array is required." });
+  }
+  const created = await DB.bulkCreateInvoices(
+    items.map((i) => ({
+      client: i.client || "Unknown",
+      date: i.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
+      item: i.item || "Planetary Crystal Alignment Package",
+      amount: Number(i.amount) || 0,
+      status: i.status || "Sent",
+      alignment: i.alignment || "Universal Alignment"
+    }))
+  );
+  res.status(201).json({ count: created.length, items: created });
+});
+router4.put("/:id", authenticateToken, async (req, res) => {
+  const { client, item, amount, status, alignment } = req.body;
+  const updates = {};
+  if (client !== void 0) updates.client = client;
+  if (item !== void 0) updates.item = item;
+  if (amount !== void 0) updates.amount = Number(amount);
+  if (status !== void 0) updates.status = status;
+  if (alignment !== void 0) updates.alignment = alignment;
+  const updated = await DB.updateInvoice(req.params.id, updates);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: "Invoice signature reference not found." });
+  }
+});
+router4.delete("/:id", authenticateToken, async (req, res) => {
+  const success = await DB.deleteInvoice(req.params.id);
+  if (success) {
+    res.json({ message: "Invoice successfully pruned." });
+  } else {
+    res.status(404).json({ error: "Invoice signature reference not found." });
+  }
+});
+router4.delete("/batch", authenticateToken, async (req, res) => {
+  const { ids } = req.body;
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: "ids array is required." });
+  }
+  const deleted = await DB.bulkDeleteInvoices(ids);
+  res.json({ deleted, total: ids.length });
+});
+var invoice_routes_default = router4;
+
+// server/routes/payment.routes.ts
+import crypto2 from "crypto";
+import { Router as Router5 } from "express";
 
 // server/services/email.ts
 import nodemailer from "nodemailer";
@@ -1585,7 +2329,9 @@ Aura & Stone Private Ltd.`;
         text: textContent,
         html: htmlContent
       });
-      await DB.addLog(`TRANSACTIONAL EMAIL DESPATCHED: Verification notice sent to client ${clientEmail}`);
+      await DB.addLog(
+        `TRANSACTIONAL EMAIL DESPATCHED: Verification notice sent to client ${clientEmail}`
+      );
     } catch (err) {
       console.error("Email dispatch error", err);
       await DB.addLog(`EMAIL ANOMALY: Failed to dispatch real SMTP transmission.`);
@@ -1596,68 +2342,391 @@ Aura & Stone Private Ltd.`;
   }
 }
 
-// server/middleware/csrf.ts
-import crypto from "crypto";
-var SAFE_METHODS = /* @__PURE__ */ new Set(["GET", "HEAD", "OPTIONS"]);
-var TOKEN_HEADER = "x-csrf-token";
-var COOKIE_KEY = "_csrf";
-var TOKEN_BYTES = 32;
-function signToken2(secret, cookieSecret2) {
-  return crypto.createHmac("sha256", cookieSecret2).update(secret).digest("hex");
-}
-function safeEqual(a, b) {
-  const aBuf = Buffer.from(a);
-  const bBuf = Buffer.from(b);
-  if (aBuf.length !== bBuf.length) return false;
-  return crypto.timingSafeEqual(aBuf, bBuf);
-}
-function createCsrfProtection(options) {
-  const { cookieSecret: cookieSecret2, exemptPaths = /* @__PURE__ */ new Set(), cookieKey = COOKIE_KEY, tokenHeader = TOKEN_HEADER } = options;
-  const headerLower = tokenHeader.toLowerCase();
-  return function csrfProtection2(req, res, next) {
-    if (exemptPaths.has(req.path)) {
-      attachTokenGenerator(req, res, cookieKey, cookieSecret2);
-      return next();
+// server/routes/payment.routes.ts
+var router5 = Router5();
+router5.post("/razorpay/order", paymentLimiter, async (req, res) => {
+  const {
+    amount,
+    currency = "INR",
+    receiptEmail,
+    clientName,
+    cartItems
+  } = req.body;
+  if (!amount || amount <= 0) {
+    return res.status(400).json({ error: "Total amount is required for setting up order tunnels." });
+  }
+  const orderId = "order_" + crypto2.randomBytes(6).toString("hex");
+  const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
+  const razorpaySecret = process.env.RAZORPAY_KEY_SECRET;
+  if (razorpayKeyId && razorpaySecret) {
+    const authString = Buffer.from(`${razorpayKeyId}:${razorpaySecret}`).toString("base64");
+    try {
+      const apiResponse = await fetch("https://api.razorpay.com/v1/orders", {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${authString}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          amount: Math.round(amount * 100),
+          currency,
+          receipt: "rec_" + Date.now().toString().slice(-6),
+          notes: {
+            clientName,
+            clientEmail: receiptEmail,
+            itemsDescription: cartItems || "High-Precision Consecration Curation Bundle"
+          }
+        })
+      });
+      if (!apiResponse.ok) {
+        throw new Error("Failure during remote Razorpay initialization.");
+      }
+      const orderData = await apiResponse.json();
+      await DB.addLog(`RAZORPAY LIVE: Registered order ${orderData.id} for \u20B9${amount}`);
+      return res.status(201).json(orderData);
+    } catch (err) {
+      console.error("Razorpay processing exception: ", err);
+      await DB.addLog(
+        "RAZORPAY EXCEPTION: Live channel failover. Generating sandboxed transaction."
+      );
     }
-    const method = req.method.toUpperCase();
-    if (SAFE_METHODS.has(method)) {
-      attachTokenGenerator(req, res, cookieKey, cookieSecret2);
-      return next();
-    }
-    const cookieToken = req.signedCookies?.[cookieKey] ?? "";
-    const headerTokenRaw = req.headers[headerLower];
-    const headerToken = Array.isArray(headerTokenRaw) ? headerTokenRaw[0] : headerTokenRaw;
-    if (!cookieToken || !headerToken) {
-      return next(Object.assign(new Error("CSRF token missing"), { code: "EBADCSRFTOKEN" }));
-    }
-    if (!safeEqual(cookieToken, headerToken)) {
-      return next(Object.assign(new Error("CSRF token mismatch"), { code: "EBADCSRFTOKEN" }));
-    }
-    attachTokenGenerator(req, res, cookieKey, cookieSecret2);
-    return next();
-  };
-}
-function attachTokenGenerator(req, res, cookieKey, cookieSecret2) {
-  req.csrfToken = () => {
-    const existing = req.signedCookies?.[cookieKey];
-    if (existing) return existing;
-    const secret = crypto.randomBytes(TOKEN_BYTES).toString("hex");
-    const signed = signToken2(secret, cookieSecret2);
-    res.cookie(cookieKey, signed, {
-      httpOnly: true,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
-      signed: true
+  }
+  await DB.addLog(`RAZORPAY SANDBOX: Allocated checkout reference ${orderId} for \u20B9${amount}`);
+  res.status(201).json({
+    id: orderId,
+    entity: "order",
+    amount: amount * 100,
+    amount_paid: 0,
+    amount_due: amount * 100,
+    currency,
+    receipt: "rec_" + Date.now().toString().slice(-6),
+    status: "created",
+    notes: {
+      clientName,
+      clientEmail: receiptEmail,
+      itemsDescription: cartItems || "Sandboxed Curation Package"
+    },
+    created_at: Math.floor(Date.now() / 1e3)
+  });
+});
+router5.post("/razorpay/webhook", async (req, res) => {
+  const signatureHeader = req.headers["x-razorpay-signature"];
+  const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader;
+  const razorpaySecret = process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET || "sacred_webhook7592_signature";
+  if (!signature) {
+    return res.status(400).json({ error: "Missing security signature block." });
+  }
+  let isSignatureValid = false;
+  try {
+    const rawBodyBuffer = req.rawBody || Buffer.from(JSON.stringify(req.body));
+    const hmac = crypto2.createHmac("sha256", razorpaySecret);
+    hmac.update(rawBodyBuffer);
+    const expectedSignature = hmac.digest("hex");
+    isSignatureValid = crypto2.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    );
+  } catch {
+    isSignatureValid = false;
+  }
+  const isBypassActive = process.env.NODE_ENV !== "production" && signature === "bypass_test_mode";
+  if (!isSignatureValid && !isBypassActive) {
+    await DB.addLog("CRITICAL: Unauthorized signature received on payment webhook.");
+    return res.status(403).json({ error: "Signature failure. Connection unauthorized." });
+  }
+  const body = req.body;
+  const event = body?.event;
+  const payload = body?.payload;
+  if (event === "payment.captured" || event === "simulated.payment.captured" || isBypassActive) {
+    const paymentEntity = payload?.payment?.entity || {};
+    const razorpayOrderId = paymentEntity.order_id || "order_sandbox_re";
+    const amountPaidInRupees = (paymentEntity.amount || body?.amount || 1e4) / 100;
+    const clientName = paymentEntity.notes?.clientName || body?.clientName || "Vrishabha Devotee";
+    const clientEmail = paymentEntity.notes?.clientEmail || body?.receiptEmail || "operations@aurastone.in";
+    const itemNames = paymentEntity.notes?.itemsDescription || body?.cartItems || "Planetary Crystal Alignment Package";
+    await DB.addLog(
+      `WEBHOOK TRANSACTION VERIFIED: Secured Order ID ${razorpayOrderId} (\u20B9${amountPaidInRupees})`
+    );
+    await DB.addInvoice({
+      client: clientName,
+      date: (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
+      item: itemNames,
+      amount: amountPaidInRupees,
+      status: "Paid",
+      alignment: "Secured via Razorpay Secure checkout Gateway"
     });
-    return signed;
-  };
-}
+    await DB.addTask({
+      title: `Sanctify crystals for order: ${razorpayOrderId} (${clientName})`,
+      status: "Water Cleanse",
+      priority: "High",
+      assignee: "Pandit Sharma",
+      daysLeft: 3
+    });
+    await sendFulfillmentEmail(clientEmail, clientName, itemNames, razorpayOrderId);
+    return res.json({
+      status: "success",
+      message: "Fulfillment sequence synced",
+      orderId: razorpayOrderId
+    });
+  }
+  res.json({ status: "ignored", event });
+});
+var payment_routes_default = router5;
 
-// server/config.ts
-var DEFAULT_ADMIN_EMAIL = "debarghapakhira@gmail.com";
-function getAdminEmail() {
-  return (process.env.ADMIN_EMAIL || DEFAULT_ADMIN_EMAIL).toLowerCase();
-}
+// server/routes/product.routes.ts
+import { Router as Router6 } from "express";
+var router6 = Router6();
+router6.get("/", async (_req, res) => {
+  try {
+    const products = await DB.getProducts();
+    res.json(products);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+router6.post("/", authenticateToken, async (req, res) => {
+  try {
+    const product = await DB.saveProduct(req.body);
+    res.status(200).json(product);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+router6.delete("/:id", authenticateToken, async (req, res) => {
+  try {
+    const success = await DB.deleteProduct(req.params.id);
+    if (success) {
+      res.json({ message: "Product deleted." });
+    } else {
+      res.status(404).json({ error: "Product not found." });
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+var product_routes_default = router6;
+
+// server/routes/system.routes.ts
+import { Router as Router7 } from "express";
+var router7 = Router7();
+router7.get("/csrf-token", (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
+router7.get("/logs", authenticateToken, async (_req, res) => {
+  const logs = await DB.getLogs();
+  res.json(logs);
+});
+router7.get("/email-records", authenticateToken, async (_req, res) => {
+  const records = await DB.getEmailRecords();
+  res.json(records);
+});
+router7.post("/email-records", authenticateToken, async (req, res) => {
+  const { clientName, email, subject } = req.body;
+  if (!email || !subject) {
+    return res.status(400).json({ error: "Email and subject are required." });
+  }
+  const record = await DB.addEmailRecord({
+    clientName: clientName || "Staff Dispatcher",
+    email,
+    subject,
+    dateStr: (/* @__PURE__ */ new Date()).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    })
+  });
+  res.status(201).json(record);
+});
+var system_routes_default = router7;
+
+// server/routes/task.routes.ts
+import { Router as Router8 } from "express";
+var router8 = Router8();
+router8.get("/", authenticateToken, async (_req, res) => {
+  const tasks = await DB.getTasks();
+  res.json(tasks);
+});
+router8.post("/", authenticateToken, async (req, res) => {
+  const { title, status, priority, assignee, daysLeft } = req.body;
+  if (!title || !assignee) {
+    return res.status(400).json({ error: "Title and responsible assignee are mandatory fields." });
+  }
+  const task = await DB.addTask({
+    title,
+    status: status || "Backlog",
+    priority: priority || "Medium",
+    assignee,
+    daysLeft: Number(daysLeft) || 3
+  });
+  res.status(201).json(task);
+});
+router8.put("/:id", authenticateToken, async (req, res) => {
+  const { title, status, priority, assignee, daysLeft } = req.body;
+  const updates = {};
+  if (title !== void 0) updates.title = title;
+  if (status !== void 0) updates.status = status;
+  if (priority !== void 0) updates.priority = priority;
+  if (assignee !== void 0) updates.assignee = assignee;
+  if (daysLeft !== void 0) updates.daysLeft = Number(daysLeft);
+  const updated = await DB.updateTask(req.params.id, updates);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: "Vedic task identifier not discovered." });
+  }
+});
+router8.put("/:id/status", authenticateToken, async (req, res) => {
+  const { status } = req.body;
+  if (!status) {
+    return res.status(400).json({ error: "Missing state status parameter." });
+  }
+  const updatedTask = await DB.updateTaskStatus(
+    req.params.id,
+    status
+  );
+  if (updatedTask) {
+    res.json(updatedTask);
+  } else {
+    res.status(404).json({ error: "Vedic task identifier not discovered." });
+  }
+});
+router8.delete("/:id", authenticateToken, async (req, res) => {
+  const success = await DB.deleteTask(req.params.id);
+  if (success) {
+    res.json({ message: "Task resolved/archived." });
+  } else {
+    res.status(404).json({ error: "Task signature reference not found." });
+  }
+});
+var task_routes_default = router8;
+
+// server/routes/vendor.routes.ts
+import { Router as Router9 } from "express";
+var router9 = Router9();
+router9.get("/", authenticateToken, async (_req, res) => {
+  const vendors = await DB.getVendors();
+  res.json(vendors);
+});
+router9.post("/", authenticateToken, async (req, res) => {
+  const { name, contact, origin, category, leadTime, leadGems } = req.body;
+  if (!name || !contact) {
+    return res.status(400).json({ error: "Name and contact person are required." });
+  }
+  const vendor = await DB.addVendor({
+    name,
+    contact,
+    origin: origin || "Himalayan Foothills",
+    category: category || "Raw Crystals",
+    leadTime: leadTime || "5 Days",
+    leadGems: leadGems || "Crystalline beads"
+  });
+  res.status(201).json(vendor);
+});
+router9.post("/batch", authenticateToken, async (req, res) => {
+  const { items } = req.body;
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: "items array is required." });
+  }
+  const created = await DB.bulkCreateVendors(
+    items.map((i) => ({
+      name: i.name || "Unknown Vendor",
+      contact: i.contact || "Unknown",
+      origin: i.origin || "Himalayan Foothills",
+      category: i.category || "Raw Crystals",
+      leadTime: i.leadTime || "5 Days",
+      leadGems: i.leadGems || "Crystalline beads"
+    }))
+  );
+  res.status(201).json({ count: created.length, items: created });
+});
+router9.put("/:id", authenticateToken, async (req, res) => {
+  const { name, contact, origin, category, leadTime, leadGems, status, rating } = req.body;
+  const updates = {};
+  if (name !== void 0) updates.name = name;
+  if (contact !== void 0) updates.contact = contact;
+  if (origin !== void 0) updates.origin = origin;
+  if (category !== void 0) updates.category = category;
+  if (leadTime !== void 0) updates.leadTime = leadTime;
+  if (leadGems !== void 0) updates.leadGems = leadGems;
+  if (status !== void 0) updates.status = status;
+  if (rating !== void 0) updates.rating = rating;
+  const updated = await DB.updateVendor(req.params.id, updates);
+  if (updated) {
+    res.json(updated);
+  } else {
+    res.status(404).json({ error: "Vendor signature reference not found." });
+  }
+});
+router9.delete("/:id", authenticateToken, async (req, res) => {
+  const success = await DB.deleteVendor(req.params.id);
+  if (success) {
+    res.json({ message: "Vendor registration successfully suspended." });
+  } else {
+    res.status(404).json({ error: "Vendor signature reference not found." });
+  }
+});
+var vendor_routes_default = router9;
+
+// server/routes/website.routes.ts
+import { Router as Router10 } from "express";
+var router10 = Router10();
+router10.get("/content", async (_req, res) => {
+  try {
+    const content = await DB.getWebsiteContent();
+    res.json(content);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+router10.post("/content", authenticateToken, async (req, res) => {
+  try {
+    const content = await DB.saveWebsiteContent(req.body);
+    res.status(200).json(content);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+router10.get("/checkpoints", authenticateToken, async (_req, res) => {
+  try {
+    const checkpoints = await DB.getCheckpoints();
+    res.json(checkpoints);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+router10.post("/checkpoints", authenticateToken, async (req, res) => {
+  try {
+    const { title } = req.body;
+    const checkpoint = await DB.createCheckpoint(
+      title || "Periodic Operational Checkpoint",
+      req.user?.username || "debarghapakhira@gmail.com"
+    );
+    res.status(201).json(checkpoint);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+router10.post("/checkpoints/:id/rollback", authenticateToken, async (req, res) => {
+  try {
+    const success = await DB.rollbackToCheckpoint(req.params.id);
+    if (success) {
+      res.json({ message: "Rollback succeeded." });
+    } else {
+      res.status(404).json({ error: "Rollback failed." });
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(500).json({ error: message });
+  }
+});
+var website_routes_default = router10;
 
 // server/app.ts
 var app = express();
@@ -1703,598 +2772,29 @@ if (!cookieSecret) {
 }
 var finalCookieSecret = cookieSecret || "aurastone-dev-cookie-secret-change-in-production-please";
 app.use(cookieParser(finalCookieSecret));
-var CSRF_EXEMPT_PATHS = /* @__PURE__ */ new Set([
-  "/api/payments/razorpay/webhook"
-]);
+var CSRF_EXEMPT_PATHS = /* @__PURE__ */ new Set(["/api/payments/razorpay/webhook"]);
 var csrfProtection = createCsrfProtection({
   cookieSecret: finalCookieSecret,
   exemptPaths: CSRF_EXEMPT_PATHS
 });
 app.use(csrfProtection);
-var authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1e3,
-  max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: "Too many authentication attempts. Try again later." }
-});
-var paymentLimiter = rateLimit({
-  windowMs: 15 * 60 * 1e3,
-  max: 30,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: "Too many payment requests. Please slow down." }
-});
 if (isFirebaseActive()) {
   DB.addLog("SYSTEM INITIALIZATION: Connect successfully to Firebase Firestore Instance.");
 } else {
-  DB.addLog("SYSTEM INITIALIZATION: No Active Firebase configuration. Running with active JSON flat-file clusters.");
-}
-app.get("/api/csrf-token", (req, res) => {
-  res.json({ csrfToken: req.csrfToken() });
-});
-app.post(
-  "/api/auth/google-login",
-  authLimiter,
-  async (req, res) => {
-    const { email, uid, displayName } = req.body;
-    if (!email) {
-      return res.status(400).json({ error: "Google email coordinate is required." });
-    }
-    const emailLower = email.toLowerCase();
-    if (emailLower !== getAdminEmail()) {
-      await DB.addLog(`SECURITY AUDIT FAILURE: Unauthorized Google login attempt made by "${emailLower}".`);
-      return res.status(403).json({ error: `Access Denied: ${getAdminEmail()} is the only authorized account.` });
-    }
-    const token = signToken({
-      id: uid || "google-admin-id",
-      username: emailLower,
-      email: emailLower,
-      role: "admin"
-    });
-    await DB.addLog(`STAFF LOG IN: Google Sign-In completed for "${emailLower}" (${displayName || "N/A"}).`);
-    return res.json({ token, role: "admin", username: emailLower });
-  }
-);
-app.get("/api/invoices", authenticateToken, async (_req, res) => {
-  const invoices = await DB.getInvoices();
-  res.json(invoices);
-});
-app.post("/api/invoices", authenticateToken, async (req, res) => {
-  const { client, item, amount, status, alignment } = req.body;
-  if (!client || !amount) {
-    return res.status(400).json({ error: "Missing client coordinates or total payment amount." });
-  }
-  const invoice = await DB.addInvoice({
-    client,
-    date: (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
-    item: item || "Planetary Crystal Alignment Package",
-    amount: Number(amount),
-    status: status || "Sent",
-    alignment: alignment || "Universal Alignment"
-  });
-  res.status(201).json(invoice);
-});
-app.post("/api/invoices/batch", authenticateToken, async (req, res) => {
-  const { items } = req.body;
-  if (!items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: "items array is required." });
-  }
-  const created = await DB.bulkCreateInvoices(items.map((i) => ({
-    client: i.client || "Unknown",
-    date: i.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
-    item: i.item || "Planetary Crystal Alignment Package",
-    amount: Number(i.amount) || 0,
-    status: i.status || "Sent",
-    alignment: i.alignment || "Universal Alignment"
-  })));
-  res.status(201).json({ count: created.length, items: created });
-});
-app.put("/api/invoices/:id", authenticateToken, async (req, res) => {
-  const { client, item, amount, status, alignment } = req.body;
-  const updates = {};
-  if (client !== void 0) updates.client = client;
-  if (item !== void 0) updates.item = item;
-  if (amount !== void 0) updates.amount = Number(amount);
-  if (status !== void 0) updates.status = status;
-  if (alignment !== void 0) updates.alignment = alignment;
-  const updated = await DB.updateInvoice(req.params.id, updates);
-  if (updated) {
-    res.json(updated);
-  } else {
-    res.status(404).json({ error: "Invoice signature reference not found." });
-  }
-});
-app.delete("/api/invoices/:id", authenticateToken, async (req, res) => {
-  const success = await DB.deleteInvoice(req.params.id);
-  if (success) {
-    res.json({ message: "Invoice successfully pruned." });
-  } else {
-    res.status(404).json({ error: "Invoice signature reference not found." });
-  }
-});
-app.delete("/api/invoices/batch", authenticateToken, async (req, res) => {
-  const { ids } = req.body;
-  if (!ids || !Array.isArray(ids) || ids.length === 0) {
-    return res.status(400).json({ error: "ids array is required." });
-  }
-  const deleted = await DB.bulkDeleteInvoices(ids);
-  res.json({ deleted, total: ids.length });
-});
-app.get("/api/vendors", authenticateToken, async (_req, res) => {
-  const vendors = await DB.getVendors();
-  res.json(vendors);
-});
-app.post("/api/vendors", authenticateToken, async (req, res) => {
-  const { name, contact, origin, category, leadTime, leadGems } = req.body;
-  if (!name || !contact) {
-    return res.status(400).json({ error: "Name and contact person are required." });
-  }
-  const vendor = await DB.addVendor({
-    name,
-    contact,
-    origin: origin || "Himalayan Foothills",
-    category: category || "Raw Crystals",
-    leadTime: leadTime || "5 Days",
-    leadGems: leadGems || "Crystalline beads"
-  });
-  res.status(201).json(vendor);
-});
-app.post("/api/vendors/batch", authenticateToken, async (req, res) => {
-  const { items } = req.body;
-  if (!items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: "items array is required." });
-  }
-  const created = await DB.bulkCreateVendors(items.map((i) => ({
-    name: i.name || "Unknown Vendor",
-    contact: i.contact || "Unknown",
-    origin: i.origin || "Himalayan Foothills",
-    category: i.category || "Raw Crystals",
-    leadTime: i.leadTime || "5 Days",
-    leadGems: i.leadGems || "Crystalline beads"
-  })));
-  res.status(201).json({ count: created.length, items: created });
-});
-app.put("/api/vendors/:id", authenticateToken, async (req, res) => {
-  const { name, contact, origin, category, leadTime, leadGems, status, rating } = req.body;
-  const updates = {};
-  if (name !== void 0) updates.name = name;
-  if (contact !== void 0) updates.contact = contact;
-  if (origin !== void 0) updates.origin = origin;
-  if (category !== void 0) updates.category = category;
-  if (leadTime !== void 0) updates.leadTime = leadTime;
-  if (leadGems !== void 0) updates.leadGems = leadGems;
-  if (status !== void 0) updates.status = status;
-  if (rating !== void 0) updates.rating = rating;
-  const updated = await DB.updateVendor(req.params.id, updates);
-  if (updated) {
-    res.json(updated);
-  } else {
-    res.status(404).json({ error: "Vendor signature reference not found." });
-  }
-});
-app.delete("/api/vendors/:id", authenticateToken, async (req, res) => {
-  const success = await DB.deleteVendor(req.params.id);
-  if (success) {
-    res.json({ message: "Vendor registration successfully suspended." });
-  } else {
-    res.status(404).json({ error: "Vendor signature reference not found." });
-  }
-});
-app.get("/api/expenses", authenticateToken, async (_req, res) => {
-  const expenses = await DB.getExpenses();
-  res.json(expenses);
-});
-app.post("/api/expenses", authenticateToken, async (req, res) => {
-  const { title, category, amount, notes } = req.body;
-  if (!title || !amount) {
-    return res.status(400).json({ error: "Title and amount parameters have not been compiled." });
-  }
-  const expense = await DB.addExpense({
-    title,
-    category: category || "Ritual Consecration",
-    amount: Number(amount),
-    notes: notes || ""
-  });
-  res.status(201).json(expense);
-});
-app.post("/api/expenses/batch", authenticateToken, async (req, res) => {
-  const { items } = req.body;
-  if (!items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: "items array is required." });
-  }
-  const created = await DB.bulkCreateExpenses(items.map((i) => ({
-    title: i.title || "Unknown Expense",
-    category: i.category || "Ritual Consecration",
-    amount: Number(i.amount) || 0,
-    notes: i.notes || ""
-  })));
-  res.status(201).json({ count: created.length, items: created });
-});
-app.put("/api/expenses/:id", authenticateToken, async (req, res) => {
-  const { title, category, amount, notes } = req.body;
-  const updates = {};
-  if (title !== void 0) updates.title = title;
-  if (category !== void 0) updates.category = category;
-  if (amount !== void 0) updates.amount = Number(amount);
-  if (notes !== void 0) updates.notes = notes;
-  const updated = await DB.updateExpense(req.params.id, updates);
-  if (updated) {
-    res.json(updated);
-  } else {
-    res.status(404).json({ error: "Expense code reference not found." });
-  }
-});
-app.delete("/api/expenses/:id", authenticateToken, async (req, res) => {
-  const success = await DB.deleteExpense(req.params.id);
-  if (success) {
-    res.json({ message: "Expense records successfully archived." });
-  } else {
-    res.status(404).json({ error: "Expense code reference not found." });
-  }
-});
-app.delete("/api/expenses/batch", authenticateToken, async (req, res) => {
-  const { ids } = req.body;
-  if (!ids || !Array.isArray(ids) || ids.length === 0) {
-    return res.status(400).json({ error: "ids array is required." });
-  }
-  const deleted = await DB.bulkDeleteExpenses(ids);
-  res.json({ deleted, total: ids.length });
-});
-app.get("/api/tasks", authenticateToken, async (_req, res) => {
-  const tasks = await DB.getTasks();
-  res.json(tasks);
-});
-app.post("/api/tasks", authenticateToken, async (req, res) => {
-  const { title, status, priority, assignee, daysLeft } = req.body;
-  if (!title || !assignee) {
-    return res.status(400).json({ error: "Title and responsible assignee are mandatory fields." });
-  }
-  const task = await DB.addTask({
-    title,
-    status: status || "Backlog",
-    priority: priority || "Medium",
-    assignee,
-    daysLeft: Number(daysLeft) || 3
-  });
-  res.status(201).json(task);
-});
-app.put("/api/tasks/:id", authenticateToken, async (req, res) => {
-  const { title, status, priority, assignee, daysLeft } = req.body;
-  const updates = {};
-  if (title !== void 0) updates.title = title;
-  if (status !== void 0) updates.status = status;
-  if (priority !== void 0) updates.priority = priority;
-  if (assignee !== void 0) updates.assignee = assignee;
-  if (daysLeft !== void 0) updates.daysLeft = Number(daysLeft);
-  const updated = await DB.updateTask(req.params.id, updates);
-  if (updated) {
-    res.json(updated);
-  } else {
-    res.status(404).json({ error: "Vedic task identifier not discovered." });
-  }
-});
-app.put("/api/tasks/:id/status", authenticateToken, async (req, res) => {
-  const { status } = req.body;
-  if (!status) {
-    return res.status(400).json({ error: "Missing state status parameter." });
-  }
-  const updatedTask = await DB.updateTaskStatus(
-    req.params.id,
-    status
+  DB.addLog(
+    "SYSTEM INITIALIZATION: No Active Firebase configuration. Running with active JSON flat-file clusters."
   );
-  if (updatedTask) {
-    res.json(updatedTask);
-  } else {
-    res.status(404).json({ error: "Vedic task identifier not discovered." });
-  }
-});
-app.delete("/api/tasks/:id", authenticateToken, async (req, res) => {
-  const success = await DB.deleteTask(req.params.id);
-  if (success) {
-    res.json({ message: "Task resolved/archived." });
-  } else {
-    res.status(404).json({ error: "Task signature reference not found." });
-  }
-});
-app.get("/api/logs", authenticateToken, async (_req, res) => {
-  const logs = await DB.getLogs();
-  res.json(logs);
-});
-app.get("/api/email-records", authenticateToken, async (_req, res) => {
-  const records = await DB.getEmailRecords();
-  res.json(records);
-});
-app.post("/api/email-records", authenticateToken, async (req, res) => {
-  const { clientName, email, subject } = req.body;
-  if (!email || !subject) {
-    return res.status(400).json({ error: "Email and subject are required." });
-  }
-  const record = await DB.addEmailRecord({
-    clientName: clientName || "Staff Dispatcher",
-    email,
-    subject,
-    dateStr: (/* @__PURE__ */ new Date()).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-  });
-  res.status(201).json(record);
-});
-app.get("/api/astro-content", authenticateToken, async (_req, res) => {
-  try {
-    const entries = await DB.getAstroContent();
-    res.json(entries);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.post("/api/astro-content", authenticateToken, async (req, res) => {
-  try {
-    const { type, key, title, interpretation, updatedBy } = req.body;
-    if (!type || !key || !title || !interpretation) {
-      return res.status(400).json({ error: "type, key, title, and interpretation are required." });
-    }
-    const validTypes = ["planet", "ascendant", "aspect", "nakshatra"];
-    if (!validTypes.includes(type)) {
-      return res.status(400).json({ error: `type must be one of: ${validTypes.join(", ")}` });
-    }
-    const entry = await DB.upsertAstroContent({
-      type,
-      key,
-      title,
-      interpretation,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      updatedBy: updatedBy || "admin"
-    });
-    res.status(200).json(entry);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.put("/api/astro-content/:id", authenticateToken, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { type, key, title, interpretation, updatedBy } = req.body;
-    if (!type || !key || !title || !interpretation) {
-      return res.status(400).json({ error: "type, key, title, and interpretation are required." });
-    }
-    const entry = await DB.upsertAstroContent({
-      id,
-      type,
-      key,
-      title,
-      interpretation,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      updatedBy: updatedBy || "admin"
-    });
-    res.status(200).json(entry);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.delete("/api/astro-content/:id", authenticateToken, async (req, res) => {
-  try {
-    const { id } = req.params;
-    await DB.deleteAstroContent(id);
-    res.status(200).json({ success: true });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.post("/api/astro-content/bulk-seed", authenticateToken, async (_req, res) => {
-  try {
-    const { buildAstroDefaults: buildAstroDefaults2 } = await Promise.resolve().then(() => (init_astroDefaults(), astroDefaults_exports));
-    const defaults = buildAstroDefaults2();
-    const created = await DB.bulkUpsertAstroContent(defaults);
-    res.status(200).json({ created: created.length, entries: created });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.get("/api/products", async (_req, res) => {
-  try {
-    const products = await DB.getProducts();
-    res.json(products);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.post("/api/products", authenticateToken, async (req, res) => {
-  try {
-    const product = await DB.saveProduct(req.body);
-    res.status(200).json(product);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.delete("/api/products/:id", authenticateToken, async (req, res) => {
-  try {
-    const success = await DB.deleteProduct(req.params.id);
-    if (success) {
-      res.json({ message: "Product deleted." });
-    } else {
-      res.status(404).json({ error: "Product not found." });
-    }
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.get("/api/website/content", async (_req, res) => {
-  try {
-    const content = await DB.getWebsiteContent();
-    res.json(content);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.post("/api/website/content", authenticateToken, async (req, res) => {
-  try {
-    const content = await DB.saveWebsiteContent(req.body);
-    res.status(200).json(content);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.get("/api/website/checkpoints", authenticateToken, async (_req, res) => {
-  try {
-    const checkpoints = await DB.getCheckpoints();
-    res.json(checkpoints);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.post("/api/website/checkpoints", authenticateToken, async (req, res) => {
-  try {
-    const { title } = req.body;
-    const checkpoint = await DB.createCheckpoint(
-      title || "Periodic Operational Checkpoint",
-      req.user?.username || "debarghapakhira@gmail.com"
-    );
-    res.status(201).json(checkpoint);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.post("/api/website/checkpoints/:id/rollback", authenticateToken, async (req, res) => {
-  try {
-    const success = await DB.rollbackToCheckpoint(req.params.id);
-    if (success) {
-      res.json({ message: "Rollback succeeded." });
-    } else {
-      res.status(404).json({ error: "Rollback failed." });
-    }
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-app.post(
-  "/api/payments/razorpay/order",
-  paymentLimiter,
-  async (req, res) => {
-    const { amount, currency = "INR", receiptEmail, clientName, cartItems } = req.body;
-    if (!amount || amount <= 0) {
-      return res.status(400).json({ error: "Total amount is required for setting up order tunnels." });
-    }
-    const orderId = "order_" + crypto2.randomBytes(6).toString("hex");
-    const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
-    const razorpaySecret = process.env.RAZORPAY_KEY_SECRET;
-    if (razorpayKeyId && razorpaySecret) {
-      const authString = Buffer.from(`${razorpayKeyId}:${razorpaySecret}`).toString("base64");
-      try {
-        const apiResponse = await fetch("https://api.razorpay.com/v1/orders", {
-          method: "POST",
-          headers: {
-            Authorization: `Basic ${authString}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            amount: Math.round(amount * 100),
-            currency,
-            receipt: "rec_" + Date.now().toString().slice(-6),
-            notes: {
-              clientName,
-              clientEmail: receiptEmail,
-              itemsDescription: cartItems || "High-Precision Consecration Curation Bundle"
-            }
-          })
-        });
-        if (!apiResponse.ok) {
-          throw new Error("Failure during remote Razorpay initialization.");
-        }
-        const orderData = await apiResponse.json();
-        await DB.addLog(`RAZORPAY LIVE: Registered order ${orderData.id} for \u20B9${amount}`);
-        return res.status(201).json(orderData);
-      } catch (err) {
-        console.error("Razorpay processing exception: ", err);
-        await DB.addLog("RAZORPAY EXCEPTION: Live channel failover. Generating sandboxed transaction.");
-      }
-    }
-    await DB.addLog(`RAZORPAY SANDBOX: Allocated checkout reference ${orderId} for \u20B9${amount}`);
-    res.status(201).json({
-      id: orderId,
-      entity: "order",
-      amount: amount * 100,
-      amount_paid: 0,
-      amount_due: amount * 100,
-      currency,
-      receipt: "rec_" + Date.now().toString().slice(-6),
-      status: "created",
-      notes: {
-        clientName,
-        clientEmail: receiptEmail,
-        itemsDescription: cartItems || "Sandboxed Curation Package"
-      },
-      created_at: Math.floor(Date.now() / 1e3)
-    });
-  }
-);
-app.post("/api/payments/razorpay/webhook", async (req, res) => {
-  const signatureHeader = req.headers["x-razorpay-signature"];
-  const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader;
-  const razorpaySecret = process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET || "sacred_webhook7592_signature";
-  if (!signature) {
-    return res.status(400).json({ error: "Missing security signature block." });
-  }
-  let isSignatureValid = false;
-  try {
-    const rawBodyBuffer = req.rawBody || Buffer.from(JSON.stringify(req.body));
-    const hmac = crypto2.createHmac("sha256", razorpaySecret);
-    hmac.update(rawBodyBuffer);
-    const expectedSignature = hmac.digest("hex");
-    isSignatureValid = crypto2.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
-    );
-  } catch {
-    isSignatureValid = false;
-  }
-  const isBypassActive = process.env.NODE_ENV !== "production" && signature === "bypass_test_mode";
-  if (!isSignatureValid && !isBypassActive) {
-    await DB.addLog("CRITICAL: Unauthorized signature received on payment webhook.");
-    return res.status(403).json({ error: "Signature failure. Connection unauthorized." });
-  }
-  const body = req.body;
-  const event = body?.event;
-  const payload = body?.payload;
-  if (event === "payment.captured" || event === "simulated.payment.captured" || isBypassActive) {
-    const paymentEntity = payload?.payment?.entity || {};
-    const razorpayOrderId = paymentEntity.order_id || "order_sandbox_re";
-    const amountPaidInRupees = (paymentEntity.amount || body?.amount || 1e4) / 100;
-    const clientName = paymentEntity.notes?.clientName || body?.clientName || "Vrishabha Devotee";
-    const clientEmail = paymentEntity.notes?.clientEmail || body?.receiptEmail || "operations@aurastone.in";
-    const itemNames = paymentEntity.notes?.itemsDescription || body?.cartItems || "Planetary Crystal Alignment Package";
-    await DB.addLog(`WEBHOOK TRANSACTION VERIFIED: Secured Order ID ${razorpayOrderId} (\u20B9${amountPaidInRupees})`);
-    await DB.addInvoice({
-      client: clientName,
-      date: (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
-      item: itemNames,
-      amount: amountPaidInRupees,
-      status: "Paid",
-      alignment: "Secured via Razorpay Secure checkout Gateway"
-    });
-    await DB.addTask({
-      title: `Sanctify crystals for order: ${razorpayOrderId} (${clientName})`,
-      status: "Water Cleanse",
-      priority: "High",
-      assignee: "Pandit Sharma",
-      daysLeft: 3
-    });
-    await sendFulfillmentEmail(clientEmail, clientName, itemNames, razorpayOrderId);
-    return res.json({ status: "success", message: "Fulfillment sequence synced", orderId: razorpayOrderId });
-  }
-  res.json({ status: "ignored", event });
-});
+}
+app.use("/api", system_routes_default);
+app.use("/api/auth", auth_routes_default);
+app.use("/api/invoices", invoice_routes_default);
+app.use("/api/vendors", vendor_routes_default);
+app.use("/api/expenses", expense_routes_default);
+app.use("/api/tasks", task_routes_default);
+app.use("/api/astro-content", astro_routes_default);
+app.use("/api/products", product_routes_default);
+app.use("/api/website", website_routes_default);
+app.use("/api/payments", payment_routes_default);
 app.use((err, _req, res, _next) => {
   const code = err?.code;
   if (code === "EBADCSRFTOKEN") {
