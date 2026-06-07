@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { TASK_STATUSES, PRIORITIES } from './seedData';
 import type { Task } from './types';

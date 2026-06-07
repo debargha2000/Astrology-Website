@@ -50,6 +50,7 @@
     ],
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-use-before-define": ["error", { "functions": false, "classes": true, "variables": true }],
     "react/react-in-jsx-scope": "off",
     "no-console": "warn"
   },
@@ -61,8 +62,16 @@
   "overrides": [
     {
       "files": ["**/*.tsx", "**/*.ts"],
-       "extends": ["plugin:react-hooks/recommended"],
+      "extends": ["plugin:react-hooks/recommended"],
       "plugins": ["react-hooks"]
+    },
+    {
+      "files": ["server/**/*.ts"],
+      "rules": {
+        "import/default": "off",
+        "import/no-named-as-default": "off",
+        "import/no-named-as-default-member": "off"
+      }
     }
   ]
 }

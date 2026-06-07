@@ -1,5 +1,4 @@
 import { Calendar, Clock, MapPin, User, HelpCircle } from 'lucide-react';
-import React from 'react';
 
 import type { BirthDetails } from '../../types';
 
@@ -20,7 +19,12 @@ export function BirthDetailsForm({
   showName = true,
   className = '',
 }: BirthDetailsFormProps) {
-  const update = (patch: Partial<BirthDetails>) => onChange({ ...value, ...patch });
+  const update = (patch: Partial<BirthDetails>) => {
+    const cleanedPatch = Object.fromEntries(
+      Object.entries(patch).filter(([, v]) => v !== undefined)
+    ) as Partial<BirthDetails>;
+    onChange({ ...value, ...cleanedPatch });
+  };
 
   const inputClass = compact
     ? 'w-full bg-[#E5E3D8]/20 border border-[#D1CEBF] rounded-lg px-3 py-2.5 text-xs outline-none focus:border-[#A6A18F] text-[#1A1A1A] font-medium transition-colors'

@@ -1,5 +1,4 @@
 import { Trash2, X, CheckSquare } from 'lucide-react';
-import React from 'react';
 
 interface Props {
   count: number;

@@ -36,22 +36,7 @@ async function authedFetch(
 export type ToastFn = (message: string, type?: 'success' | 'error' | 'info') => void;
 
 export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
-  const {
-    setInvoices,
-    setVendors,
-    setExpenses,
-    setTasks,
-    setProductsList,
-    setSiteForm,
-    setCheckpointsList,
-    setIsLoading,
-    setTerminalLog,
-    useFirestoreSource,
-    googleUser,
-    setGoogleUser,
-    setGoogleToken,
-    loadData,
-  } = state;
+  const { setIsLoading, setTerminalLog, useFirestoreSource, googleUser, loadData } = state;
 
   const notify = useCallback(
     (message: string, type: 'success' | 'error' | 'info' = 'success') => {
@@ -122,8 +107,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
           const err = await res.json();
           notify(`Error saving product: ${err.error}`, 'error');
         }
-      } catch (e: any) {
-        notify(`Save error: ${e.message}`, 'error');
+      } catch (e: unknown) {
+        notify(`Save error: ${e instanceof Error ? e.message : String(e)}`, 'error');
       } finally {
         setIsLoading(false);
       }
@@ -146,8 +131,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         } else {
           notify('Failed to delete product.', 'error');
         }
-      } catch (e: any) {
-        notify(`Delete error: ${e.message}`, 'error');
+      } catch (e: unknown) {
+        notify(`Delete error: ${e instanceof Error ? e.message : String(e)}`, 'error');
       } finally {
         setIsLoading(false);
       }
@@ -173,8 +158,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         } else {
           notify('Failed to update website customization.', 'error');
         }
-      } catch (e: any) {
-        notify(`Update error: ${e.message}`, 'error');
+      } catch (e: unknown) {
+        notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
       } finally {
         setIsLoading(false);
       }
@@ -197,8 +182,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
       } else {
         notify('Failed to create checkpoint.', 'error');
       }
-    } catch (e: any) {
-      notify(`Error: ${e.message}`, 'error');
+    } catch (e: unknown) {
+      notify(`Error: ${e instanceof Error ? e.message : String(e)}`, 'error');
     } finally {
       setIsLoading(false);
     }
@@ -217,8 +202,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         } else {
           notify('Failed to execute system rollback.', 'error');
         }
-      } catch (e: any) {
-        notify(`Error: ${e.message}`, 'error');
+      } catch (e: unknown) {
+        notify(`Error: ${e instanceof Error ? e.message : String(e)}`, 'error');
       } finally {
         setIsLoading(false);
       }
@@ -236,10 +221,11 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     }) => {
       if (!form.client || !form.amount) return;
       const customId = `INV-2026-${Math.floor(Math.random() * 900 + 100)}`;
+      const today = new Date().toISOString().split('T')[0]!;
       const payload: Invoice = {
         id: customId,
         client: form.client,
-        date: new Date().toISOString().split('T')[0],
+        date: today,
         item: form.item || 'Planetary Crystal Alignment Package',
         amount: parseFloat(form.amount) || 0,
         status: form.status,
@@ -265,6 +251,7 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
           notify(`Invoice created for ${payload.client}.`);
           await loadData();
         } catch (err) {
+          // eslint-disable-next-line no-console
           console.error(err);
         }
         return;
@@ -296,8 +283,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         } else {
           notify('Failed to update invoice.', 'error');
         }
-      } catch (e: any) {
-        notify(`Update error: ${e.message}`, 'error');
+      } catch (e: unknown) {
+        notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
       } finally {
         setIsLoading(false);
       }
@@ -337,6 +324,7 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
           notify(`Vendor "${payload.name}" onboarded.`);
           await loadData();
         } catch (err) {
+          // eslint-disable-next-line no-console
           console.error(err);
         }
         return;
@@ -368,8 +356,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         } else {
           notify('Failed to update vendor.', 'error');
         }
-      } catch (e: any) {
-        notify(`Update error: ${e.message}`, 'error');
+      } catch (e: unknown) {
+        notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
       } finally {
         setIsLoading(false);
       }
@@ -381,12 +369,13 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (form: { title: string; category: string; amount: string; notes: string }) => {
       if (!form.title || !form.amount) return;
       const customId = `EXP-${Math.floor(Math.random() * 90 + 100)}`;
+      const today = new Date().toISOString().split('T')[0]!;
       const payload: Expense = {
         id: customId,
         title: form.title,
         category: form.category,
         amount: parseFloat(form.amount) || 0,
-        date: new Date().toISOString().split('T')[0],
+        date: today,
         notes: form.notes || '',
       };
 
@@ -399,6 +388,7 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
           notify(`Expense "${payload.title}" logged.`);
           await loadData();
         } catch (err) {
+          // eslint-disable-next-line no-console
           console.error(err);
         }
         return;
@@ -430,8 +420,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         } else {
           notify('Failed to update expense.', 'error');
         }
-      } catch (e: any) {
-        notify(`Update error: ${e.message}`, 'error');
+      } catch (e: unknown) {
+        notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
       } finally {
         setIsLoading(false);
       }
@@ -467,6 +457,7 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
           notify(`Task created for ${payload.assignee}.`);
           await loadData();
         } catch (err) {
+          // eslint-disable-next-line no-console
           console.error(err);
         }
         return;
@@ -498,8 +489,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         } else {
           notify('Failed to update task.', 'error');
         }
-      } catch (e: any) {
-        notify(`Update error: ${e.message}`, 'error');
+      } catch (e: unknown) {
+        notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
       } finally {
         setIsLoading(false);
       }
@@ -532,6 +523,7 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
           );
           await loadData();
         } catch (err) {
+          // eslint-disable-next-line no-console
           console.error(err);
         }
         return;
@@ -557,8 +549,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         } else {
           notify('Failed to delete task.', 'error');
         }
-      } catch (e: any) {
-        notify(`Delete error: ${e.message}`, 'error');
+      } catch (e: unknown) {
+        notify(`Delete error: ${e instanceof Error ? e.message : String(e)}`, 'error');
       } finally {
         setIsLoading(false);
       }
@@ -577,6 +569,7 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
           notify('Expense removed.');
           await loadData();
         } catch (err) {
+          // eslint-disable-next-line no-console
           console.error(err);
         }
         return;
@@ -595,19 +588,17 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     try {
       setIsLoading(true);
       const headers = TOKEN_HEADER();
-      const [resInvoices, resVendors, resExpenses, resTasks, resLogs] = await Promise.all([
+      const [resInvoices, resVendors, resExpenses, resTasks] = await Promise.all([
         apiFetch('/api/invoices', { headers }),
         apiFetch('/api/vendors', { headers }),
         apiFetch('/api/expenses', { headers }),
         apiFetch('/api/tasks', { headers }),
-        apiFetch('/api/logs', { headers }),
       ]);
-      const [dataInvoices, dataVendors, dataExpenses, dataTasks, dataLogs] = await Promise.all([
+      const [dataInvoices, dataVendors, dataExpenses, dataTasks] = await Promise.all([
         resInvoices.json(),
         resVendors.json(),
         resExpenses.json(),
         resTasks.json(),
-        resLogs.json(),
       ]);
       for (const inv of dataInvoices) {
         await setDoc(doc(firestoreDb, 'invoices', inv.id), inv).catch((err) =>
@@ -646,6 +637,7 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
       notify('Firestore sync complete!');
       await loadData();
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Data Sync Error:', err);
       notify('Sync failed. Check console for details.', 'error');
     } finally {

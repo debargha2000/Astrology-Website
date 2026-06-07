@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { ASPECT_MEANINGS } from '../../lib/interpretations';
 import type { TransitAspect } from '../../types';

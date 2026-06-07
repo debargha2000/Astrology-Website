@@ -22,6 +22,7 @@ export const apiService = {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Failed to fetch products:', error);
       throw error;
     }
@@ -36,6 +37,7 @@ export const apiService = {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Failed to save product:', error);
       throw error;
     }
@@ -46,6 +48,7 @@ export const apiService = {
       const response = await apiFetch(`/api/products/${id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Failed to delete product:', error);
       throw error;
     }
@@ -58,6 +61,7 @@ export const apiService = {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Failed to fetch website content:', error);
       throw error;
     }
@@ -72,6 +76,7 @@ export const apiService = {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Failed to save website content:', error);
       throw error;
     }

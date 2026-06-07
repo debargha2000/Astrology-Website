@@ -4,25 +4,19 @@ import {
   Activity,
   Cpu,
   Database,
-  Key,
-  Mail,
-  Sparkles,
   RefreshCw,
   CheckCircle2,
   TrendingUp,
-  Compass,
-  ArrowRight,
-  Play,
   Info,
+  Mail,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export default function CodebaseRatingDashboard() {
   const [activeSubTab, setActiveSubTab] = useState<'metrics' | 'checklist' | 'diagnostics'>(
     'metrics'
   );
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [scanStep, setScanStep] = useState(0);
   const [pingLatency, setPingLatency] = useState<number | null>(null);
@@ -42,20 +36,20 @@ export default function CodebaseRatingDashboard() {
   ];
 
   // Perform actual API ping to check current server round-trip latency
-  const measurePing = async () => {
+  const measurePing = useCallback(async () => {
     const start = performance.now();
     try {
       // Fetch public metadata or simple ping
       await fetch('/metadata.json');
       const duration = parseFloat((performance.now() - start).toFixed(1));
       setPingLatency(duration);
-    } catch (err) {
+    } catch (_err) {
       setPingLatency(null);
     }
-  };
+  }, []);
 
   // Perform actual requestAnimationFrame benchmarking to capture live FPS metric
-  const runFpsBenchmark = () => {
+  const runFpsBenchmark = useCallback(() => {
     if (fpsChecking) return;
     setFpsChecking(true);
     let frames = 0;
@@ -73,32 +67,43 @@ export default function CodebaseRatingDashboard() {
       }
     };
     requestAnimationFrame(countFrame);
-  };
+  }, [fpsChecking]);
 
   // On mount, perform initial baseline metrics
   useEffect(() => {
-    measurePing();
-    runFpsBenchmark();
+    // Defer measurements to avoid synchronous setState cascades during render
+    const timerId = setTimeout(() => {
+      measurePing();
+      runFpsBenchmark();
+    }, 0);
 
-    // Check secure admin token state
+    // Check secure admin token state - defer setState to avoid cascading renders
     const token = localStorage.getItem('signtific_admin_token');
     if (token) {
       try {
         const parts = token.split('.');
-        if (parts.length === 3) {
+        if (parts.length === 3 && parts[1]) {
           const payload = JSON.parse(atob(parts[1]));
           const exp = payload.exp ? new Date(payload.exp * 1000).toLocaleString() : 'Never';
-          setJwtStatus({ present: true, expireInfo: exp });
+          setTimeout(() => setJwtStatus({ present: true, expireInfo: exp }), 0);
         } else {
-          setJwtStatus({ present: true, expireInfo: 'Custom Secure Hash' });
+          setTimeout(() => setJwtStatus({ present: true, expireInfo: 'Custom Secure Hash' }), 0);
         }
-      } catch (e) {
-        setJwtStatus({ present: true, expireInfo: 'Encrypted Bearer payload' });
+      } catch (_e) {
+        setTimeout(
+          () => setJwtStatus({ present: true, expireInfo: 'Encrypted Bearer payload' }),
+          0
+        );
       }
     } else {
-      setJwtStatus({ present: false, expireInfo: 'Anonymous mode (Sign in required)' });
+      setTimeout(
+        () => setJwtStatus({ present: false, expireInfo: 'Anonymous mode (Sign in required)' }),
+        0
+      );
     }
-  }, []);
+
+    return () => clearTimeout(timerId);
+  }, [measurePing, runFpsBenchmark]);
 
   const handleRunFullScan = () => {
     if (isScanning) return;

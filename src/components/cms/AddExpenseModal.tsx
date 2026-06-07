@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { EXPENSE_CATEGORIES } from './seedData';
 
@@ -16,7 +16,7 @@ interface Props {
 export function AddExpenseModal({ onClose, onSubmit }: Props) {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState<string>(EXPENSE_CATEGORIES[0]);
+  const [category, setCategory] = useState<string>(EXPENSE_CATEGORIES[0] ?? 'Ritual Consecration');
   const [notes, setNotes] = useState('');
 
   return (

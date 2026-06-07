@@ -4,20 +4,8 @@ import {
   GeoVector,
   Ecliptic,
   SiderealTime,
-  Observer,
   e_tilt,
-  Rotation_ECL_EQD,
-  Rotation_EQD_HOR,
-  RotateVector,
-  VectorFromSphere,
-  Spherical,
-  EquatorFromVector,
-  Equator,
   SearchMoonNode,
-  NextMoonNode,
-  SearchRelativeLongitude,
-  MoonPhase,
-  SearchMoonPhase,
 } from 'astronomy-engine';
 
 import type { BirthDetails, PlanetPosition, NatalChart, TransitAspect } from '../types';
@@ -366,7 +354,7 @@ function normalizeAngle(deg: number): number {
 
 function signFromLongitude(lon: number): string {
   const idx = Math.floor(normalizeAngle(lon) / 30);
-  return SIGNS[idx % 12];
+  return SIGNS[idx % 12]!;
 }
 
 function degreeInSign(lon: number): number {
@@ -390,12 +378,12 @@ function nakshatraFromLongitude(lon: number): {
   const signLon = (normalized / 360) * 12;
   const signIdx = Math.floor(signLon) % 12;
   const idx = index % 27;
-  const data = NAKSHATRA_FULL[idx];
+  const data = NAKSHATRA_FULL[idx]!;
   return {
     name: data.name,
     lord: data.lord,
     pada: Math.min(pada, 4),
-    sign: SIGNS[signIdx],
+    sign: SIGNS[signIdx]!,
     symbol: data.symbol,
     deity: data.deity,
     nature: data.nature,
@@ -418,8 +406,8 @@ function getPlanetEclipticLongitude(body: Body, date: Date): number {
 function getPlanetHouse(lon: number, houseCusps: number[]): number {
   const normalized = normalizeAngle(lon);
   for (let i = 0; i < houseCusps.length; i++) {
-    const start = normalizeAngle(houseCusps[i]);
-    const end = normalizeAngle(houseCusps[(i + 1) % 12]);
+    const start = normalizeAngle(houseCusps[i]!);
+    const end = normalizeAngle(houseCusps[(i + 1) % 12]!);
     if (start < end) {
       if (normalized >= start && normalized < end) return i + 1;
     } else {
@@ -517,14 +505,13 @@ function findTransits(natalPlanets: Record<string, number>, date: Date): Transit
   ];
 
   const transits: TransitAspect[] = [];
-  const time = MakeTime(date);
 
   for (const { body, name: planetName } of PLANETS_FOR_POSITIONS) {
     const transitLon = getPlanetEclipticLongitude(body, date);
 
     for (const [natalName, natalLon] of Object.entries(natalPlanets)) {
       for (const aspect of aspects) {
-        const { angle, orb } = getAspectAngle(transitLon, natalLon);
+        const { angle } = getAspectAngle(transitLon, natalLon);
         const diffFromAspect = Math.abs(angle - aspect.angle);
         if (diffFromAspect <= aspect.orb) {
           transits.push({
@@ -568,14 +555,9 @@ export function computeNatalChart(details: BirthDetails): NatalChart | null {
     date = localDate;
   }
 
-  const hasTime = !!details.birthTime;
   const hasPlace = !!details.birthCoords;
 
   const time = MakeTime(date);
-  const obs = hasPlace
-    ? new Observer(details.birthCoords!.lat, details.birthCoords!.lon, 0)
-    : new Observer(0, 0, 0);
-
   const gast = SiderealTime(time);
   const longitude = hasPlace ? details.birthCoords!.lon : 0;
   const lstHours = (((gast + longitude / 15) % 24) + 24) % 24;
@@ -666,9 +648,11 @@ function determineSignFromDate(month: number, day: number): string {
     [12, 22],
   ];
   for (let i = 0; i < 12; i++) {
-    const [m, d] = dates[i];
-    if (month === m && day <= d) return SIGNS[i];
-    if (month === m && day > d) return SIGNS[(i + 1) % 12];
+    const dateTuple = dates[i]!;
+    const m = dateTuple[0] as number;
+    const d = dateTuple[1] as number;
+    if (month === m && day <= d) return SIGNS[i]!;
+    if (month === m && day > d) return SIGNS[(i + 1) % 12]!;
   }
   return 'Capricorn';
 }

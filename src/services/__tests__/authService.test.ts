@@ -1,12 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { apiFetch } from '../apiFetch';
 import { authService } from '../authService';
 
 vi.mock('../apiFetch', () => ({
   apiFetch: vi.fn(),
 }));
-
-import { apiFetch } from '../apiFetch';
 
 describe('authService', () => {
   beforeEach(() => {
@@ -16,10 +15,10 @@ describe('authService', () => {
   describe('googleLogin', () => {
     it('should login successfully with valid credentials', async () => {
       const mockResponse = { token: 'jwt-token', role: 'admin', username: 'test@test.com' };
-      (apiFetch as any).mockResolvedValue({
+      vi.mocked(apiFetch).mockResolvedValue({
         ok: true,
         json: async () => mockResponse,
-      });
+      } as Response);
 
       const result = await authService.googleLogin({
         email: 'test@test.com',
@@ -30,10 +29,10 @@ describe('authService', () => {
     });
 
     it('should throw on authentication failure', async () => {
-      (apiFetch as any).mockResolvedValue({
+      vi.mocked(apiFetch).mockResolvedValue({
         ok: false,
         json: async () => ({ error: 'Access Denied' }),
-      });
+      } as Response);
 
       await expect(
         authService.googleLogin({ email: 'bad@test.com', uid: 'uid', displayName: 'Bad' })

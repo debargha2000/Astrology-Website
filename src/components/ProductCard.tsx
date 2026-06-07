@@ -5,7 +5,6 @@
 
 import { Star, Flame, Eye, ShoppingCart, Check } from 'lucide-react';
 import { motion } from 'motion/react';
-import React from 'react';
 
 import { Product } from '../types';
 
@@ -113,6 +112,7 @@ export default function ProductCard({
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                   key={i}
+                  data-testid="star-icon"
                   className={`h-3 w-3 ${
                     i < Math.floor(product.rating) ? 'fill-[#A6A18F]' : 'opacity-30'
                   }`}

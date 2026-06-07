@@ -1,18 +1,25 @@
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
-import rateLimit from 'express-rate-limit';
-import admin from 'firebase-admin';
 import helmet from 'helmet';
 
-import { getAdminEmail } from './config.js';
-import { DB, isFirebaseActive } from './db.js';
+import { isFirebaseActive } from './db.js';
 import { createCsrfProtection } from './middleware/csrf.js';
-
-// Modular Routers
+import { logger } from './middleware/logging.js';
+import {
+  initRedisRateLimiter,
+  authRateLimiter,
+  apiRateLimiter,
+  paymentRateLimiter,
+  aiRateLimiter,
+} from './middleware/redisRateLimit.js';
+import { requestId, requestLogger } from './middleware/requestId.js';
+import aiRoutes from './routes/ai.routes.js';
 import astroRoutes from './routes/astro.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import expenseRoutes from './routes/expense.routes.js';
 import invoiceRoutes from './routes/invoice.routes.js';
+import openapiRoutes from './routes/openapi.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
 import productRoutes from './routes/product.routes.js';
 import systemRoutes from './routes/system.routes.js';
@@ -23,23 +30,53 @@ import websiteRoutes from './routes/website.routes.js';
 const app = express();
 
 // ==========================================
+// CORS (must be before other middleware)
+// ==========================================
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:3001',
+  process.env.APP_URL,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
+  })
+);
+
+// ==========================================
 // SECURITY HEADERS (apply to every response)
 // ==========================================
+const isDev = process.env.NODE_ENV !== 'production';
 app.use(
   helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", 'https://checkout.razorpay.com'],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-        imgSrc: ["'self'", 'data:', 'https:'],
-        connectSrc: ["'self'", 'https://api.razorpay.com', 'https://*.googleapis.com'],
-        frameSrc: ["'self'", 'https://checkout.razorpay.com'],
-        objectSrc: ["'none'"],
-        upgradeInsecureRequests: [],
-      },
-    },
+    contentSecurityPolicy: isDev
+      ? false
+      : {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", 'https://checkout.razorpay.com'],
+            styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+            fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+            imgSrc: ["'self'", 'data:', 'https:'],
+            connectSrc: ["'self'", 'https://api.razorpay.com', 'https://*.googleapis.com'],
+            frameSrc: ["'self'", 'https://checkout.razorpay.com'],
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: [],
+          },
+        },
     crossOriginEmbedderPolicy: false,
     crossOriginResourcePolicy: { policy: 'same-site' },
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
@@ -53,6 +90,12 @@ app.use(
 // `req.secure` correctly detects HTTPS for cookie flags.
 // ==========================================
 app.set('trust proxy', 1);
+
+// ==========================================
+// REQUEST ID & LOGGING
+// ==========================================
+app.use(requestId);
+app.use(requestLogger);
 
 // ==========================================
 // BODY PARSERS
@@ -69,42 +112,68 @@ app.use(
 // ==========================================
 // COOKIE PARSER (required for csurf cookie mode)
 // ==========================================
-const cookieSecret = process.env.COOKIE_SECRET || process.env.JWT_SECRET;
-if (!cookieSecret) {
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error(
-      'COOKIE_SECRET or JWT_SECRET must be set in production. Refusing to start with a default cookie secret.'
+function getCookieSecret(): string {
+  const cookieSecret = process.env.COOKIE_SECRET || process.env.JWT_SECRET;
+  if (!cookieSecret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        'COOKIE_SECRET or JWT_SECRET must be set in production. Refusing to start with a default cookie secret.'
+      );
+    }
+    logger.warn(
+      '⚠️  COOKIE_SECRET/JWT_SECRET not set. Falling back to insecure development cookie secret.'
     );
+    return 'aurastone-dev-cookie-secret-change-in-production-please';
   }
-  console.warn(
-    '⚠️  COOKIE_SECRET/JWT_SECRET not set. Falling back to insecure development cookie secret.'
-  );
+  return cookieSecret;
 }
-const finalCookieSecret = cookieSecret || 'aurastone-dev-cookie-secret-change-in-production-please';
-app.use(cookieParser(finalCookieSecret));
 
-// ==========================================
-// CSRF PROTECTION
-// Skips the Razorpay webhook (the webhook is
-// called by an external service and is verified
-// via HMAC signature instead). Safe methods
-// (GET/HEAD/OPTIONS) are ignored by the middleware itself.
-// ==========================================
+// Initialize cookie parser lazily - secrets will be available after dotenv.config()
+// (Don't call at module load time)
+let cookieParserInitialized = false;
+function ensureCookieParser() {
+  if (!cookieParserInitialized) {
+    const finalCookieSecret = getCookieSecret();
+    app.use(cookieParser(finalCookieSecret));
+    cookieParserInitialized = true;
+  }
+}
+
+// CSRF exempt paths (defined before use)
 const CSRF_EXEMPT_PATHS = new Set<string>(['/api/payments/razorpay/webhook']);
 
-const csrfProtection = createCsrfProtection({
-  cookieSecret: finalCookieSecret,
-  exemptPaths: CSRF_EXEMPT_PATHS,
+// Initialize CSRF protection lazily so secrets are available
+let csrfProtectionInitialized = false;
+function ensureCsrfProtection() {
+  if (!csrfProtectionInitialized) {
+    const csrfProtection = createCsrfProtection({
+      cookieSecret: getCookieSecret(),
+      exemptPaths: CSRF_EXEMPT_PATHS,
+    });
+    app.use(csrfProtection);
+    csrfProtectionInitialized = true;
+  }
+}
+
+// Middleware to ensure cookie parser and CSRF are initialized before any route
+app.use((req, res, next) => {
+  ensureCookieParser();
+  ensureCsrfProtection();
+  next();
 });
-app.use(csrfProtection);
+
+// ==========================================
+// REDIS RATE LIMITER INITIALIZATION
+// ==========================================
+initRedisRateLimiter();
 
 // ==========================================
 // DATABASE INITIALIZATION LOGGING
 // ==========================================
 if (isFirebaseActive()) {
-  DB.addLog('SYSTEM INITIALIZATION: Connect successfully to Firebase Firestore Instance.');
+  logger.info('SYSTEM INITIALIZATION: Connect successfully to Firebase Firestore Instance.');
 } else {
-  DB.addLog(
+  logger.warn(
     'SYSTEM INITIALIZATION: No Active Firebase configuration. Running with active JSON flat-file clusters.'
   );
 }
@@ -114,8 +183,8 @@ if (isFirebaseActive()) {
 // ==========================================
 
 // System & Auth
-app.use('/api', systemRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api', apiRateLimiter, systemRoutes);
+app.use('/api/auth', authRateLimiter, authRoutes);
 
 // Business Domains
 app.use('/api/invoices', invoiceRoutes);
@@ -129,7 +198,13 @@ app.use('/api/products', productRoutes);
 app.use('/api/website', websiteRoutes);
 
 // Payments
-app.use('/api/payments', paymentRoutes);
+app.use('/api/payments', paymentRateLimiter, paymentRoutes);
+
+// AI Services
+app.use('/api/ai', aiRateLimiter, aiRoutes);
+
+// OpenAPI Documentation
+app.use('/api/docs', openapiRoutes);
 
 // ==========================================
 // JSON ERROR HANDLER
@@ -138,8 +213,7 @@ app.use('/api/payments', paymentRoutes);
 // Express's default HTML error page.
 // ==========================================
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const code = (err as any)?.code;
+  const code = (err as { code?: string })?.code;
   if (code === 'EBADCSRFTOKEN') {
     return res.status(403).json({ error: 'CSRF validation failed.' });
   }
@@ -148,7 +222,7 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   if (message.toLowerCase().includes('csrf')) {
     return res.status(403).json({ error: 'CSRF validation failed.' });
   }
-  console.error('Unhandled server error:', err);
+  logger.error({ err }, 'Unhandled server error');
   return res.status(500).json({ error: 'Internal server error.' });
 });
 

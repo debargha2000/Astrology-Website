@@ -2,59 +2,96 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+  const isProduction = mode === 'production';
+
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      isProduction && visualizer({
+        filename: 'dist/stats.html',
+        open: false,
+        gzipSize: true,
+        brotliSize: true,
+      }),
+    ].filter(Boolean),
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
       },
     },
     server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
-      // Bind to localhost by default so the printed URL works in the browser.
-      // Override via HOST env var when running vite directly (e.g. HOST=0.0.0.0).
       host: process.env.HOST || 'localhost',
     },
     build: {
-      // Disable source maps for production builds to improve performance
-      sourcemap: false,
-      // Increase chunk size limit to reduce warnings
-      chunkSizeWarningLimit: 1500,
-      // Enable CSS code splitting
+      sourcemap: !isProduction,
+      chunkSizeWarningLimit: 1000,
       cssCodeSplit: true,
-      // Minify with esbuild for faster builds
       minify: 'esbuild',
-      // Target modern browsers for smaller output
       target: 'es2020',
+      cssMinify: true,
+      modulePreload: {
+        polyfill: false,
+      },
       rollupOptions: {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
-              if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
-                return 'vendor-react';
-              }
-              if (id.includes('motion') || id.includes('lucide-react') || id.includes('@tanstack')) {
-                return 'vendor-ui';
-              }
               if (id.includes('firebase')) {
                 return 'vendor-firebase';
               }
               if (id.includes('i18next') || id.includes('react-i18next')) {
                 return 'vendor-i18n';
               }
+              if (id.includes('zustand')) {
+                return 'vendor-state';
+              }
+              if (id.includes('zod')) {
+                return 'vendor-validation';
+              }
+              if (id.includes('@radix-ui')) {
+                return 'vendor-radix';
+              }
+              if (id.includes('date-fns') || id.includes('dayjs')) {
+                return 'vendor-date';
+              }
+              // Core vendor: react, react-dom, motion, lucide, tanstack, scheduler
+              if (
+                id.includes('react') ||
+                id.includes('react-dom') ||
+                id.includes('scheduler') ||
+                id.includes('motion') ||
+                id.includes('lucide-react') ||
+                id.includes('@tanstack')
+              ) {
+                return 'vendor';
+              }
               return 'vendor';
             }
+            return undefined;
           },
-          // Better asset file naming for cache-busting
           chunkFileNames: 'assets/[name]-[hash].js',
           entryFileNames: 'assets/[name]-[hash].js',
-          assetFileNames: 'assets/[name]-[hash][extname]',
+          assetFileNames: (assetInfo) => {
+            const name = assetInfo.name ?? '';
+            const info = name.split('.');
+            const ext = info[info.length - 1] ?? '';
+            if (/\.(png|jpe?g|gif|svg|webp|avif)$/.test(name)) {
+              return `assets/images/[name]-[hash].${ext}`;
+            }
+            if (/\.(woff2?|eot|ttf|otf)$/.test(name)) {
+              return `assets/fonts/[name]-[hash].${ext}`;
+            }
+            return `assets/[name]-[hash].${ext}`;
+          },
         },
       },
+      reportCompressedSize: true,
     },
     optimizeDeps: {
       include: [
@@ -63,7 +100,18 @@ export default defineConfig(() => {
         'zustand',
         'motion/react',
         'lucide-react',
+        '@tanstack/react-query',
+        'zod',
       ],
+      exclude: ['@google-cloud/vertexai'],
+    },
+    experimental: {
+      renderBuiltUrl(filename, { hostType }) {
+        if (hostType === 'js') {
+          return { url: `/${filename}`, relative: true };
+        }
+        return { url: filename, relative: true };
+      },
     },
   };
 });

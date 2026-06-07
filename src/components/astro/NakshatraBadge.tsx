@@ -1,8 +1,6 @@
-import React from 'react';
-
 interface NakshatraBadgeProps {
   nakshatra: string;
-  symbol?: string;
+  symbol?: string | undefined;
   className?: string;
 }
 

@@ -1,3 +1,4 @@
+import type { User } from 'firebase/auth';
 import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -13,6 +14,7 @@ import {
   OperationType,
 } from '../../lib/firebase';
 import { apiFetch } from '../../services/apiFetch';
+import type { Product } from '../../types';
 
 import { DEFAULT_SITE_FORM } from './seedData';
 import {
@@ -33,7 +35,7 @@ export function useCmsAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!getAdminToken());
   const [authError, setAuthError] = useState<string>('');
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
-  const [googleUser, setGoogleUser] = useState<any>(null);
+  const [googleUser, setGoogleUser] = useState<User | null>(null);
   const [googleToken, setGoogleToken] = useState<string | null>(null);
 
   const exchangeForJwt = useCallback(
@@ -66,6 +68,7 @@ export function useCmsAuth() {
             });
             setIsAuthenticated(true);
           } catch (e) {
+            // eslint-disable-next-line no-console
             console.error('Auto-login token exchange failure:', e);
           }
         }
@@ -100,7 +103,8 @@ export function useCmsAuth() {
       await exchangeForJwt({ email: user.email, uid: user.uid, displayName: user.displayName });
       setIsAuthenticated(true);
       setGoogleUser(user);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      // eslint-disable-next-line no-console
       console.error('Google alignment login failure:', err);
       setAuthError(
         'Connection anomaly or authentication error occurred during Google verification.'
@@ -114,7 +118,8 @@ export function useCmsAuth() {
     try {
       const result = await signInForGmail();
       return result;
-    } catch (e: any) {
+    } catch (e: unknown) {
+      // eslint-disable-next-line no-console
       console.error('Gmail OAuth escalation error:', e);
       throw e;
     }
@@ -128,6 +133,7 @@ export function useCmsAuth() {
     try {
       await firebaseLogout();
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error('Logout sync anomaly:', e);
     }
   }, []);
@@ -155,7 +161,7 @@ export function useCmsData() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [terminalLog, setTerminalLog] = useState<string[]>([]);
-  const [productsList, setProductsList] = useState<any[]>([]);
+  const [productsList, setProductsList] = useState<Product[]>([]);
   const [checkpointsList, setCheckpointsList] = useState<Checkpoint[]>([]);
   const [siteForm, setSiteForm] = useState<SiteForm>(DEFAULT_SITE_FORM);
   const [astroContent, setAstroContent] = useState<AstroContent[]>([]);
@@ -197,8 +203,8 @@ export function useCmsData() {
     const unsub5 = onSnapshot(
       query(collection(firestoreDb, 'logs'), orderBy('id', 'desc'), limit(10)),
       (snap) => {
-        const dataLogs = snap.docs.map((d) => d.data());
-        setTerminalLog(dataLogs.map((l: any) => `[${l.timestamp}] ${l.message}`));
+        const dataLogs = snap.docs.map((d) => d.data() as { timestamp: string; message: string });
+        setTerminalLog(dataLogs.map((l) => `[${l.timestamp}] ${l.message}`));
       },
       (err) => handleFirestoreError(err, OperationType.GET, 'logs')
     );
@@ -226,6 +232,7 @@ export function useCmsData() {
       try {
         setupFirestoreListeners();
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Firestore listener setup failure', err);
       } finally {
         setIsLoading(false);
@@ -298,8 +305,13 @@ export function useCmsData() {
       setSiteForm({ ...DEFAULT_SITE_FORM, ...(dataContent || {}) });
       setCheckpointsList(dataCheckpoints || []);
       setAstroContent(dataAstro || []);
-      setTerminalLog((dataLogs || []).map((l: any) => `[${l.timestamp}] ${l.message}`));
+      setTerminalLog(
+        (dataLogs || []).map(
+          (l: { timestamp: string; message: string }) => `[${l.timestamp}] ${l.message}`
+        )
+      );
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Failed to align temple records', err);
     } finally {
       setIsLoading(false);

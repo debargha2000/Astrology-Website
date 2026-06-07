@@ -4,6 +4,7 @@ import { Router, Request, Response } from 'express';
 
 import { DB } from '../db.js';
 import { paymentLimiter } from '../middleware/limiter.js';
+import { logger } from '../middleware/logging.js';
 import { sendFulfillmentEmail } from '../services/email.js';
 
 const router = Router();
@@ -24,9 +25,8 @@ router.post('/razorpay/order', paymentLimiter, async (req: Request, res: Respons
   };
 
   if (!amount || amount <= 0) {
-    return res
-      .status(400)
-      .json({ error: 'Total amount is required for setting up order tunnels.' });
+    res.status(400).json({ error: 'Total amount is required for setting up order tunnels.' });
+    return;
   }
 
   const orderId = 'order_' + crypto.randomBytes(6).toString('hex');
@@ -62,7 +62,7 @@ router.post('/razorpay/order', paymentLimiter, async (req: Request, res: Respons
       await DB.addLog(`RAZORPAY LIVE: Registered order ${orderData.id} for ₹${amount}`);
       return res.status(201).json(orderData);
     } catch (err) {
-      console.error('Razorpay processing exception: ', err);
+      logger.error({ err }, 'Razorpay processing exception');
       await DB.addLog(
         'RAZORPAY EXCEPTION: Live channel failover. Generating sandboxed transaction.'
       );
@@ -86,6 +86,7 @@ router.post('/razorpay/order', paymentLimiter, async (req: Request, res: Respons
     },
     created_at: Math.floor(Date.now() / 1000),
   });
+  return;
 });
 
 router.post('/razorpay/webhook', async (req: Request, res: Response) => {
@@ -97,7 +98,8 @@ router.post('/razorpay/webhook', async (req: Request, res: Response) => {
     'sacred_webhook7592_signature';
 
   if (!signature) {
-    return res.status(400).json({ error: 'Missing security signature block.' });
+    res.status(400).json({ error: 'Missing security signature block.' });
+    return;
   }
 
   let isSignatureValid = false;
@@ -120,7 +122,8 @@ router.post('/razorpay/webhook', async (req: Request, res: Response) => {
 
   if (!isSignatureValid && !isBypassActive) {
     await DB.addLog('CRITICAL: Unauthorized signature received on payment webhook.');
-    return res.status(403).json({ error: 'Signature failure. Connection unauthorized.' });
+    res.status(403).json({ error: 'Signature failure. Connection unauthorized.' });
+    return;
   }
 
   const body = req.body as {
@@ -143,26 +146,27 @@ router.post('/razorpay/webhook', async (req: Request, res: Response) => {
     };
     const razorpayOrderId = paymentEntity.order_id || 'order_sandbox_re';
     const amountPaidInRupees = (paymentEntity.amount || body?.amount || 10000) / 100;
-    const clientName = paymentEntity.notes?.clientName || body?.clientName || 'Vrishabha Devotee';
+    const clientName = paymentEntity.notes?.clientName ?? body?.clientName ?? 'Vrishabha Devotee';
     const clientEmail =
-      paymentEntity.notes?.clientEmail || body?.receiptEmail || 'operations@aurastone.in';
+      paymentEntity.notes?.clientEmail ?? body?.receiptEmail ?? 'operations@aurastone.in';
     const itemNames =
-      paymentEntity.notes?.itemsDescription ||
-      body?.cartItems ||
+      paymentEntity.notes?.itemsDescription ??
+      body?.cartItems ??
       'Planetary Crystal Alignment Package';
 
     await DB.addLog(
       `WEBHOOK TRANSACTION VERIFIED: Secured Order ID ${razorpayOrderId} (₹${amountPaidInRupees})`
     );
 
+    const today = new Date().toISOString().split('T')[0]!;
     await DB.addInvoice({
       client: clientName,
-      date: new Date().toISOString().split('T')[0],
+      date: today,
       item: itemNames,
       amount: amountPaidInRupees,
       status: 'Paid',
       alignment: 'Secured via Razorpay Secure checkout Gateway',
-    });
+    } as const);
 
     await DB.addTask({
       title: `Sanctify crystals for order: ${razorpayOrderId} (${clientName})`,
@@ -174,11 +178,12 @@ router.post('/razorpay/webhook', async (req: Request, res: Response) => {
 
     await sendFulfillmentEmail(clientEmail, clientName, itemNames, razorpayOrderId);
 
-    return res.json({
+    res.json({
       status: 'success',
       message: 'Fulfillment sequence synced',
       orderId: razorpayOrderId,
     });
+    return;
   }
 
   res.json({ status: 'ignored', event });

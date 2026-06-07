@@ -1,6 +1,6 @@
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { storage } from '../../lib/firebase';
 
@@ -51,8 +51,8 @@ export function ImageUpload({ value, onChange, folder = 'uploads', label = 'Imag
 
       const downloadUrl = await getDownloadURL(task.snapshot.ref);
       onChange(downloadUrl);
-    } catch (e: any) {
-      setError(e.message || 'Upload failed.');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Upload failed.');
     } finally {
       setUploading(false);
     }

@@ -1,12 +1,15 @@
 import { Search, MapPin, Loader2, X } from 'lucide-react';
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 import { geocodeCity, GeoResult } from '../../lib/geocode';
 
 interface CityAutocompleteProps {
   value: string;
   coords?: { lat: number; lon: number; timezone: string };
-  onChange: (place: string, coords?: { lat: number; lon: number; timezone: string }) => void;
+  onChange: (
+    place: string,
+    coords?: { lat: number; lon: number; timezone: string } | undefined
+  ) => void;
   placeholder?: string;
   className?: string;
 }
@@ -26,9 +29,13 @@ export function CityAutocomplete({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const prevValueRef = useRef(value);
 
   useEffect(() => {
-    setQuery(value);
+    if (prevValueRef.current !== value) {
+      prevValueRef.current = value;
+      setQuery(value);
+    }
   }, [value]);
 
   useEffect(() => {
@@ -56,7 +63,7 @@ export function CityAutocomplete({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setQuery(val);
-    onChange(val, undefined);
+    onChange(val);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => search(val), 400);
   };
@@ -70,7 +77,7 @@ export function CityAutocomplete({
 
   const handleClear = () => {
     setQuery('');
-    onChange('', undefined);
+    onChange('');
     setResults([]);
     setOpen(false);
     inputRef.current?.focus();
@@ -84,9 +91,9 @@ export function CityAutocomplete({
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setHighlighted((h) => Math.max(h - 1, 0));
-    } else if (e.key === 'Enter' && highlighted >= 0) {
+    } else if (e.key === 'Enter' && highlighted >= 0 && results[highlighted]) {
       e.preventDefault();
-      handleSelect(results[highlighted]);
+      handleSelect(results[highlighted]!);
     } else if (e.key === 'Escape') {
       setOpen(false);
     }

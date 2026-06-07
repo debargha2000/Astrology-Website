@@ -8,7 +8,7 @@ import {
   ChevronDown,
   ChevronsUpDown,
 } from 'lucide-react';
-import React, { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 import { AddExpenseModal } from './AddExpenseModal';
 import { BulkActions } from './BulkActions';
@@ -22,9 +22,9 @@ import { useBulkSelect } from './useBulkSelect';
 import type { CmsHandlers } from './useCmsHandlers';
 import type { CmsState } from './useCmsState';
 import { useCsvExport } from './useCsvExport';
+import { usePagination } from './usePagination';
 import { useSearchFilter } from './useSearchFilter';
 import { useSort } from './useSort';
-import { usePagination } from './usePagination';
 
 interface Props {
   state: CmsState;
@@ -57,7 +57,6 @@ export function ExpensesTab({ state, handlers }: Props) {
     toggleSelect,
     selectAll,
     clearSelection,
-    hasSelection,
     count: bulkCount,
   } = useBulkSelect(paginated);
   const [showAdd, setShowAdd] = useState(false);

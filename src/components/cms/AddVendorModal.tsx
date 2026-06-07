@@ -1,7 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState } from 'react';
-
-import type { Vendor } from './types';
+import { useState } from 'react';
 
 interface Props {
   onClose: () => void;

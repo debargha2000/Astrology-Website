@@ -3,21 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  Search,
-  Flame,
-  ShieldAlert,
-  BookOpen,
-  Layers,
-  Gem,
-  Activity,
-  HelpCircle,
-} from 'lucide-react';
+import { Search, BookOpen, Layers, Gem, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { CRYSTAL_ENCYCLOPEDIA } from '../data';
-import { CrystalDetails } from '../types';
 
 export default function CrystalEncyclopedia() {
   const [selectedCrystal, setSelectedCrystal] = useState<string | null>('Citrine');

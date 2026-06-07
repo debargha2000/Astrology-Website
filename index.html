@@ -3,11 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1C1917" />
+    <meta name="description" content="Fine crystal jewelry engineered from verified planetary minerals. Cleansed, moon bathed, and programmed to your birth chart parameters to create an unshakeable energetic shield." />
+    <meta name="keywords" content="crystal jewelry, vedic astrology, zodiac crystals, spiritual jewelry, healing crystals" />
+    <meta name="author" content="Aura & Stone" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://checkout.razorpay.com" />
+    <link rel="preconnect" href="https://api.razorpay.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://api.razorpay.com" />
+    <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#C5A880" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Aura & Stone" />
+    <meta name="application-name" content="Aura & Stone" />
+    <meta name="msapplication-TileColor" content="#1C1917" />
+    <meta name="msapplication-TileImage" content="/pwa-192x192.png" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
     <title>Aura & Stone | Crystalline Astrology & Signs</title>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(console.error);
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

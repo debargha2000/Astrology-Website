@@ -1,5 +1,5 @@
 import { Plus, Clock, Award, Compass, CheckCircle2, Pencil, Trash2, Search } from 'lucide-react';
-import React, { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 import { AddTaskModal } from './AddTaskModal';
 import { ConfirmDialog } from './ConfirmDialog';

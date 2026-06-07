@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 
+import type { Invoice, Expense, Vendor } from './types';
+
 function toCsvValue(val: unknown): string {
   const str = String(val ?? '');
   if (str.includes(',') || str.includes('"') || str.includes('\n')) {
@@ -20,7 +22,7 @@ function downloadCsv(filename: string, headers: string[], rows: string[][]) {
 }
 
 export function useCsvExport() {
-  const exportInvoices = useCallback((invoices: any[]) => {
+  const exportInvoices = useCallback((invoices: Invoice[]) => {
     const headers = ['ID', 'Client', 'Date', 'Item', 'Amount', 'Status', 'Alignment'];
     const rows = invoices.map((inv) => [
       toCsvValue(inv.id),
@@ -34,7 +36,7 @@ export function useCsvExport() {
     downloadCsv(`invoices_${Date.now()}.csv`, headers, rows);
   }, []);
 
-  const exportExpenses = useCallback((expenses: any[]) => {
+  const exportExpenses = useCallback((expenses: Expense[]) => {
     const headers = ['ID', 'Title', 'Category', 'Amount', 'Date', 'Notes'];
     const rows = expenses.map((exp) => [
       toCsvValue(exp.id),
@@ -47,7 +49,7 @@ export function useCsvExport() {
     downloadCsv(`expenses_${Date.now()}.csv`, headers, rows);
   }, []);
 
-  const exportVendors = useCallback((vendors: any[]) => {
+  const exportVendors = useCallback((vendors: Vendor[]) => {
     const headers = [
       'ID',
       'Name',

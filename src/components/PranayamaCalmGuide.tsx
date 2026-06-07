@@ -1,6 +1,6 @@
-import { Sparkles, Eye, EyeOff, Music, Volume2, Wind } from 'lucide-react';
+import { Music, Volume2, Wind } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function PranayamaCalmGuide() {
   const [breathePhase, setBreathePhase] = useState<'In' | 'Hold In' | 'Out' | 'Hold Out'>('In');
@@ -59,7 +59,9 @@ export default function PranayamaCalmGuide() {
     } else {
       // Lazy init AudioContext
       try {
-        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+        const AudioContextClass =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
         const ctx = new AudioContextClass();
         audioCtxRef.current = ctx;
 
@@ -118,6 +120,7 @@ export default function PranayamaCalmGuide() {
         lfo.start();
         setIsPlayingSound(true);
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.warn('AudioContext not supported or gesture blocked.');
       }
     }

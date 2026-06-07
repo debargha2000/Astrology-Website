@@ -12,7 +12,7 @@ import {
   X,
   Edit3,
 } from 'lucide-react';
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 
 import { ConfirmDialog } from './ConfirmDialog';
 import type { AstroContent, AstroContentType } from './types';

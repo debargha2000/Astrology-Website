@@ -1,5 +1,5 @@
 import { Send, X, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import { googleSignIn } from '../../lib/firebase';
 import { apiFetch } from '../../services/apiFetch';
@@ -44,6 +44,7 @@ export function GmailTab({ state }: Props) {
           setHistory(data || []);
         }
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error('Failed to load email history:', e);
       }
     };
@@ -74,6 +75,7 @@ export function GmailTab({ state }: Props) {
         setHistory((prev) => [record, ...prev]);
       }
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error('Failed to save email record:', e);
     }
   };
@@ -129,9 +131,12 @@ export function GmailTab({ state }: Props) {
       setSubject(GMAIL_TEMPLATES.blessing.subject);
       setBody(GMAIL_TEMPLATES.blessing.body);
       setTemplate('blessing');
-    } catch (err: any) {
+    } catch (err: unknown) {
+      // eslint-disable-next-line no-console
       console.error('Gmail Dispatch Error:', err);
-      setStatus(`error: ${err?.message || 'Failed to dispatch Gmail message.'}`);
+      setStatus(
+        `error: ${err instanceof Error ? err.message : 'Failed to dispatch Gmail message.'}`
+      );
     } finally {
       setSending(false);
     }

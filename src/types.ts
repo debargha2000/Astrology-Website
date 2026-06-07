@@ -51,17 +51,20 @@ export interface Review {
   avatarUrl?: string;
 }
 
+export interface BirthDetails {
+  name: string;
+  birthDate: string;
+  birthTime?: string;
+  birthPlace?: string;
+  birthCoords?: { lat: number; lon: number; timezone: string };
+}
+
 export interface CartItem {
   product: Product;
   quantity: number;
   size: 'standard-unisex' | 'petite' | 'xl-mens';
   personalizedCertification: boolean;
-  birthDetails?: {
-    name: string;
-    birthDate: string;
-    birthTime?: string;
-    birthPlace?: string;
-  };
+  birthDetails: BirthDetails | undefined;
 }
 
 export interface ZodiacInfo {
@@ -106,14 +109,6 @@ export interface WebsiteContent {
   historyParagraph1: string;
   historyParagraph2: string;
   bannerImage: string;
-}
-
-export interface BirthDetails {
-  name: string;
-  birthDate: string;
-  birthTime?: string;
-  birthPlace?: string;
-  birthCoords?: { lat: number; lon: number; timezone: string };
 }
 
 export interface PlanetPosition {

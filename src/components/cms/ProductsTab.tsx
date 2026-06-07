@@ -1,5 +1,7 @@
 import { Plus, Trash2, Box, Compass } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
+
+import type { Product } from '../../types';
 
 import { ConfirmDialog } from './ConfirmDialog';
 import { ImageUpload } from './ImageUpload';
@@ -24,7 +26,7 @@ function newProductForm(): ProductForm {
   };
 }
 
-function fromExisting(p: any): ProductForm {
+function fromExisting(p: Product): ProductForm {
   return {
     ...DEFAULT_PRODUCT_FORM,
     ...p,
@@ -33,16 +35,23 @@ function fromExisting(p: any): ProductForm {
     zodiacConnection: Array.isArray(p.zodiacConnection)
       ? p.zodiacConnection.join(', ')
       : p.zodiacConnection || '',
-    specifications: p.specifications || { ...DEFAULT_PRODUCT_FORM.specifications },
+    category: p.category === 'zodiac' ? 'bracelet' : p.category,
+    specifications: {
+      beadSize: p.specifications?.beadSize || '',
+      beadCount: p.specifications?.beadCount || 0,
+      threadMaterial: p.specifications?.threadMaterial || '',
+      origin: p.specifications?.origin || '',
+      chargeTime: p.specifications?.chargeTime || '',
+    },
   };
 }
 
 export function ProductsTab({ state, handlers }: Props) {
   const { productsList } = state;
   const { saveProduct, deleteProduct } = handlers;
-  const [editing, setEditing] = useState<any | null>(null);
+  const [editing, setEditing] = useState<Product | null>(null);
   const [adding, setAdding] = useState(false);
-  const [deleting, setDeleting] = useState<any | null>(null);
+  const [deleting, setDeleting] = useState<Product | null>(null);
   const [form, setForm] = useState<ProductForm>(newProductForm());
 
   const startAdd = () => {
@@ -51,7 +60,7 @@ export function ProductsTab({ state, handlers }: Props) {
     setAdding(true);
   };
 
-  const startEdit = (prod: any) => {
+  const startEdit = (prod: Product) => {
     setAdding(false);
     setEditing(prod);
     setForm(fromExisting(prod));
@@ -93,7 +102,7 @@ export function ProductsTab({ state, handlers }: Props) {
               Live Showroom Index ({productsList.length})
             </span>
             <div className="space-y-2.5 max-h-[600px] overflow-y-auto pr-1">
-              {productsList.map((prod: any) => (
+              {productsList.map((prod: Product) => (
                 <div
                   key={prod.id}
                   className={`p-3 rounded-xl border transition-all ${

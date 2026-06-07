@@ -7,6 +7,8 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { PRODUCTS } from '../src/data';
 import { Product, WebsiteContent, Checkpoint } from '../src/types';
 
+import { logger } from './middleware/logging.js';
+
 // Read config for lazy initialization
 const CONFIG_PATH = path.join(process.cwd(), 'firebase-applet-config.json');
 const SERVICE_ACCOUNT_PATH = path.join(process.cwd(), 'serviceAccountKey.json');
@@ -39,7 +41,7 @@ function getServiceAccount(): admin.ServiceAccount | null {
     try {
       return JSON.parse(envKey) as admin.ServiceAccount;
     } catch (err) {
-      console.warn('FIREBASE_SERVICE_ACCOUNT_KEY is set but invalid JSON.', err);
+      logger.warn({ err }, 'FIREBASE_SERVICE_ACCOUNT_KEY is set but invalid JSON.');
     }
   }
   // 2. Fall back to file (for local dev / App Hosting)
@@ -79,7 +81,7 @@ export function getFirestoreDB() {
     return firestoreDb;
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);
-    console.warn(`Firestore unavailable (${reason}). Falling back to local flat-file storage.`);
+    logger.warn(`Firestore unavailable (${reason}). Falling back to local flat-file storage.`);
     useLocalFallback = true;
     return null;
   }
@@ -417,7 +419,7 @@ export class DB {
     try {
       if (fs.existsSync(DB_FILE)) {
         const fileContent = fs.readFileSync(DB_FILE, 'utf-8');
-        const data = JSON.parse(fileContent) as any;
+        const data = JSON.parse(fileContent) as Record<string, unknown>;
         let modified = false;
         if (!data.products) {
           data.products = PRODUCTS;
@@ -440,12 +442,12 @@ export class DB {
           modified = true;
         }
         if (modified) {
-          this.save(data);
+          this.save(data as unknown as DatabaseStructure);
         }
-        return data as DatabaseStructure;
+        return data as unknown as DatabaseStructure;
       }
     } catch (e) {
-      console.error('Error reading index file. Initializing default structures.', e);
+      logger.error({ e }, 'Error reading index file. Initializing default structures.');
     }
 
     const defaultData: DatabaseStructure = {
@@ -472,7 +474,7 @@ export class DB {
     try {
       fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
     } catch (e) {
-      console.error('CRITICAL: Failed to write to the index file.', e);
+      logger.error({ e }, 'CRITICAL: Failed to write to the index file.');
     }
   }
 
@@ -742,7 +744,7 @@ export class DB {
     const data = this.load();
     const index = data.invoices.findIndex((i) => i.id === id);
     if (index > -1) {
-      data.invoices[index] = { ...data.invoices[index], ...updates };
+      data.invoices[index] = { ...data.invoices[index], ...updates } as Invoice;
       this.save(data);
       await this.addLog(`Updated invoice ${id} for ${data.invoices[index].client}.`);
       return data.invoices[index];
@@ -854,7 +856,7 @@ export class DB {
     const data = this.load();
     const index = data.vendors.findIndex((v) => v.id === id);
     if (index > -1) {
-      data.vendors[index] = { ...data.vendors[index], ...updates };
+      data.vendors[index] = { ...data.vendors[index], ...updates } as Vendor;
       this.save(data);
       await this.addLog(`Updated vendor ${id} (${data.vendors[index].name}).`);
       return data.vendors[index];
@@ -906,7 +908,7 @@ export class DB {
       ...expense,
       id: customId,
       date: new Date().toISOString().split('T')[0],
-    };
+    } as Expense;
 
     const fdb = getFirestoreDB();
     if (fdb) {
@@ -951,7 +953,7 @@ export class DB {
     const data = this.load();
     const index = data.expenses.findIndex((e) => e.id === id);
     if (index > -1) {
-      data.expenses[index] = { ...data.expenses[index], ...updates };
+      data.expenses[index] = { ...data.expenses[index], ...updates } as Expense;
       this.save(data);
       await this.addLog(`Updated expense ${id} (${data.expenses[index].title}).`);
       return data.expenses[index];
@@ -1043,10 +1045,13 @@ export class DB {
     const data = this.load();
     const index = data.tasks.findIndex((t) => t.id === id);
     if (index > -1) {
-      data.tasks[index].status = status;
-      this.save(data);
-      await this.addLog(`Updated task status for ${id} to "${status}"`);
-      return data.tasks[index];
+      const task = data.tasks[index];
+      if (task) {
+        task.status = status;
+        this.save(data);
+        await this.addLog(`Updated task status for ${id} to "${status}"`);
+        return task;
+      }
     }
     return null;
   }
@@ -1073,7 +1078,7 @@ export class DB {
     const data = this.load();
     const index = data.tasks.findIndex((t) => t.id === id);
     if (index > -1) {
-      data.tasks[index] = { ...data.tasks[index], ...updates };
+      data.tasks[index] = { ...data.tasks[index], ...updates } as Task;
       this.save(data);
       await this.addLog(`Updated task ${id} ("${data.tasks[index].title}").`);
       return data.tasks[index];
@@ -1121,7 +1126,7 @@ export class DB {
         }
         return snapshot.docs.map((doc) => doc.data() as Product);
       } catch (e) {
-        console.error('Firestore getProducts failure, falling back to local file', e);
+        logger.error({ e }, 'Firestore getProducts failure, falling back to local file');
       }
     }
     return this.load().products || PRODUCTS;
@@ -1137,7 +1142,7 @@ export class DB {
         );
         return product;
       } catch (e) {
-        console.error('Firestore saveProduct error, falling back to local file', e);
+        logger.error({ e }, 'Firestore saveProduct error, falling back to local file');
       }
     }
 
@@ -1161,7 +1166,7 @@ export class DB {
         await this.addLog(`Product ID ${id} deleted static reference from Firestore.`);
         return true;
       } catch (e) {
-        console.error('Firestore deleteProduct error, falling back to local file', e);
+        logger.error({ e }, 'Firestore deleteProduct error, falling back to local file');
       }
     }
 
@@ -1191,7 +1196,7 @@ export class DB {
         }
         return doc.data() as WebsiteContent;
       } catch (e) {
-        console.error('Firestore getWebsiteContent failure, falling back to local file', e);
+        logger.error({ e }, 'Firestore getWebsiteContent failure, falling back to local file');
       }
     }
     return this.load().websiteContent || INITIAL_WEBSITE_CONTENT;
@@ -1205,7 +1210,7 @@ export class DB {
         await this.addLog('Website custom theme header and layout properties synchronized.');
         return content;
       } catch (e) {
-        console.error('Firestore saveWebsiteContent error, falling back to local file', e);
+        logger.error({ e }, 'Firestore saveWebsiteContent error, falling back to local file');
       }
     }
 
@@ -1230,7 +1235,7 @@ export class DB {
           .get();
         return snapshot.docs.map((doc) => doc.data() as Checkpoint);
       } catch (e) {
-        console.error('Firestore getCheckpoints failure, falling back to local file', e);
+        logger.error({ e }, 'Firestore getCheckpoints failure, falling back to local file');
       }
     }
     return this.load().checkpoints || [];
@@ -1264,7 +1269,7 @@ export class DB {
         await this.addLog(`System Rollback Checkpoint Created: "${newCheckpoint.title}"`);
         return newCheckpoint;
       } catch (e) {
-        console.error('Firestore createCheckpoint failure, falling back to local file', e);
+        logger.error({ e }, 'Firestore createCheckpoint failure, falling back to local file');
       }
     }
 
@@ -1289,7 +1294,10 @@ export class DB {
           checkpoint = doc.data() as Checkpoint;
         }
       } catch (e) {
-        console.error('Firestore fetch checkpoint rollback failure, falling back to local file', e);
+        logger.error(
+          { e },
+          'Firestore fetch checkpoint rollback failure, falling back to local file'
+        );
       }
     }
 
@@ -1317,7 +1325,7 @@ export class DB {
           await fdb.collection('products').doc(p.id).set(p);
         }
       } catch (e) {
-        console.error('Firestore execute product collection rollback failure', e);
+        logger.error({ e }, 'Firestore execute product collection rollback failure');
       }
     } else {
       const data = this.load();

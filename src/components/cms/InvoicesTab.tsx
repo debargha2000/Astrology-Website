@@ -8,7 +8,7 @@ import {
   ChevronDown,
   ChevronsUpDown,
 } from 'lucide-react';
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 
 import { AddInvoiceModal } from './AddInvoiceModal';
 import { BulkActions } from './BulkActions';
@@ -18,14 +18,14 @@ import { EditInvoiceModal } from './EditInvoiceModal';
 import { InvoicePreviewModal } from './InvoicePreviewModal';
 import { Pagination } from './Pagination';
 import { INVOICE_STATUSES } from './seedData';
-import type { Invoice, CmsSubTab } from './types';
+import type { Invoice } from './types';
 import { useBulkSelect } from './useBulkSelect';
+import type { CmsHandlers } from './useCmsHandlers';
 import type { CmsState } from './useCmsState';
 import { useCsvExport } from './useCsvExport';
+import { usePagination } from './usePagination';
 import { useSearchFilter } from './useSearchFilter';
 import { useSort } from './useSort';
-import { usePagination } from './usePagination';
-import type { CmsHandlers } from './useCmsHandlers';
 
 interface Props {
   state: CmsState;
@@ -57,7 +57,6 @@ export function InvoicesTab({ state, handlers }: Props) {
     toggleSelect,
     selectAll,
     clearSelection,
-    hasSelection,
     count: bulkCount,
   } = useBulkSelect(paginated);
   const [preview, setPreview] = useState<Invoice | null>(null);
@@ -105,15 +104,15 @@ export function InvoicesTab({ state, handlers }: Props) {
             />
           </div>
           <div className="flex bg-cream border border-stone p-1 rounded-xl text-[10.5px] font-mono font-bold uppercase tracking-wider">
-            {['All', ...INVOICE_STATUSES].map((state) => (
+            {['All', ...INVOICE_STATUSES].map((status) => (
               <button
-                key={state}
-                onClick={() => setFilter(state)}
+                key={status}
+                onClick={() => setFilter(status)}
                 className={`cursor-pointer px-3 py-1.5 rounded-lg transition-all ${
-                  filter === state ? 'bg-white text-ink shadow-sm' : 'text-clay hover:text-ink'
+                  filter === status ? 'bg-white text-ink shadow-sm' : 'text-clay hover:text-ink'
                 }`}
               >
-                {state}
+                {status}
               </button>
             ))}
           </div>

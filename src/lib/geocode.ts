@@ -15,13 +15,13 @@ export async function geocodeCity(query: string): Promise<GeoResult[]> {
     if (!res.ok) return [];
     const data = await res.json();
     if (!data.results) return [];
-    return data.results.map((r: any) => ({
-      name: r.name,
-      country: r.country || '',
-      latitude: r.latitude,
-      longitude: r.longitude,
-      timezone: r.timezone || 'UTC',
-      admin1: r.admin1,
+    return data.results.map((r: Record<string, unknown>) => ({
+      name: r.name as string,
+      country: (r.country as string) || '',
+      latitude: r.latitude as number,
+      longitude: r.longitude as number,
+      timezone: (r.timezone as string) || 'UTC',
+      admin1: r.admin1 as string | undefined,
     }));
   } catch {
     return [];

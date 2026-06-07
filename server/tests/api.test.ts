@@ -1,13 +1,15 @@
-import request from 'supertest';
+import request, { Agent } from 'supertest';
 
-import app from '../app.js';
-
-// Set environment variables for testing
+// Set environment variables for testing BEFORE importing app
+process.env.NODE_ENV = 'test';
+process.env.DISABLE_REDIS_RATE_LIMIT = 'true';
 process.env.JWT_SECRET = 'test-secret-that-is-at-least-32-characters-long-for-testing';
 process.env.COOKIE_SECRET = 'test-cookie-secret-that-is-at-least-32-characters-long-for-testing';
 
+import app from '../app.js';
+
 describe('API Integration Tests', () => {
-  let agent: request.agent;
+  let agent: Agent;
   let authToken: string;
   let csrfToken: string;
 
@@ -166,8 +168,26 @@ describe('API Integration Tests', () => {
       const product = {
         id: 'TEST-PROD-001',
         name: 'Test Product',
-        price: 1500,
+        originalPrice: 2000,
+        salePrice: 1500,
+        rating: 4.5,
+        reviewsCount: 10,
         description: 'A test product',
+        shortDescription: 'Test short description',
+        benefits: ['Benefit 1', 'Benefit 2'],
+        crystalsUsed: ['Crystal 1'],
+        imageUrl: 'https://example.com/image.jpg',
+        videoUrl: 'https://example.com/video.mp4',
+        category: 'bracelet',
+        stockStatus: 'in-stock',
+        zodiacConnection: ['Aries', 'Leo'],
+        specifications: {
+          beadSize: '8mm',
+          beadCount: 20,
+          threadMaterial: 'Elastic',
+          origin: 'India',
+          chargeTime: '3 Nights',
+        },
       };
       const res = await agent
         .post('/api/products')

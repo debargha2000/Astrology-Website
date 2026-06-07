@@ -3,7 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Product } from '../types';
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+  }
+  return '/';
+};
+
+const BASE_URL = getBaseUrl();
+const IMG = `${BASE_URL}src/assets/images`;
 
 export interface HeroSlide {
   name: string;
@@ -13,13 +21,33 @@ export interface HeroSlide {
 }
 
 export const HERO_SLIDES: HeroSlide[] = [
-  { name: 'The Money Magnet Bracelet', img: '', crystal: 'Citrine & Pyrite', price: '₹1,199' },
-  { name: 'Grounding Armor Nazar Shield', img: '', crystal: 'Black Tourmaline', price: '₹899' },
-  { name: 'The Master Healer Pack', img: '', crystal: 'Faceted Clear Quartz', price: '₹1,899' },
-  { name: 'The Stress Killer Remedy', img: '', crystal: 'Royal Amethyst', price: '₹999' },
+  {
+    name: 'The Money Magnet Bracelet',
+    img: `${IMG}/money_magnet_bracelet_1779793792641.png`,
+    crystal: 'Citrine & Pyrite',
+    price: '₹1,199',
+  },
+  {
+    name: 'Grounding Armor Nazar Shield',
+    img: `${IMG}/evil_eye_bracelet_1779793810222.png`,
+    crystal: 'Black Tourmaline',
+    price: '₹899',
+  },
+  {
+    name: 'The Master Healer Pack',
+    img: `${IMG}/super_balanced_combo_1779793830531.png`,
+    crystal: 'Faceted Clear Quartz',
+    price: '₹1,899',
+  },
+  {
+    name: 'The Stress Killer Remedy',
+    img: `${IMG}/stress_killer_amethyst_1779998973130.png`,
+    crystal: 'Royal Amethyst',
+    price: '₹999',
+  },
   {
     name: 'Divine Harmony & Calm',
-    img: '',
+    img: `${IMG}/love_harmony_rose_quartz_1779998954650.png`,
     crystal: 'Rose Quartz & Peach Sunstone',
     price: '₹949',
   },

@@ -1,0 +1,57 @@
+import { motion } from 'motion/react';
+
+import CartDrawer from '../components/CartDrawer';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
+import ZodiacCalculator from '../components/ZodiacCalculator';
+import { useCartStore } from '../store/cartStore';
+import { useNavigationStore } from '../store/navigationStore';
+import { useUIStore } from '../store/uiStore';
+import { Product } from '../types';
+
+export default function ZodiacCalculatorPage() {
+  const { items: cartItems, addItem } = useCartStore();
+  const { isCartOpen, openCart, closeCart, setSelectedProduct } = useUIStore();
+  const { currentPage, setCurrentPage } = useNavigationStore();
+
+  const handleAddToCart = (product: Product) => {
+    addItem(product);
+    openCart();
+  };
+
+  const getTotalItems = () => cartItems.reduce((acc, c) => acc + c.quantity, 0);
+
+  return (
+    <motion.div
+      id="zodiac-calculator-root"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Header
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        cartCount={getTotalItems()}
+        onOpenCart={openCart}
+        brandName="Aura & Stone"
+        brandSubtitle="Crystalline Astrology"
+      />
+      <ZodiacCalculator
+        onViewProduct={setSelectedProduct}
+        onAddToCart={handleAddToCart}
+        cartProducts={cartItems.map((c) => c.product.id)}
+      />
+      <Footer setCurrentPage={setCurrentPage} />
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={closeCart}
+        cartItems={cartItems}
+        onUpdateQuantity={() => {}}
+        onRemoveItem={() => {}}
+        onUpdateSize={() => {}}
+        onUpdatePersonalization={() => {}}
+        onCheckout={() => setCurrentPage('checkout')}
+      />
+    </motion.div>
+  );
+}

@@ -29,6 +29,7 @@ const TOKEN_HEADER = 'x-csrf-token';
 const COOKIE_KEY = '_csrf';
 const TOKEN_BYTES = 32;
 
+/* eslint-disable @typescript-eslint/no-shadow */
 declare module 'express-serve-static-core' {
   interface Request {
     csrfToken?: () => string;
@@ -44,6 +45,27 @@ function safeEqual(a: string, b: string): boolean {
   const bBuf = Buffer.from(b);
   if (aBuf.length !== bBuf.length) return false;
   return crypto.timingSafeEqual(aBuf, bBuf);
+}
+
+function attachTokenGenerator(
+  req: Request,
+  res: Response,
+  cookieKey: string,
+  cookieSecret: string
+): void {
+  req.csrfToken = () => {
+    const existing = req.signedCookies?.[cookieKey] as string | undefined;
+    if (existing) return existing;
+    const secret = crypto.randomBytes(TOKEN_BYTES).toString('hex');
+    const signed = signToken(secret, cookieSecret);
+    res.cookie(cookieKey, signed, {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      signed: true,
+    });
+    return signed;
+  };
 }
 
 export interface CsrfOptions {
@@ -88,26 +110,5 @@ export function createCsrfProtection(options: CsrfOptions): RequestHandler {
 
     attachTokenGenerator(req, res, cookieKey, cookieSecret);
     return next();
-  };
-}
-
-function attachTokenGenerator(
-  req: Request,
-  res: Response,
-  cookieKey: string,
-  cookieSecret: string
-): void {
-  req.csrfToken = () => {
-    const existing = req.signedCookies?.[cookieKey] as string | undefined;
-    if (existing) return existing;
-    const secret = crypto.randomBytes(TOKEN_BYTES).toString('hex');
-    const signed = signToken(secret, cookieSecret);
-    res.cookie(cookieKey, signed, {
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
-      signed: true,
-    });
-    return signed;
   };
 }

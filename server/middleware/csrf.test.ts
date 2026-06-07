@@ -51,9 +51,9 @@ describe('csrf middleware', () => {
   it('allows POST with matching token and cookie', async () => {
     const getRes = await request(app).get('/api/csrf-token');
     const token = getRes.body.csrfToken as string;
-    const cookie = (getRes.headers['set-cookie'] as string[])
-      .find((c) => c.startsWith('_csrf='))!
-      .split(';')[0];
+    const setCookie = getRes.headers['set-cookie'];
+    const cookieArray = Array.isArray(setCookie) ? setCookie : setCookie ? [setCookie] : [];
+    const cookie = cookieArray.find((c) => c.startsWith('_csrf='))!.split(';')[0];
 
     const res = await request(app)
       .post('/api/echo')
@@ -66,9 +66,9 @@ describe('csrf middleware', () => {
 
   it('rejects POST with missing token', async () => {
     const getRes = await request(app).get('/api/csrf-token');
-    const cookie = (getRes.headers['set-cookie'] as string[])
-      .find((c) => c.startsWith('_csrf='))!
-      .split(';')[0];
+    const setCookie = getRes.headers['set-cookie'];
+    const cookieArray = Array.isArray(setCookie) ? setCookie : setCookie ? [setCookie] : [];
+    const cookie = cookieArray.find((c) => c.startsWith('_csrf='))!.split(';')[0];
 
     const res = await request(app).post('/api/echo').set('Cookie', cookie).send({});
     expect(res.status).toBe(403);
@@ -76,9 +76,9 @@ describe('csrf middleware', () => {
 
   it('rejects POST with mismatched token', async () => {
     const getRes = await request(app).get('/api/csrf-token');
-    const cookie = (getRes.headers['set-cookie'] as string[])
-      .find((c) => c.startsWith('_csrf='))!
-      .split(';')[0];
+    const setCookie = getRes.headers['set-cookie'];
+    const cookieArray = Array.isArray(setCookie) ? setCookie : setCookie ? [setCookie] : [];
+    const cookie = cookieArray.find((c) => c.startsWith('_csrf='))!.split(';')[0];
 
     const res = await request(app)
       .post('/api/echo')

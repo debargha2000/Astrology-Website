@@ -1,12 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+import { apiFetch } from '../apiFetch';
 import { taskService } from '../taskService';
 
 vi.mock('../apiFetch', () => ({
   apiFetch: vi.fn(),
 }));
-
-import { apiFetch } from '../apiFetch';
 
 describe('taskService', () => {
   beforeEach(() => {
@@ -25,10 +24,10 @@ describe('taskService', () => {
           daysLeft: 1,
         },
       ];
-      (apiFetch as any).mockResolvedValue({
+      vi.mocked(apiFetch).mockResolvedValue({
         ok: true,
         json: async () => mockTasks,
-      });
+      } as Response);
       const result = await taskService.getAll();
       expect(result).toEqual(mockTasks);
     });
@@ -44,10 +43,10 @@ describe('taskService', () => {
         assignee: 'A',
         daysLeft: 1,
       };
-      (apiFetch as any).mockResolvedValue({
+      vi.mocked(apiFetch).mockResolvedValue({
         ok: true,
         json: async () => updatedTask,
-      });
+      } as Response);
       const result = await taskService.updateStatus('T-1', 'Water Cleanse');
       expect(result.status).toBe('Water Cleanse');
     });
@@ -55,7 +54,7 @@ describe('taskService', () => {
 
   describe('delete', () => {
     it('should delete a task', async () => {
-      (apiFetch as any).mockResolvedValue({ ok: true });
+      vi.mocked(apiFetch).mockResolvedValue({ ok: true } as Response);
       await taskService.delete('T-1');
       expect(apiFetch).toHaveBeenCalledWith('/api/tasks/T-1', { method: 'DELETE' });
     });

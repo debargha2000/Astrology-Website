@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { PLANET_INTERPRETATIONS } from '../../lib/interpretations';
 import type { PlanetPosition } from '../../types';

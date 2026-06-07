@@ -1,3 +1,4 @@
+import type { User } from 'firebase/auth';
 import {
   LogOut,
   Compass,
@@ -10,11 +11,11 @@ import {
   Sparkles,
   Terminal,
 } from 'lucide-react';
-import React from 'react';
+import type { ReactNode } from 'react';
 
 import type { CmsSubTab } from './types';
 
-const TABS: { key: CmsSubTab; label: string; icon: React.ReactNode }[] = [
+const TABS: { key: CmsSubTab; label: string; icon: ReactNode }[] = [
   { key: 'dashboard', label: 'dashboard', icon: <Compass className="h-3.5 w-3.5" /> },
   { key: 'invoices', label: 'invoices', icon: <FileText className="h-3.5 w-3.5" /> },
   { key: 'vendors', label: 'vendors', icon: <Users className="h-3.5 w-3.5" /> },
@@ -32,7 +33,7 @@ const TABS: { key: CmsSubTab; label: string; icon: React.ReactNode }[] = [
 ];
 
 interface Props {
-  googleUser: any;
+  googleUser: User | null;
   activeTab: CmsSubTab;
   onTabChange: (tab: CmsSubTab) => void;
   onLogout: () => void;

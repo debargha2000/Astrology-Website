@@ -1,5 +1,5 @@
 import { Search, Plus, Pencil, Download } from 'lucide-react';
-import React, { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 import { AddVendorModal } from './AddVendorModal';
 import { CsvImport } from './CsvImport';

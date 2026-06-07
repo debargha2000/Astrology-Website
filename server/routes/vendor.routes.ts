@@ -1,92 +1,86 @@
 import { Router, Request, Response } from 'express';
+import { z } from 'zod';
 
-import { DB } from '../db.js';
 import { authenticateToken } from '../middleware/auth.js';
+import { validate } from '../middleware/validation.js';
+import { vendorRepository } from '../repositories/index.js';
 
 const router = Router();
 
-router.get('/', authenticateToken, async (_req: Request, res: Response) => {
-  const vendors = await DB.getVendors();
+const vendorCreateSchema = z.object({
+  name: z.string().min(1).max(200),
+  contact: z.string().min(1).max(200),
+  origin: z.string().max(200).optional(),
+  category: z.string().max(100).optional(),
+  leadTime: z.string().max(50).optional(),
+  leadGems: z.string().max(200).optional(),
+});
+
+const vendorUpdateSchema = vendorCreateSchema.partial().extend({
+  rating: z.number().int().min(1).max(5).optional(),
+  status: z.enum(['Approved', 'Under Review', 'Suspended']).optional(),
+});
+
+const vendorBatchCreateSchema = z.object({
+  items: z.array(vendorCreateSchema).min(1),
+});
+
+router.get('/', authenticateToken, async (_req: Request, res: Response): Promise<void> => {
+  const vendors = await vendorRepository.findAll();
   res.json(vendors);
 });
 
-router.post('/', authenticateToken, async (req: Request, res: Response) => {
-  const { name, contact, origin, category, leadTime, leadGems } = req.body as {
-    name?: string;
-    contact?: string;
-    origin?: string;
-    category?: string;
-    leadTime?: string;
-    leadGems?: string;
-  };
-  if (!name || !contact) {
-    return res.status(400).json({ error: 'Name and contact person are required.' });
+router.post(
+  '/',
+  authenticateToken,
+  validate(vendorCreateSchema),
+  async (req: Request, res: Response): Promise<void> => {
+    const vendor = await vendorRepository.create(req.body);
+    res.status(201).json(vendor);
   }
+);
 
-  const vendor = await DB.addVendor({
-    name,
-    contact,
-    origin: origin || 'Himalayan Foothills',
-    category: category || 'Raw Crystals',
-    leadTime: leadTime || '5 Days',
-    leadGems: leadGems || 'Crystalline beads',
-  });
-  res.status(201).json(vendor);
-});
-
-router.post('/batch', authenticateToken, async (req: Request, res: Response) => {
-  const { items } = req.body as { items?: any[] };
-  if (!items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: 'items array is required.' });
+router.post(
+  '/batch',
+  authenticateToken,
+  validate(vendorBatchCreateSchema),
+  async (req: Request, res: Response): Promise<void> => {
+    const { items } = req.body;
+    const created = await vendorRepository.bulkCreate(items);
+    res.status(201).json({ count: created.length, items: created });
   }
-  const created = await DB.bulkCreateVendors(
-    items.map((i) => ({
-      name: i.name || 'Unknown Vendor',
-      contact: i.contact || 'Unknown',
-      origin: i.origin || 'Himalayan Foothills',
-      category: i.category || 'Raw Crystals',
-      leadTime: i.leadTime || '5 Days',
-      leadGems: i.leadGems || 'Crystalline beads',
-    }))
-  );
-  res.status(201).json({ count: created.length, items: created });
-});
+);
 
-router.put('/:id', authenticateToken, async (req: Request, res: Response) => {
-  const { name, contact, origin, category, leadTime, leadGems, status, rating } = req.body as {
-    name?: string;
-    contact?: string;
-    origin?: string;
-    category?: string;
-    leadTime?: string;
-    leadGems?: string;
-    status?: string;
-    rating?: number;
-  };
-  const updates: Record<string, unknown> = {};
-  if (name !== undefined) updates.name = name;
-  if (contact !== undefined) updates.contact = contact;
-  if (origin !== undefined) updates.origin = origin;
-  if (category !== undefined) updates.category = category;
-  if (leadTime !== undefined) updates.leadTime = leadTime;
-  if (leadGems !== undefined) updates.leadGems = leadGems;
-  if (status !== undefined) updates.status = status;
-  if (rating !== undefined) updates.rating = rating;
-
-  const updated = await DB.updateVendor(req.params.id, updates as any);
-  if (updated) {
-    res.json(updated);
-  } else {
-    res.status(404).json({ error: 'Vendor signature reference not found.' });
+router.put(
+  '/:id',
+  authenticateToken,
+  validate(vendorUpdateSchema),
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: 'Missing vendor ID.' });
+      return;
+    }
+    const updated = await vendorRepository.update(id, req.body);
+    if (updated) {
+      res.json(updated);
+    } else {
+      res.status(404).json({ error: 'Vendor not found.' });
+    }
   }
-});
+);
 
-router.delete('/:id', authenticateToken, async (req: Request, res: Response) => {
-  const success = await DB.deleteVendor(req.params.id);
+router.delete('/:id', authenticateToken, async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(400).json({ error: 'Missing vendor ID.' });
+    return;
+  }
+  const success = await vendorRepository.delete(id);
   if (success) {
     res.json({ message: 'Vendor registration successfully suspended.' });
   } else {
-    res.status(404).json({ error: 'Vendor signature reference not found.' });
+    res.status(404).json({ error: 'Vendor not found.' });
   }
 });
 

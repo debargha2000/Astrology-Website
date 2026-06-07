@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Award, Compass, ShieldCheck, Truck, Mail, Sparkles, Send } from 'lucide-react';
-import React, { useState } from 'react';
+import { Award, Compass, ShieldCheck, Truck, Sparkles, Send } from 'lucide-react';
+import { useState } from 'react';
 
-import { PageId } from '../types';
+import type { PageId } from '../types';
 
 interface FooterProps {
   setCurrentPage: (page: PageId) => void;

@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { EXPENSE_CATEGORIES } from './seedData';
 import type { Expense } from './types';

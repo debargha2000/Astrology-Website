@@ -3,20 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Sparkles, Gift } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ArrowRight, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import React from 'react';
 
-import { CartItem, Product, PageId } from '../types';
+import { CartItem } from '../types';
 
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   cartItems: CartItem[];
-  onUpdateQuantity: (idx: number, q: number) => void;
-  onRemoveItem: (idx: number) => void;
-  onUpdateSize: (idx: number, s: CartItem['size']) => void;
-  onUpdatePersonalization: (idx: number, val: boolean, details?: CartItem['birthDetails']) => void;
+  onUpdateQuantity: (productId: string, q: number) => void;
+  onRemoveItem: (productId: string) => void;
+  onUpdateSize: (productId: string, s: CartItem['size']) => void;
+  onUpdatePersonalization: (
+    productId: string,
+    val: boolean,
+    details?: CartItem['birthDetails']
+  ) => void;
   onCheckout: () => void;
 }
 
@@ -107,10 +110,10 @@ export default function CartDrawer({
                   </button>
                 </div>
               ) : (
-                cartItems.map((item, idx) => (
+                cartItems.map((item) => (
                   <div
-                    id={`cart-item-${idx}`}
-                    key={idx}
+                    id={`cart-item-${item.product.id}`}
+                    key={item.product.id}
                     className="pb-6 border-b border-[#D1CEBF]/40 space-y-4"
                   >
                     {/* Item info header */}
@@ -139,8 +142,8 @@ export default function CartDrawer({
 
                       {/* delete */}
                       <button
-                        id={`remove-cart-item-${idx}`}
-                        onClick={() => onRemoveItem(idx)}
+                        id={`remove-cart-item-${item.product.id}`}
+                        onClick={() => onRemoveItem(item.product.id)}
                         className="cursor-pointer text-[#1A1A1A]/40 hover:text-[#9E2A2B] p-1 rounded hover:bg-red-50 transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -154,9 +157,11 @@ export default function CartDrawer({
                           Wrist Size:
                         </label>
                         <select
-                          id={`cart-item-size-${idx}`}
+                          id={`cart-item-size-${item.product.id}`}
                           value={item.size}
-                          onChange={(e) => onUpdateSize(idx, e.target.value as CartItem['size'])}
+                          onChange={(e) =>
+                            onUpdateSize(item.product.id, e.target.value as CartItem['size'])
+                          }
                           className="w-full bg-[#E5E3D8]/20 border border-[#D1CEBF] p-1.5 rounded text-[10px] outline-none focus:border-[#A6A18F] text-[#1A1A1A]"
                         >
                           <option value="petite">Petite (15cm - Female standard)</option>
@@ -171,9 +176,11 @@ export default function CartDrawer({
                         </label>
                         <div className="flex items-center bg-[#E5E3D8]/20 border border-[#D1CEBF] rounded overflow-hidden max-w-[85px]">
                           <button
-                            id={`qty-minus-${idx}`}
+                            id={`qty-minus-${item.product.id}`}
                             type="button"
-                            onClick={() => onUpdateQuantity(idx, Math.max(1, item.quantity - 1))}
+                            onClick={() =>
+                              onUpdateQuantity(item.product.id, Math.max(1, item.quantity - 1))
+                            }
                             className="p-1.5 cursor-pointer text-[#1A1A1A] hover:bg-[#D1CEBF]/30"
                           >
                             <Minus className="h-3 w-3" />
@@ -182,9 +189,9 @@ export default function CartDrawer({
                             {item.quantity}
                           </span>
                           <button
-                            id={`qty-plus-${idx}`}
+                            id={`qty-plus-${item.product.id}`}
                             type="button"
-                            onClick={() => onUpdateQuantity(idx, item.quantity + 1)}
+                            onClick={() => onUpdateQuantity(item.product.id, item.quantity + 1)}
                             className="p-1.5 cursor-pointer text-[#1A1A1A] hover:bg-[#D1CEBF]/30"
                           >
                             <Plus className="h-3 w-3" />
@@ -196,13 +203,13 @@ export default function CartDrawer({
                     {/* Personalized Astrological custom verification checkbox */}
                     <div className="p-3 bg-[#E5E3D8]/20 border border-[#D1CEBF]/50 rounded-xl flex items-start gap-2.5">
                       <input
-                        id={`cart-personalization-toggle-${idx}`}
+                        id={`cart-personalization-toggle-${item.product.id}`}
                         type="checkbox"
                         checked={item.personalizedCertification}
                         onChange={(e) => {
                           const checked = e.target.checked;
                           onUpdatePersonalization(
-                            idx,
+                            item.product.id,
                             checked,
                             checked ? { name: '', birthDate: '' } : undefined
                           );
@@ -211,7 +218,7 @@ export default function CartDrawer({
                       />
                       <div className="space-y-1.5 flex-1">
                         <label
-                          htmlFor={`cart-personalization-toggle-${idx}`}
+                          htmlFor={`cart-personalization-toggle-${item.product.id}`}
                           className="text-[10px] font-mono text-[#1A1A1A] font-semibold uppercase tracking-wider cursor-pointer flex items-center justify-between"
                         >
                           <span>Natal Chart Seal (+ ₹250)</span>
@@ -237,7 +244,7 @@ export default function CartDrawer({
                                   Full Name of Wearer:
                                 </label>
                                 <input
-                                  id={`birth-details-name-${idx}`}
+                                  id={`birth-details-name-${item.product.id}`}
                                   type="text"
                                   required
                                   placeholder="e.g. Priyan Sharma"
@@ -247,7 +254,7 @@ export default function CartDrawer({
                                       name: '',
                                       birthDate: '',
                                     };
-                                    onUpdatePersonalization(idx, true, {
+                                    onUpdatePersonalization(item.product.id, true, {
                                       ...details,
                                       name: e.target.value,
                                     });
@@ -262,7 +269,7 @@ export default function CartDrawer({
                                     Birth Date:
                                   </label>
                                   <input
-                                    id={`birth-details-date-${idx}`}
+                                    id={`birth-details-date-${item.product.id}`}
                                     type="date"
                                     required
                                     value={item.birthDetails?.birthDate || ''}
@@ -271,7 +278,7 @@ export default function CartDrawer({
                                         name: '',
                                         birthDate: '',
                                       };
-                                      onUpdatePersonalization(idx, true, {
+                                      onUpdatePersonalization(item.product.id, true, {
                                         ...details,
                                         birthDate: e.target.value,
                                       });
@@ -284,7 +291,7 @@ export default function CartDrawer({
                                     Birth Time (optional):
                                   </label>
                                   <input
-                                    id={`birth-details-time-${idx}`}
+                                    id={`birth-details-time-${item.product.id}`}
                                     type="time"
                                     value={item.birthDetails?.birthTime || ''}
                                     onChange={(e) => {
@@ -292,36 +299,14 @@ export default function CartDrawer({
                                         name: '',
                                         birthDate: '',
                                       };
-                                      onUpdatePersonalization(idx, true, {
+                                      onUpdatePersonalization(item.product.id, true, {
                                         ...details,
-                                        birthTime: e.target.value || undefined,
+                                        birthTime: e.target.value || '',
                                       });
                                     }}
                                     className="w-full bg-white border border-[#D1CEBF] px-2 py-1 rounded text-[10px] outline-none text-[#1A1A1A]"
                                   />
                                 </div>
-                              </div>
-                              <div>
-                                <label className="block text-[8px] font-mono uppercase text-[#1A1A1A]/60 mb-0.5">
-                                  Birth Place:
-                                </label>
-                                <input
-                                  id={`birth-details-place-${idx}`}
-                                  type="text"
-                                  placeholder="City (e.g. Mumbai)"
-                                  value={item.birthDetails?.birthPlace || ''}
-                                  onChange={(e) => {
-                                    const details = item.birthDetails || {
-                                      name: '',
-                                      birthDate: '',
-                                    };
-                                    onUpdatePersonalization(idx, true, {
-                                      ...details,
-                                      birthPlace: e.target.value,
-                                    });
-                                  }}
-                                  className="w-full bg-white border border-[#D1CEBF] px-2 py-1 rounded text-[10px] outline-none text-[#1A1A1A] font-medium"
-                                />
                               </div>
                             </motion.div>
                           )}
@@ -331,42 +316,31 @@ export default function CartDrawer({
                   </div>
                 ))
               )}
-            </div>
 
-            {/* Bottom calculation details summary & checkout button */}
-            {cartItems.length > 0 && (
-              <div className="border-t border-[#D1CEBF] bg-[#FAF7F2]/40 p-6 space-y-4">
-                <div className="space-y-1.5 font-mono text-xs text-[#1A1A1A]/70">
-                  <div className="flex justify-between">
-                    <span>Consecrated Subtotal</span>
-                    <span className="text-[#1A1A1A] font-bold">{formatINR(subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Certified Vedic Cleansing</span>
-                    <span className="text-[#2D5A27] font-semibold uppercase">Free of Charge</span>
-                  </div>
-                  <div className="flex justify-between text-base border-t border-[#D1CEBF] pt-3 text-[#1A1A1A] font-bold">
-                    <span>Estimated Total</span>
-                    <span>{formatINR(subtotal)}</span>
-                  </div>
+              {/* Subtotal & Checkout */}
+              <div className="pt-6 space-y-4 border-t border-[#D1CEBF]">
+                <div className="flex justify-between text-sm font-mono text-[#1A1A1A]">
+                  <span>Subtotal</span>
+                  <span className="font-bold">{formatINR(subtotal)}</span>
                 </div>
-
-                <div className="p-3 bg-white border border-[#D1CEBF] rounded-xl flex items-center gap-2">
-                  <ShieldCheck className="h-4.5 w-4.5 text-[#A6A18F]" />
-                  <span className="text-[10px] text-[#1A1A1A]/60 leading-normal font-medium">
-                    Backed by 75 Years of ancestral astrology curation. All crystals authenticated.
-                  </span>
+                <div className="flex justify-between text-[10px] text-[#1A1A1A]/60 font-mono">
+                  <span>Vedic Consecration Fee</span>
+                  <span>Included in pricing</span>
+                </div>
+                <div className="flex justify-between text-sm font-mono text-[#1A1A1A]">
+                  <span>Estimated Total</span>
+                  <span className="font-bold">{formatINR(subtotal)}</span>
                 </div>
 
                 <button
-                  id="cart-checkout-trigger"
+                  id="cart-checkout-btn"
                   onClick={onCheckout}
-                  className="cursor-pointer w-full bg-[#1A1A1A] hover:bg-[#322D2C] text-white py-4 rounded-xl text-xs tracking-widest font-mono font-medium uppercase transition-colors flex items-center justify-center gap-2 border border-[#D1CEBF]/20"
+                  className="w-full cursor-pointer bg-[#1A1A1A] hover:bg-[#322D2C] text-white py-3.5 rounded-lg text-xs font-mono font-medium uppercase tracking-widest flex items-center justify-center gap-1.5"
                 >
-                  Proceed to Secure Checkout <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 text-[#A6A18F]" /> Proceed to Consecration
                 </button>
               </div>
-            )}
+            </div>
           </motion.div>
         </>
       )}

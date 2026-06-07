@@ -1,6 +1,6 @@
-import { AlertTriangle, Info, Trash2, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 interface Props {
   open: boolean;

@@ -1,6 +1,5 @@
 import { X, Printer } from 'lucide-react';
 import { motion } from 'motion/react';
-import React from 'react';
 
 import type { Invoice } from './types';
 

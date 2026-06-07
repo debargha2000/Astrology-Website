@@ -1,25 +1,26 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import path from 'path';
 import net from 'net';
-import dotenv from 'dotenv';
 import app from './server/app.js';
-
-dotenv.config();
+import { shutdownRedisRateLimiter } from './server/middleware/redisRateLimit.js';
 
 const IS_VERCEL = !!process.env.VERCEL;
 
-function isPortFree(port: number): Promise<boolean> {
+function isPortFree(port: number, host: string): Promise<boolean> {
   return new Promise((resolve) => {
     const tester = net.createServer()
       .once('error', () => resolve(false))
       .once('listening', () => tester.close(() => resolve(true)))
-      .listen(port, '0.0.0.0');
+      .listen(port, host);
   });
 }
 
-async function findFreePort(start: number, maxTries = 50): Promise<number> {
+async function findFreePort(start: number, host: string, maxTries = 50): Promise<number> {
   for (let p = start; p < start + maxTries; p++) {
-    if (await isPortFree(p)) return p;
+    if (await isPortFree(p, host)) return p;
   }
   throw new Error(`No free port found in range ${start}–${start + maxTries - 1}`);
 }
@@ -31,13 +32,13 @@ if (IS_VERCEL) {
   app.get('*', (_req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
-} else {
-  // Local / App Hosting: full dev or production server
-  async function startServer() {
-    const PREFERRED_PORT = Number(process.env.PORT) || 3000;
-    const HOST = process.env.HOST || 'localhost';
-    // Probe against 0.0.0.0 so we catch any binding (IPv4 or IPv6) on the port.
-    const PORT = await findFreePort(PREFERRED_PORT);
+  } else {
+    // Local / App Hosting: full dev or production server
+    async function startServer() {
+      const PREFERRED_PORT = Number(process.env.PORT) || 3000;
+      const HOST = process.env.HOST || 'localhost';
+      // Probe against the same host so we catch any binding (IPv4 or IPv6) on the port.
+      const PORT = await findFreePort(PREFERRED_PORT, HOST);
 
     if (process.env.NODE_ENV !== 'production') {
       const { createServer: createViteServer } = await import('vite');
@@ -71,6 +72,18 @@ if (IS_VERCEL) {
   startServer().catch((err) => {
     console.error('Failed to start backend:', err);
     process.exit(1);
+  });
+
+  process.on('SIGTERM', async () => {
+    console.log('SIGTERM received, shutting down gracefully...');
+    await shutdownRedisRateLimiter();
+    process.exit(0);
+  });
+
+  process.on('SIGINT', async () => {
+    console.log('SIGINT received, shutting down gracefully...');
+    await shutdownRedisRateLimiter();
+    process.exit(0);
   });
 }
 

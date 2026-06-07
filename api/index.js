@@ -1,456 +1,3 @@
-var __defProp = Object.defineProperty;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __esm = (fn, res) => function __init() {
-  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-};
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-
-// src/lib/interpretations.ts
-var PLANET_INTERPRETATIONS, ASCENDANT_INTERPRETATIONS, ASPECT_MEANINGS;
-var init_interpretations = __esm({
-  "src/lib/interpretations.ts"() {
-    PLANET_INTERPRETATIONS = {
-      Sun: {
-        Aries: "Your core identity burns with pioneering courage. You lead through action and inspire others with your fearless initiative.",
-        Taurus: "Your core identity is rooted in stability and sensuality. You value comfort and build lasting foundations with patient determination.",
-        Gemini: "Your core identity thrives on communication and variety. You connect with the world through wit, intellect, and restless curiosity.",
-        Cancer: "Your core identity is deeply emotional and nurturing. You protect what matters and find strength in home and family bonds.",
-        Leo: "Your core identity radiates warmth and creative authority. You naturally command attention and express yourself with theatrical flair.",
-        Virgo: "Your core identity serves through precision and helpfulness. You find meaning in analysis, improvement, and practical service.",
-        Libra: "Your core identity seeks beauty and harmony. You create balance in relationships and possess an innate sense of fairness and diplomacy.",
-        Scorpio: "Your core identity transforms through intensity. You navigate depth, uncovering hidden truths with magnetic determination.",
-        Sagittarius: "Your core identity expands through adventure and philosophy. You seek truth, freedom, and meaning beyond borders.",
-        Capricorn: "Your core identity builds through discipline and ambition. You achieve through patience, structure, and unwavering responsibility.",
-        Aquarius: "Your core identity innovates through originality. You champion humanitarian causes and think beyond conventional boundaries.",
-        Pisces: "Your core identity dissolves into universal compassion. You channel creativity and spiritual depth through empathic intuition."
-      },
-      Moon: {
-        Aries: "Your emotional world is fiery and immediate. You process feelings through action and need independence to feel secure.",
-        Taurus: "Your emotional world craves comfort and predictability. You find peace through sensory pleasures and material security.",
-        Gemini: "Your emotional world processes through communication. You need intellectual stimulation and social variety to feel balanced.",
-        Cancer: "Your emotional world is deeply nurturing and protective. Home and family are your anchors; you feel most safe in familiar arms.",
-        Leo: "Your emotional world expresses through warmth and creativity. You need admiration and creative outlets to feel emotionally fulfilled.",
-        Virgo: "Your emotional world processes through analysis and service. You find comfort in routine, order, and being useful to others.",
-        Libra: "Your emotional world seeks partnership and beauty. You need harmony in relationships and aesthetic surroundings to feel at peace.",
-        Scorpio: "Your emotional world runs deep and intense. You transform through emotional crises and need authenticity in all connections.",
-        Sagittarius: "Your emotional world expands through freedom and exploration. You need adventure, philosophy, and space to breathe.",
-        Capricorn: "Your emotional world processes through structure and responsibility. You find comfort in achievement and long-term planning.",
-        Aquarius: "Your emotional world connects through intellectual bonds. You need freedom, friendship, and shared ideals to feel emotionally secure.",
-        Pisces: "Your emotional world dissolves boundaries. You absorb others' feelings and need spiritual practice and creative expression to stay grounded."
-      },
-      Mercury: {
-        Aries: "Your mind is quick, assertive, and decisive. You think on your feet and communicate with direct, sometimes blunt, clarity.",
-        Taurus: "Your mind is methodical and practical. You think slowly but thoroughly, preferring concrete facts over abstract theories.",
-        Gemini: "Your mind is versatile, curious, and quick-witted. You juggle multiple interests and communicate with effortless charm.",
-        Cancer: "Your mind is intuitive and emotionally attuned. You process information through feelings and have an exceptional memory.",
-        Leo: "Your mind is creative, dramatic, and confident. You express ideas with flair and enjoy being the center of intellectual attention.",
-        Virgo: "Your mind is analytical, precise, and detail-oriented. You excel at organizing information and finding practical solutions.",
-        Libra: "Your mind is balanced, diplomatic, and aesthetic. You consider all perspectives and communicate with grace and fairness.",
-        Scorpio: "Your mind is penetrating, investigative, and strategic. You uncover hidden layers and think with intense focus.",
-        Sagittarius: "Your mind is expansive, philosophical, and optimistic. You seek big-picture understanding and communicate with enthusiasm.",
-        Capricorn: "Your mind is structured, ambitious, and strategic. You think in terms of long-term goals and practical achievement.",
-        Aquarius: "Your mind is innovative, original, and humanitarian. You think outside conventions and champion progressive ideas.",
-        Pisces: "Your mind is imaginative, empathic, and intuitive. You process information through feelings and creative vision."
-      },
-      Venus: {
-        Aries: "Your love is passionate and direct. You pursue romance with boldness and need excitement and independence in relationships.",
-        Taurus: "Your love is sensual, loyal, and enduring. You express affection through touch, gifts, and creating beautiful environments.",
-        Gemini: "Your love is playful, communicative, and intellectually stimulating. You need variety and wit in romantic connections.",
-        Cancer: "Your love is nurturing, protective, and deeply emotional. You create intimate sanctuaries and cherish family bonds.",
-        Leo: "Your love is generous, dramatic, and warm. You express affection lavishly and need admiration and loyalty from partners.",
-        Virgo: "Your love is practical, devoted, and attentive to details. You show care through acts of service and thoughtful analysis.",
-        Libra: "Your love is harmonious, romantic, and partnership-oriented. You seek beauty, balance, and intellectual companionship.",
-        Scorpio: "Your love is intense, transformative, and all-consuming. You crave deep soul connections and absolute loyalty.",
-        Sagittarius: "Your love is adventurous, freedom-loving, and philosophical. You need a partner who shares your quest for truth.",
-        Capricorn: "Your love is committed, ambitious, and enduring. You build relationships with patience and long-term vision.",
-        Aquarius: "Your love is unconventional, intellectual, and friendship-based. You need freedom, equality, and shared ideals.",
-        Pisces: "Your love is compassionate, spiritual, and selfless. You dissolve boundaries in love and seek soul-deep connections."
-      },
-      Mars: {
-        Aries: "Your drive is bold, pioneering, and assertive. You attack challenges head-on with fearless energy and competitive fire.",
-        Taurus: "Your drive is steady, persistent, and sensually motivated. You pursue goals with unwavering determination and physical endurance.",
-        Gemini: "Your drive is versatile, communicative, and mentally stimulated. You channel energy through writing, speaking, and intellectual debate.",
-        Cancer: "Your drive is protective, nurturing, and emotionally fueled. You fight for what matters and channel energy through caregiving.",
-        Leo: "Your drive is creative, dramatic, and leadership-oriented. You pursue goals with theatrical confidence and generous ambition.",
-        Virgo: "Your drive is analytical, precise, and service-oriented. You channel energy through detailed work and practical improvement.",
-        Libra: "Your drive is diplomatic, aesthetic, and partnership-focused. You pursue harmony and channel energy through collaboration.",
-        Scorpio: "Your drive is intense, strategic, and transformative. You pursue goals with relentless focus and magnetic determination.",
-        Sagittarius: "Your drive is adventurous, philosophical, and optimistic. You channel energy through exploration and spreading knowledge.",
-        Capricorn: "Your drive is disciplined, ambitious, and strategic. You pursue long-term goals with patience and structural planning.",
-        Aquarius: "Your drive is innovative, humanitarian, and unconventional. You channel energy through progressive causes and original thinking.",
-        Pisces: "Your drive is intuitive, spiritual, and compassionate. You channel energy through creative expression and selfless service."
-      },
-      Jupiter: {
-        Aries: "Your luck and growth come through bold initiative and independent action. You expand by pioneering new paths.",
-        Taurus: "Your luck and growth come through patience, sensuality, and material abundance. You expand through building lasting value.",
-        Gemini: "Your luck and growth come through communication, learning, and social connections. You expand through intellectual versatility.",
-        Cancer: "Your luck and growth come through emotional depth, family, and nurturing. You expand by creating secure foundations.",
-        Leo: "Your luck and growth come through creativity, generosity, and leadership. You expand by inspiring others with your vision.",
-        Virgo: "Your luck and growth come through service, analysis, and practical improvement. You expand by refining your skills.",
-        Libra: "Your luck and growth come through partnerships, beauty, and diplomacy. You expand by creating harmony and balance.",
-        Scorpio: "Your luck and growth come through transformation, depth, and shared resources. You expand by embracing change.",
-        Sagittarius: "Your luck and growth come through adventure, philosophy, and freedom. You expand by exploring truth beyond borders.",
-        Capricorn: "Your luck and growth come through discipline, ambition, and structure. You expand by building lasting achievements.",
-        Aquarius: "Your luck and growth come through innovation, friendship, and humanitarian ideals. You expand by championing progress.",
-        Pisces: "Your luck and growth come through intuition, compassion, and spiritual connection. You expand by dissolving boundaries."
-      },
-      Saturn: {
-        Aries: "Your lessons come through patience, self-discipline, and tempering impulsiveness. You build strength by learning to wait.",
-        Taurus: "Your lessons come through letting go of material attachment and embracing change. You build resilience through flexibility.",
-        Gemini: "Your lessons come through focus, depth, and commitment. You build wisdom by mastering scattered energies.",
-        Cancer: "Your lessons come through emotional independence and boundary-setting. You build strength by nurturing yourself first.",
-        Leo: "Your lessons come through humility, service, and redirecting ego. You build character by serving something greater.",
-        Virgo: "Your lessons come through self-acceptance and releasing perfectionism. You build peace by embracing imperfection.",
-        Libra: "Your lessons come through self-reliance, decision-making, and confronting conflict. You build strength through independence.",
-        Scorpio: "Your lessons come through trust, letting go, and emotional vulnerability. You build depth by releasing control.",
-        Sagittarius: "Your lessons come through discipline, focus, and practical grounding. You build wisdom by channeling optimism into action.",
-        Capricorn: "Your lessons come through patience with yourself, rest, and balancing ambition with joy. You build by slowing down.",
-        Aquarius: "Your lessons come through emotional connection, tradition, and grounding revolutionary ideals in reality.",
-        Pisces: "Your lessons come through boundaries, practical discernment, and structure. You build by channeling compassion into form."
-      }
-    };
-    ASCENDANT_INTERPRETATIONS = {
-      Aries: "You meet the world as a warrior \u2014 direct, bold, and impossible to ignore. Your first impression is one of confident action and magnetic initiative.",
-      Taurus: "You meet the world as a presence of calm stability. Your first impression is one of grounded reliability, sensuality, and quiet strength.",
-      Gemini: "You meet the world as a communicator \u2014 quick, curious, and endlessly engaging. Your first impression is one of wit, intelligence, and youthful energy.",
-      Cancer: "You meet the world as a nurturing soul \u2014 warm, protective, and deeply intuitive. Your first impression is one of emotional depth and genuine care.",
-      Leo: "You meet the world as royalty \u2014 radiant, confident, and impossible to overlook. Your first impression is one of warmth, generosity, and natural authority.",
-      Virgo: "You meet the world as an analyst \u2014 observant, precise, and quietly competent. Your first impression is one of intelligence, helpfulness, and attention to detail.",
-      Libra: "You meet the world as a diplomat \u2014 graceful, charming, and aesthetically refined. Your first impression is one of beauty, balance, and social ease.",
-      Scorpio: "You meet the world as an enigma \u2014 intense, magnetic, and deeply perceptive. Your first impression is one of power, mystery, and penetrating insight.",
-      Sagittarius: "You meet the world as an explorer \u2014 optimistic, philosophical, and larger than life. Your first impression is one of warmth, enthusiasm, and boundless curiosity.",
-      Capricorn: "You meet the world as an authority \u2014 composed, ambitious, and quietly commanding. Your first impression is one of maturity, discipline, and long-term vision.",
-      Aquarius: "You meet the world as a visionary \u2014 original, independent, and intellectually stimulating. Your first impression is one of innovation, humanitarian ideals, and quirky brilliance.",
-      Pisces: "You meet the world as a mystic \u2014 compassionate, dreamy, and ethereally gentle. Your first impression is one of sensitivity, creativity, and spiritual depth."
-    };
-    ASPECT_MEANINGS = {
-      "Sun-Conjunction": "Your core identity and this planet merge as one. This is a powerful, defining influence.",
-      "Sun-Opposition": "Your core identity and this planet create tension that demands balance and integration.",
-      "Sun-Trine": "Your core identity flows harmoniously with this planet, bringing natural gifts and ease.",
-      "Sun-Square": "Your core identity and this planet create dynamic friction that drives growth through challenge.",
-      "Sun-Sextile": "Your core identity benefits from this planet's gentle, supportive influence.",
-      "Moon-Conjunction": "Your emotions and this planet blend deeply. This is a profoundly felt influence.",
-      "Moon-Opposition": "Your emotions and this planet create polarizing tension that seeks equilibrium.",
-      "Moon-Trine": "Your emotions flow naturally with this planet, bringing emotional gifts and intuitive support.",
-      "Moon-Square": "Your emotions and this planet create emotional friction that demands conscious awareness.",
-      "Moon-Sextile": "Your emotions benefit from this planet's gentle, supportive influence.",
-      "Mercury-Conjunction": "Your mind merges with this planet's energy. Thoughts and communication are powerfully focused.",
-      "Mercury-Opposition": "Your mind and this planet create intellectual tension that demands perspective-taking.",
-      "Mercury-Trine": "Your mind flows naturally with this planet, bringing intellectual gifts and easy communication.",
-      "Mercury-Square": "Your mind and this planet create mental friction that sharpens thinking through challenge.",
-      "Mercury-Sextile": "Your mind benefits from this planet's gentle, supportive intellectual influence.",
-      "Venus-Conjunction": "Your love nature merges with this planet. Relationships and aesthetics are deeply colored.",
-      "Venus-Opposition": "Your love nature and this planet create romantic tension that seeks balance.",
-      "Venus-Trine": "Your love nature flows harmoniously with this planet, bringing romantic and artistic gifts.",
-      "Venus-Square": "Your love nature and this planet create relational friction that deepens understanding.",
-      "Venus-Sextile": "Your love nature benefits from this planet's gentle, romantic influence.",
-      "Mars-Conjunction": "Your drive and energy merge with this planet. Action and ambition are powerfully focused.",
-      "Mars-Opposition": "Your drive and this planet create dynamic tension that demands balanced action.",
-      "Mars-Trine": "Your drive flows naturally with this planet, bringing energetic gifts and physical vitality.",
-      "Mars-Square": "Your drive and this planet create aggressive friction that demands conscious channeling.",
-      "Mars-Sextile": "Your drive benefits from this planet's supportive, energizing influence.",
-      "Jupiter-Conjunction": "Your luck and expansion merge with this planet. Growth and abundance are amplified.",
-      "Jupiter-Opposition": "Your luck and this planet create expansive tension that demands balanced growth.",
-      "Jupiter-Trine": "Your luck flows naturally with this planet, bringing fortune and philosophical gifts.",
-      "Jupiter-Square": "Your luck and this planet create growth friction that teaches through excess.",
-      "Jupiter-Sextile": "Your luck benefits from this planet's gentle, fortunate influence.",
-      "Saturn-Conjunction": "Your discipline and this planet merge. Lessons and structure are powerfully focused.",
-      "Saturn-Opposition": "Your discipline and this planet create karmic tension that demands maturity.",
-      "Saturn-Trine": "Your discipline flows naturally with this planet, bringing structural gifts and patient achievement.",
-      "Saturn-Square": "Your discipline and this planet create hardship friction that builds character through challenge.",
-      "Saturn-Sextile": "Your discipline benefits from this planet's steady, supportive influence."
-    };
-  }
-});
-
-// src/lib/nakshatraData.ts
-var NAKSHATRA_DATA;
-var init_nakshatraData = __esm({
-  "src/lib/nakshatraData.ts"() {
-    NAKSHATRA_DATA = [
-      {
-        name: "Ashwini",
-        symbol: "Horse Head",
-        lord: "Ketu",
-        deity: "Ashwini Kumaras",
-        nature: "Swift/Healing",
-        startDegree: 0
-      },
-      {
-        name: "Bharani",
-        symbol: "Yoni",
-        lord: "Venus",
-        deity: "Yama",
-        nature: "Creative/Transformative",
-        startDegree: 13.333
-      },
-      {
-        name: "Krittika",
-        symbol: "Razor",
-        lord: "Sun",
-        deity: "Agni",
-        nature: "Purifying/Fierce",
-        startDegree: 26.667
-      },
-      {
-        name: "Rohini",
-        symbol: "Chariot",
-        lord: "Moon",
-        deity: "Brahma",
-        nature: "Fertile/Indulgent",
-        startDegree: 40
-      },
-      {
-        name: "Mrigashira",
-        symbol: "Deer Head",
-        lord: "Mars",
-        deity: "Soma",
-        nature: "Searching/Curious",
-        startDegree: 53.333
-      },
-      {
-        name: "Ardra",
-        symbol: "Teardrop",
-        lord: "Rahu",
-        deity: "Rudra",
-        nature: "Intense/Transformative",
-        startDegree: 66.667
-      },
-      {
-        name: "Punarvasu",
-        symbol: "Bow and Arrow",
-        lord: "Jupiter",
-        deity: "Aditi",
-        nature: "Renewing/Optimistic",
-        startDegree: 80
-      },
-      {
-        name: "Pushya",
-        symbol: "Lotus",
-        lord: "Saturn",
-        deity: "Brihaspati",
-        nature: "Nourishing/Spiritual",
-        startDegree: 93.333
-      },
-      {
-        name: "Ashlesha",
-        symbol: "Serpent",
-        lord: "Mercury",
-        deity: "Naga",
-        nature: "Mystical/Intuitive",
-        startDegree: 106.667
-      },
-      {
-        name: "Magha",
-        symbol: "Throne",
-        lord: "Ketu",
-        deity: "Pitrs",
-        nature: "Royal/Ancestral",
-        startDegree: 120
-      },
-      {
-        name: "Purva Phalguni",
-        symbol: "Hammock",
-        lord: "Venus",
-        deity: "Bhaga",
-        nature: "Pleasurable/Creative",
-        startDegree: 133.333
-      },
-      {
-        name: "Uttara Phalguni",
-        symbol: "Bed",
-        lord: "Sun",
-        deity: "Aryaman",
-        nature: "Patronage/Friendly",
-        startDegree: 146.667
-      },
-      {
-        name: "Hasta",
-        symbol: "Hand",
-        lord: "Moon",
-        deity: "Savitar",
-        nature: "Skillful/Healing",
-        startDegree: 160
-      },
-      {
-        name: "Chitra",
-        symbol: "Jewel",
-        lord: "Mars",
-        deity: "Vishvakarma",
-        nature: "Artistic/Bright",
-        startDegree: 173.333
-      },
-      {
-        name: "Swati",
-        symbol: "Coral",
-        lord: "Rahu",
-        deity: "Vayu",
-        nature: "Independent/Liberal",
-        startDegree: 186.667
-      },
-      {
-        name: "Vishakha",
-        symbol: "Archway",
-        lord: "Jupiter",
-        deity: "Indra-Agni",
-        nature: "Determined/Goal-oriented",
-        startDegree: 200
-      },
-      {
-        name: "Anuradha",
-        symbol: "Lotus",
-        lord: "Saturn",
-        deity: "Mitra",
-        nature: "Devoted/Friendship",
-        startDegree: 213.333
-      },
-      {
-        name: "Jyeshtha",
-        symbol: "Circular Talisman",
-        lord: "Mercury",
-        deity: "Indra",
-        nature: "Senior/Protective",
-        startDegree: 226.667
-      },
-      {
-        name: "Mula",
-        symbol: "Tied Bunch",
-        lord: "Ketu",
-        deity: "Nirrti",
-        nature: "Investigative/Spiritual",
-        startDegree: 240
-      },
-      {
-        name: "Purva Ashadha",
-        symbol: "Tusk",
-        lord: "Venus",
-        deity: "Apas",
-        nature: "Invincible/Flowing",
-        startDegree: 253.333
-      },
-      {
-        name: "Uttara Ashadha",
-        symbol: "Elephant Tusk",
-        lord: "Sun",
-        deity: "Vishvadevas",
-        nature: "Victorious/Universal",
-        startDegree: 266.667
-      },
-      {
-        name: "Shravana",
-        symbol: "Ear",
-        lord: "Moon",
-        deity: "Vishnu",
-        nature: "Listening/Knowledgeable",
-        startDegree: 280
-      },
-      {
-        name: "Dhanishta",
-        symbol: "Drum",
-        lord: "Mars",
-        deity: "Vasus",
-        nature: "Wealthy/Musical",
-        startDegree: 293.333
-      },
-      {
-        name: "Shatabhisha",
-        symbol: "Circle",
-        lord: "Rahu",
-        deity: "Varuna",
-        nature: "Healing/Mysterious",
-        startDegree: 306.667
-      },
-      {
-        name: "Purva Bhadrapada",
-        symbol: "Sword",
-        lord: "Jupiter",
-        deity: "Aja Ekapada",
-        nature: "Intense/Spiritual",
-        startDegree: 320
-      },
-      {
-        name: "Uttara Bhadrapada",
-        symbol: "Twin",
-        lord: "Saturn",
-        deity: "Ahir Budhnya",
-        nature: "Deep/Profound",
-        startDegree: 333.333
-      },
-      {
-        name: "Revati",
-        symbol: "Fish",
-        lord: "Mercury",
-        deity: "Pushan",
-        nature: "Journeying/Nourishing",
-        startDegree: 346.667
-      }
-    ];
-  }
-});
-
-// server/astroDefaults.ts
-var astroDefaults_exports = {};
-__export(astroDefaults_exports, {
-  buildAstroDefaults: () => buildAstroDefaults
-});
-function buildAstroDefaults() {
-  const entries = [];
-  const ts = (/* @__PURE__ */ new Date()).toISOString();
-  const author = "system-defaults";
-  for (const [planet, signs] of Object.entries(PLANET_INTERPRETATIONS)) {
-    for (const [sign, text] of Object.entries(signs)) {
-      entries.push({
-        type: "planet",
-        key: `${planet}-${sign}`,
-        title: `${planet} in ${sign}`,
-        interpretation: text,
-        updatedAt: ts,
-        updatedBy: author
-      });
-    }
-  }
-  for (const [sign, text] of Object.entries(ASCENDANT_INTERPRETATIONS)) {
-    entries.push({
-      type: "ascendant",
-      key: sign,
-      title: `${sign} Ascendant`,
-      interpretation: text,
-      updatedAt: ts,
-      updatedBy: author
-    });
-  }
-  for (const [key, text] of Object.entries(ASPECT_MEANINGS)) {
-    entries.push({
-      type: "aspect",
-      key,
-      title: key.replace(/-/g, " "),
-      interpretation: text,
-      updatedAt: ts,
-      updatedBy: author
-    });
-  }
-  for (const n of NAKSHATRA_DATA) {
-    entries.push({
-      type: "nakshatra",
-      key: n.name,
-      title: `${n.name} Nakshatra`,
-      interpretation: `${n.name} \u2014 Ruled by ${n.lord}, deity ${n.deity}. Nature: ${n.nature}. Symbol: ${n.symbol}.`,
-      updatedAt: ts,
-      updatedBy: author
-    });
-  }
-  return entries;
-}
-var init_astroDefaults = __esm({
-  "server/astroDefaults.ts"() {
-    init_interpretations();
-    init_nakshatraData();
-  }
-});
-
 // server/app.ts
 import cookieParser from "cookie-parser";
 import express from "express";
@@ -799,6 +346,32 @@ var DEFAULT_WEBSITE_CONTENT = {
   bannerImage: `${IMG}/aura_stone_hero_banner_1779793774735.png`
 };
 
+// server/middleware/logging.ts
+import pino from "pino";
+var isDevelopment = process.env.NODE_ENV !== "production";
+var logger = pino({
+  level: process.env.LOG_LEVEL || (isDevelopment ? "debug" : "info"),
+  ...isDevelopment ? {
+    transport: {
+      target: "pino-pretty",
+      options: {
+        colorize: true,
+        translateTime: "SYS:standard",
+        ignore: "pid,hostname"
+      }
+    }
+  } : {},
+  base: {
+    service: "aura-stone-api",
+    env: process.env.NODE_ENV || "development"
+  },
+  formatters: {
+    level: (label) => {
+      return { level: label };
+    }
+  }
+});
+
 // server/db.ts
 var CONFIG_PATH = path.join(process.cwd(), "firebase-applet-config.json");
 var SERVICE_ACCOUNT_PATH = path.join(process.cwd(), "serviceAccountKey.json");
@@ -825,7 +398,7 @@ function getServiceAccount() {
     try {
       return JSON.parse(envKey);
     } catch (err) {
-      console.warn("FIREBASE_SERVICE_ACCOUNT_KEY is set but invalid JSON.", err);
+      logger.warn({ err }, "FIREBASE_SERVICE_ACCOUNT_KEY is set but invalid JSON.");
     }
   }
   try {
@@ -862,7 +435,7 @@ function getFirestoreDB() {
     return firestoreDb;
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);
-    console.warn(`Firestore unavailable (${reason}). Falling back to local flat-file storage.`);
+    logger.warn(`Firestore unavailable (${reason}). Falling back to local flat-file storage.`);
     useLocalFallback = true;
     return null;
   }
@@ -1134,7 +707,7 @@ var DB = class {
         return data;
       }
     } catch (e) {
-      console.error("Error reading index file. Initializing default structures.", e);
+      logger.error({ e }, "Error reading index file. Initializing default structures.");
     }
     const defaultData = {
       invoices: INITIAL_INVOICES,
@@ -1158,7 +731,7 @@ var DB = class {
     try {
       fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
     } catch (e) {
-      console.error("CRITICAL: Failed to write to the index file.", e);
+      logger.error({ e }, "CRITICAL: Failed to write to the index file.");
     }
   }
   // General log appender (Sync & Async)
@@ -1637,10 +1210,13 @@ var DB = class {
     const data = this.load();
     const index = data.tasks.findIndex((t) => t.id === id);
     if (index > -1) {
-      data.tasks[index].status = status;
-      this.save(data);
-      await this.addLog(`Updated task status for ${id} to "${status}"`);
-      return data.tasks[index];
+      const task = data.tasks[index];
+      if (task) {
+        task.status = status;
+        this.save(data);
+        await this.addLog(`Updated task status for ${id} to "${status}"`);
+        return task;
+      }
     }
     return null;
   }
@@ -1707,7 +1283,7 @@ var DB = class {
         }
         return snapshot.docs.map((doc) => doc.data());
       } catch (e) {
-        console.error("Firestore getProducts failure, falling back to local file", e);
+        logger.error({ e }, "Firestore getProducts failure, falling back to local file");
       }
     }
     return this.load().products || PRODUCTS;
@@ -1722,7 +1298,7 @@ var DB = class {
         );
         return product;
       } catch (e) {
-        console.error("Firestore saveProduct error, falling back to local file", e);
+        logger.error({ e }, "Firestore saveProduct error, falling back to local file");
       }
     }
     const data = this.load();
@@ -1744,7 +1320,7 @@ var DB = class {
         await this.addLog(`Product ID ${id} deleted static reference from Firestore.`);
         return true;
       } catch (e) {
-        console.error("Firestore deleteProduct error, falling back to local file", e);
+        logger.error({ e }, "Firestore deleteProduct error, falling back to local file");
       }
     }
     const data = this.load();
@@ -1772,7 +1348,7 @@ var DB = class {
         }
         return doc.data();
       } catch (e) {
-        console.error("Firestore getWebsiteContent failure, falling back to local file", e);
+        logger.error({ e }, "Firestore getWebsiteContent failure, falling back to local file");
       }
     }
     return this.load().websiteContent || INITIAL_WEBSITE_CONTENT;
@@ -1785,7 +1361,7 @@ var DB = class {
         await this.addLog("Website custom theme header and layout properties synchronized.");
         return content;
       } catch (e) {
-        console.error("Firestore saveWebsiteContent error, falling back to local file", e);
+        logger.error({ e }, "Firestore saveWebsiteContent error, falling back to local file");
       }
     }
     const data = this.load();
@@ -1804,7 +1380,7 @@ var DB = class {
         const snapshot = await fdb.collection("checkpoints").orderBy("timestamp", "desc").limit(25).get();
         return snapshot.docs.map((doc) => doc.data());
       } catch (e) {
-        console.error("Firestore getCheckpoints failure, falling back to local file", e);
+        logger.error({ e }, "Firestore getCheckpoints failure, falling back to local file");
       }
     }
     return this.load().checkpoints || [];
@@ -1834,7 +1410,7 @@ var DB = class {
         await this.addLog(`System Rollback Checkpoint Created: "${newCheckpoint.title}"`);
         return newCheckpoint;
       } catch (e) {
-        console.error("Firestore createCheckpoint failure, falling back to local file", e);
+        logger.error({ e }, "Firestore createCheckpoint failure, falling back to local file");
       }
     }
     const data = this.load();
@@ -1856,7 +1432,10 @@ var DB = class {
           checkpoint = doc.data();
         }
       } catch (e) {
-        console.error("Firestore fetch checkpoint rollback failure, falling back to local file", e);
+        logger.error(
+          { e },
+          "Firestore fetch checkpoint rollback failure, falling back to local file"
+        );
       }
     }
     if (!checkpoint) {
@@ -1876,7 +1455,7 @@ var DB = class {
           await fdb.collection("products").doc(p.id).set(p);
         }
       } catch (e) {
-        console.error("Firestore execute product collection rollback failure", e);
+        logger.error({ e }, "Firestore execute product collection rollback failure");
       }
     } else {
       const data = this.load();
@@ -1896,8 +1475,8 @@ var SAFE_METHODS = /* @__PURE__ */ new Set(["GET", "HEAD", "OPTIONS"]);
 var TOKEN_HEADER = "x-csrf-token";
 var COOKIE_KEY = "_csrf";
 var TOKEN_BYTES = 32;
-function signToken(secret, cookieSecret2) {
-  return crypto.createHmac("sha256", cookieSecret2).update(secret).digest("hex");
+function signToken(secret, cookieSecret) {
+  return crypto.createHmac("sha256", cookieSecret).update(secret).digest("hex");
 }
 function safeEqual(a, b) {
   const aBuf = Buffer.from(a);
@@ -1905,22 +1484,37 @@ function safeEqual(a, b) {
   if (aBuf.length !== bBuf.length) return false;
   return crypto.timingSafeEqual(aBuf, bBuf);
 }
+function attachTokenGenerator(req, res, cookieKey, cookieSecret) {
+  req.csrfToken = () => {
+    const existing = req.signedCookies?.[cookieKey];
+    if (existing) return existing;
+    const secret = crypto.randomBytes(TOKEN_BYTES).toString("hex");
+    const signed = signToken(secret, cookieSecret);
+    res.cookie(cookieKey, signed, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      signed: true
+    });
+    return signed;
+  };
+}
 function createCsrfProtection(options) {
   const {
-    cookieSecret: cookieSecret2,
+    cookieSecret,
     exemptPaths = /* @__PURE__ */ new Set(),
     cookieKey = COOKIE_KEY,
     tokenHeader = TOKEN_HEADER
   } = options;
   const headerLower = tokenHeader.toLowerCase();
-  return function csrfProtection2(req, res, next) {
+  return function csrfProtection(req, res, next) {
     if (exemptPaths.has(req.path)) {
-      attachTokenGenerator(req, res, cookieKey, cookieSecret2);
+      attachTokenGenerator(req, res, cookieKey, cookieSecret);
       return next();
     }
     const method = req.method.toUpperCase();
     if (SAFE_METHODS.has(method)) {
-      attachTokenGenerator(req, res, cookieKey, cookieSecret2);
+      attachTokenGenerator(req, res, cookieKey, cookieSecret);
       return next();
     }
     const cookieToken = req.signedCookies?.[cookieKey] ?? "";
@@ -1932,28 +1526,194 @@ function createCsrfProtection(options) {
     if (!safeEqual(cookieToken, headerToken)) {
       return next(Object.assign(new Error("CSRF token mismatch"), { code: "EBADCSRFTOKEN" }));
     }
-    attachTokenGenerator(req, res, cookieKey, cookieSecret2);
+    attachTokenGenerator(req, res, cookieKey, cookieSecret);
     return next();
   };
 }
-function attachTokenGenerator(req, res, cookieKey, cookieSecret2) {
-  req.csrfToken = () => {
-    const existing = req.signedCookies?.[cookieKey];
-    if (existing) return existing;
-    const secret = crypto.randomBytes(TOKEN_BYTES).toString("hex");
-    const signed = signToken(secret, cookieSecret2);
-    res.cookie(cookieKey, signed, {
-      httpOnly: true,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
-      signed: true
+
+// server/middleware/redisRateLimit.ts
+import Redis from "ioredis";
+import { RateLimiterRedis } from "rate-limiter-flexible";
+var redisClient = null;
+var rateLimiter = null;
+var redisInitAttempted = false;
+var redisInitFailed = false;
+var isTestEnv = process.env.NODE_ENV === "test" || process.env.DISABLE_REDIS_RATE_LIMIT === "true";
+var isDevEnv = process.env.NODE_ENV === "development";
+function initRedisRateLimiter() {
+  if (isTestEnv) {
+    logger.info("Redis rate limiter disabled in test environment");
+    return;
+  }
+  if (redisInitAttempted) {
+    return;
+  }
+  redisInitAttempted = true;
+  const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
+  try {
+    redisClient = new Redis(redisUrl, {
+      maxRetriesPerRequest: 1,
+      retryStrategy: () => null,
+      enableReadyCheck: true,
+      lazyConnect: true,
+      connectTimeout: 2e3
     });
-    return signed;
+    redisClient.on("error", (err) => {
+      if (!redisInitFailed) {
+        logger.warn({ err }, "Redis connection failed, rate limiting will use in-memory fallback");
+        redisInitFailed = true;
+      }
+    });
+    redisClient.on("connect", () => {
+      logger.info("Redis connected for rate limiting");
+      redisInitFailed = false;
+    });
+    redisClient.connect().catch(() => {
+      if (!redisInitFailed) {
+        logger.warn("Redis connection failed, rate limiting will use in-memory fallback");
+        redisInitFailed = true;
+      }
+    });
+    rateLimiter = new RateLimiterRedis({
+      storeClient: redisClient,
+      keyPrefix: "rl:",
+      points: 100,
+      duration: 60,
+      blockDuration: 60 * 15
+    });
+    logger.info("Redis rate limiter initialized");
+  } catch (err) {
+    logger.warn({ err }, "Failed to initialize Redis rate limiter, falling back to in-memory");
+    redisInitFailed = true;
+  }
+}
+function createInMemoryLimiter(options) {
+  const store = /* @__PURE__ */ new Map();
+  return async (req, res, next) => {
+    const key = `${options.keyPrefix || "rl:"}${req.ip}:${req.path}`;
+    const now = Date.now();
+    let entry = store.get(key);
+    if (!entry || entry.expires < now) {
+      entry = { points: options.points, expires: now + options.duration * 1e3 };
+      store.set(key, entry);
+    }
+    if (entry.points > 0) {
+      entry.points--;
+      next();
+    } else {
+      const secs = Math.ceil((entry.expires - now) / 1e3) || 1;
+      res.set("Retry-After", String(secs));
+      res.status(429).json({
+        error: "Too many requests",
+        retryAfter: secs
+      });
+    }
   };
 }
+function createRateLimiter(options) {
+  if (isTestEnv) {
+    return async (_req, _res, next) => {
+      next();
+    };
+  }
+  const inMemoryLimiter = createInMemoryLimiter(options);
+  if (!rateLimiter && !redisInitFailed) {
+    initRedisRateLimiter();
+  }
+  let limiter = null;
+  if (redisClient) {
+    limiter = new RateLimiterRedis({
+      storeClient: redisClient,
+      keyPrefix: options.keyPrefix || "rl:",
+      points: options.points,
+      duration: options.duration,
+      blockDuration: options.blockDuration || 60 * 15
+    });
+  }
+  return async (req, res, next) => {
+    const isDev2 = process.env.NODE_ENV === "development" || !process.env.NODE_ENV || process.env.NODE_ENV === "unset";
+    if (redisInitFailed || isDev2 || !limiter) {
+      return inMemoryLimiter(req, res, next);
+    }
+    const key = `${options.keyPrefix || "rl:"}${req.ip}:${req.path}`;
+    try {
+      await limiter.consume(key);
+      next();
+    } catch (rejRes) {
+      const isRedisError = rejRes instanceof Error || rejRes && typeof rejRes === "object" && !("msBeforeNext" in rejRes);
+      if (isRedisError) {
+        logger.warn({ err: rejRes }, "Rate limiter Redis error, falling back to in-memory");
+        return inMemoryLimiter(req, res, next);
+      }
+      const secs = Math.round(rejRes.msBeforeNext / 1e3) || 1;
+      res.set("Retry-After", String(secs));
+      res.status(429).json({
+        error: "Too many requests",
+        retryAfter: secs
+      });
+    }
+  };
+}
+var authRateLimiter = createRateLimiter({
+  points: 10,
+  duration: 15 * 60,
+  keyPrefix: "rl:auth:",
+  blockDuration: 60 * 15
+});
+var apiRateLimiter = createRateLimiter({
+  points: 100,
+  duration: 60,
+  keyPrefix: "rl:api:"
+});
+var paymentRateLimiter = createRateLimiter({
+  points: 30,
+  duration: 15 * 60,
+  keyPrefix: "rl:payment:",
+  blockDuration: 60 * 30
+});
+var aiRateLimiter = createRateLimiter({
+  points: 20,
+  duration: 60,
+  keyPrefix: "rl:ai:",
+  blockDuration: 60 * 5
+});
 
-// server/routes/astro.routes.ts
+// server/middleware/requestId.ts
+import crypto2 from "crypto";
+var requestId = (req, _res, next) => {
+  req.id = req.headers["x-request-id"] || crypto2.randomUUID();
+  req.startTime = Date.now();
+  next();
+};
+var requestLogger = (req, res, next) => {
+  const originalSend = res.send;
+  res.send = function(body) {
+    const duration = Date.now() - req.startTime;
+    const log = logger.child({
+      reqId: req.id,
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      duration: `${duration}ms`,
+      ip: req.ip,
+      userAgent: req.get("user-agent")
+    });
+    if (res.statusCode >= 400) {
+      log.warn(
+        { body: typeof body === "string" ? body.slice(0, 500) : body },
+        "Request completed with error"
+      );
+    } else {
+      log.info("Request completed");
+    }
+    return originalSend.call(this, body);
+  };
+  next();
+};
+
+// server/routes/ai.routes.ts
 import { Router } from "express";
+import { z } from "zod";
 
 // server/middleware/auth.ts
 import jwt from "jsonwebtoken";
@@ -1971,16 +1731,19 @@ function authenticateToken(req, res, next) {
   try {
     secret = getJwtSecret();
   } catch {
-    return res.status(500).json({ error: "Server misconfigured: JWT secret unavailable." });
+    res.status(500).json({ error: "Server misconfigured: JWT secret unavailable." });
+    return;
   }
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) {
-    return res.status(401).json({ error: "Missing divine session credentials." });
+    res.status(401).json({ error: "Missing divine session credentials." });
+    return;
   }
   jwt.verify(token, secret, (err, decoded) => {
     if (err) {
-      return res.status(403).json({ error: "Astral session expired or corrupt." });
+      res.status(403).json({ error: "Astral session expired or corrupt." });
+      return;
     }
     req.user = decoded;
     next();
@@ -1990,88 +1753,1331 @@ function signToken2(payload) {
   return jwt.sign(payload, getJwtSecret(), { expiresIn: "8h" });
 }
 
-// server/routes/astro.routes.ts
-var router = Router();
-router.get("/", authenticateToken, async (_req, res) => {
+// server/middleware/validation.ts
+function validate(schema) {
+  return (req, res, next) => {
+    try {
+      const result = schema.safeParse(req.body);
+      if (!result.success) {
+        const errors = result.error.flatten().fieldErrors;
+        logger.warn({ errors, path: req.path, method: req.method }, "Validation failed");
+        res.status(422).json({
+          error: "Validation failed",
+          issues: errors
+        });
+        return;
+      }
+      req.validated = result.data;
+      next();
+    } catch (err) {
+      logger.error({ err, path: req.path, method: req.method }, "Validation error");
+      res.status(500).json({ error: "Internal validation error" });
+    }
+  };
+}
+
+// server/services/firebaseAI.ts
+import { VertexAI } from "@google-cloud/vertexai";
+var PROJECT_ID = process.env.FIREBASE_PROJECT_ID || "aura-and-stone";
+var LOCATION = process.env.FIREBASE_LOCATION || "us-central1";
+var vertexAI = new VertexAI({ project: PROJECT_ID, location: LOCATION });
+var generativeModel = vertexAI.getGenerativeModel({
+  model: "gemini-1.5-pro",
+  generationConfig: {
+    maxOutputTokens: 2048,
+    temperature: 0.7,
+    topP: 0.95
+  }
+});
+async function generateWithGemini(prompt) {
   try {
-    const entries = await DB.getAstroContent();
+    const result = await generativeModel.generateContent(prompt);
+    const response = result.response;
+    if (typeof response.text === "function") {
+      return response.text() || "";
+    }
+    if (response.candidates && response.candidates.length > 0) {
+      const candidate = response.candidates[0];
+      if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
+        const part = candidate.content.parts[0];
+        if (part.text !== void 0) {
+          return part.text;
+        }
+      }
+    }
+    return "";
+  } catch (error) {
+    logger.error({ error }, "Gemini API error");
+    throw new Error("Failed to generate AI response");
+  }
+}
+async function getProductRecommendations(input) {
+  const prompt = `
+You are an expert Vedic astrologer and crystal consultant for Aura & Stone.
+Given the user's birth details and current cart, recommend 3 products from our catalog with detailed reasoning.
+
+User Birth Details:
+- Name: ${input.userBirthDetails.name}
+- Birth Date: ${input.userBirthDetails.birthDate}
+- Birth Time: ${input.userBirthDetails.birthTime || "Not provided"}
+- Birth Place: ${input.userBirthDetails.birthPlace || "Not provided"}
+
+Current Cart: ${JSON.stringify(input.currentCart)}
+Purchase History: ${input.purchaseHistory.join(", ") || "None"}
+Preferences: Budget: ${input.userPreferences.budget}, Style: ${input.userPreferences.style}, Intent: ${input.userPreferences.intent}
+
+Provide recommendations in this format:
+1. Product Name - Brief astrological reasoning + specific crystal benefit
+2. Product Name - Brief astrological reasoning + specific crystal benefit
+3. Product Name - Brief astrological reasoning + specific crystal benefit
+
+Keep responses concise, authentic to Vedic astrology, and practical.
+`;
+  return generateWithGemini(prompt);
+}
+async function handleChatbotMessage(input) {
+  const prompt = `
+You are the Aura & Stone AI Assistant - knowledgeable about Vedic astrology, crystals, and our products.
+Be helpful, authentic, and concise. Never make medical claims.
+
+User Context:
+- Name: ${input.userContext.name}
+- Authenticated: ${input.userContext.isAuthenticated}
+- Cart Items: ${input.userContext.cartItems}
+- Current Page: ${input.userContext.currentPage}
+
+Conversation History:
+${input.conversationHistory.map((h) => `${h.role}: ${h.content}`).join("\n")}
+
+Current Message: ${input.message}
+
+Respond as the Aura & Stone assistant. Be warm, knowledgeable, and guide towards relevant products or astrological insights when appropriate.
+`;
+  return generateWithGemini(prompt);
+}
+async function generateContent(input) {
+  const toneInstructions = {
+    professional: "Professional, authoritative, trustworthy",
+    spiritual: "Sacred, reverent, connecting to ancient wisdom",
+    luxury: "Elegant, exclusive, aspirational",
+    educational: "Clear, informative, empowering"
+  };
+  const prompt = `
+You are a content writer for Aura & Stone - premium Vedic crystal jewelry brand.
+Create ${input.type} content with the following specifications:
+
+Topic: ${input.topic}
+Target Audience: ${input.targetAudience}
+Tone: ${toneInstructions[input.tone]}
+Key Points to Cover:
+${input.keyPoints.map((p) => `- ${p}`).join("\n")}
+Maximum Length: ${input.maxLength} words
+
+Brand Voice: Authentic Vedic wisdom meets modern luxury. Use Sanskrit terms appropriately.
+Products: Money Magnet (Citrine/Pyrite), Evil Eye (Black Tourmaline), Stress Killer (Amethyst), etc.
+`;
+  return generateWithGemini(prompt);
+}
+async function getAstrologyInsights(input) {
+  const prompt = `
+You are a senior Vedic astrologer providing personalized insights for Aura & Stone customers.
+Provide authentic, practical astrological guidance without making deterministic predictions.
+
+Birth Details:
+- Name: ${input.birthDetails.name}
+- Date: ${input.birthDetails.birthDate}
+- Time: ${input.birthDetails.birthTime || "Not provided"}
+- Place: ${input.birthDetails.birthPlace || "Not provided"}
+
+Current Transits: ${input.currentTransits.join(", ")}
+Focus: ${input.focusArea}
+${input.specificQuestion ? `Specific Question: ${input.specificQuestion}` : ""}
+
+Provide insights in this format:
+1. Current Planetary Influence
+2. Recommended Crystal Support
+3. Practical Actions
+4. Auspicious Timing (if applicable)
+
+Be authentic to Vedic principles, practical, and empowering.
+`;
+  return generateWithGemini(prompt);
+}
+
+// server/routes/ai.routes.ts
+var router = Router();
+var recommendationSchema = z.object({
+  userBirthDetails: z.object({
+    name: z.string().min(1),
+    birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    birthTime: z.string().optional(),
+    birthPlace: z.string().optional()
+  }),
+  currentCart: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      category: z.string(),
+      crystalsUsed: z.array(z.string())
+    })
+  ).optional(),
+  purchaseHistory: z.array(z.string()).optional(),
+  userPreferences: z.object({
+    budget: z.enum(["low", "medium", "high"]).optional(),
+    style: z.enum(["minimal", "statement", "spiritual"]).optional(),
+    intent: z.enum(["wealth", "protection", "health", "relationships", "career", "general"]).optional()
+  }).optional()
+});
+var chatbotSchema = z.object({
+  message: z.string().min(1).max(2e3),
+  conversationHistory: z.array(
+    z.object({
+      role: z.enum(["user", "assistant"]),
+      content: z.string()
+    })
+  ).max(20).optional(),
+  userContext: z.object({
+    name: z.string(),
+    isAuthenticated: z.boolean(),
+    cartItems: z.number().optional(),
+    currentPage: z.string().optional()
+  }).optional()
+});
+var contentSchema = z.object({
+  type: z.enum(["product-description", "blog-post", "email-campaign", "social-media"]),
+  topic: z.string().min(1).max(500),
+  targetAudience: z.string().min(1).max(200),
+  tone: z.enum(["professional", "spiritual", "luxury", "educational"]),
+  keyPoints: z.array(z.string().min(1).max(200)).max(10),
+  maxLength: z.number().int().positive().max(5e3)
+});
+var astrologySchema = z.object({
+  birthDetails: z.object({
+    name: z.string().min(1),
+    birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    birthTime: z.string().optional(),
+    birthPlace: z.string().optional()
+  }),
+  currentTransits: z.array(z.string()).optional(),
+  focusArea: z.enum(["daily", "weekly", "monthly", "yearly", "specific"]),
+  specificQuestion: z.string().max(1e3).optional()
+});
+router.post(
+  "/recommendations",
+  authenticateToken,
+  validate(recommendationSchema),
+  async (req, res) => {
+    try {
+      const result = await getProductRecommendations(req.body);
+      res.json({ result });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
+  }
+);
+router.post(
+  "/chatbot",
+  validate(chatbotSchema),
+  async (req, res) => {
+    try {
+      const result = await handleChatbotMessage(req.body);
+      res.json({ result });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
+  }
+);
+router.post(
+  "/generate-content",
+  authenticateToken,
+  validate(contentSchema),
+  async (req, res) => {
+    try {
+      const result = await generateContent(req.body);
+      res.json({ result });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
+  }
+);
+router.post(
+  "/astrology-insights",
+  validate(astrologySchema),
+  async (req, res) => {
+    try {
+      const result = await getAstrologyInsights(req.body);
+      res.json({ result });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
+  }
+);
+var ai_routes_default = router;
+
+// server/routes/astro.routes.ts
+import { Router as Router2 } from "express";
+import { z as z2 } from "zod";
+
+// server/services/FirestoreService.ts
+import fs2 from "fs";
+import admin2 from "firebase-admin";
+import { getFirestore as getFirestore2 } from "firebase-admin/firestore";
+var CONFIG_PATH2 = "./firebase-applet-config.json";
+var SERVICE_ACCOUNT_PATH2 = "./serviceAccountKey.json";
+var projectId2 = "aura-and-stone";
+var firestoreDatabaseId2 = void 0;
+try {
+  if (fs2.existsSync(CONFIG_PATH2)) {
+    const config = JSON.parse(fs2.readFileSync(CONFIG_PATH2, "utf-8"));
+    if (config.projectId) projectId2 = config.projectId;
+    if (config.firestoreDatabaseId && config.firestoreDatabaseId !== "(default)") {
+      firestoreDatabaseId2 = config.firestoreDatabaseId;
+    }
+  }
+} catch {
+}
+var firestoreDb2 = null;
+var useLocalFallback2 = false;
+function getServiceAccount2() {
+  const envKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  if (envKey) {
+    try {
+      return JSON.parse(envKey);
+    } catch (err) {
+      logger.warn({ err }, "FIREBASE_SERVICE_ACCOUNT_KEY is set but invalid JSON");
+    }
+  }
+  try {
+    if (fs2.existsSync(SERVICE_ACCOUNT_PATH2)) {
+      return JSON.parse(fs2.readFileSync(SERVICE_ACCOUNT_PATH2, "utf-8"));
+    }
+  } catch {
+  }
+  return null;
+}
+function getFirestoreDB2() {
+  if (useLocalFallback2) return null;
+  if (firestoreDb2) return firestoreDb2;
+  try {
+    if (admin2.apps.length === 0) {
+      const serviceAccount = getServiceAccount2();
+      if (serviceAccount) {
+        admin2.initializeApp({
+          credential: admin2.credential.cert(serviceAccount),
+          projectId: projectId2
+        });
+      } else {
+        admin2.initializeApp({ projectId: projectId2 });
+      }
+    }
+    const app2 = admin2.app();
+    firestoreDb2 = firestoreDatabaseId2 ? getFirestore2(app2, firestoreDatabaseId2) : getFirestore2(app2);
+    logger.info("Firestore initialized successfully");
+    return firestoreDb2;
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err);
+    logger.warn({ reason }, "Firestore unavailable, falling back to local storage");
+    useLocalFallback2 = true;
+    return null;
+  }
+}
+function isFirebaseActive2() {
+  return getFirestoreDB2() !== null;
+}
+
+// server/services/LocalFileService.ts
+import fs3 from "fs";
+import path2 from "path";
+var DB_FILE2 = path2.join(process.cwd(), "database.json");
+var IS_PRODUCTION2 = process.env.NODE_ENV === "production";
+function getInitialData() {
+  return {
+    invoices: [
+      {
+        id: "INV-2026-601",
+        client: "Aarav Mehta",
+        date: "2026-05-24",
+        item: "Astral Prosperity Bracelet Combo",
+        amount: 8400,
+        status: "Paid",
+        alignment: "Money Magnet (Citrine + Pyrite)"
+      },
+      {
+        id: "INV-2026-602",
+        client: "Priya Sharma",
+        date: "2026-05-25",
+        item: "Evil Eye Armour Ring Set",
+        amount: 5900,
+        status: "Sent",
+        alignment: "Protection (Black Tourmaline)"
+      },
+      {
+        id: "INV-2026-603",
+        client: "Devas Astrographics",
+        date: "2026-05-21",
+        item: "Mass Calibration (12 Sacred Geodes)",
+        amount: 48e3,
+        status: "Paid",
+        alignment: "Vedic Grid Alignment"
+      },
+      {
+        id: "INV-2026-604",
+        client: "Rohit Khandelwal",
+        date: "2026-05-18",
+        item: "Crown Clarity Amethyst Special",
+        amount: 9500,
+        status: "Overdue",
+        alignment: "Saturn Node Alignment"
+      },
+      {
+        id: "INV-2026-605",
+        client: "Kiran Desai",
+        date: "2026-05-26",
+        item: "Chakra Awakening Gilded Bead Set",
+        amount: 12500,
+        status: "Draft",
+        alignment: "Full Alignment"
+      }
+    ],
+    vendors: [
+      {
+        id: "VND-301",
+        name: "Himalayan Fine Quartz Co.",
+        contact: "Harish Rawat",
+        origin: "Uttarakhand, India",
+        rating: 5,
+        category: "Raw Geodes",
+        leadTime: "3 Days",
+        leadGems: "Clear Quartz & Citrine",
+        status: "Approved"
+      },
+      {
+        id: "VND-302",
+        name: "Uruguayan Amethyst Miner's Guild",
+        contact: "Lucas Silveira",
+        origin: "Artigas, Uruguay",
+        rating: 5,
+        category: "Crystalline Clusters",
+        leadTime: "14 Days",
+        leadGems: "Deep Amethyst",
+        status: "Approved"
+      },
+      {
+        id: "VND-303",
+        name: "Gilded Silver & Thread Artisans",
+        contact: "Kavita Jewellers",
+        origin: "Jaipur, India",
+        rating: 4,
+        category: "Mountings & Elastic Conductors",
+        leadTime: "5 Days",
+        leadGems: "925 Silver Links",
+        status: "Under Review"
+      },
+      {
+        id: "VND-304",
+        name: "Ganges Water Sanctify Source",
+        contact: "Pandit Shastri Ji",
+        origin: "Rishikesh, India",
+        rating: 5,
+        category: "Sanctifying Liquids",
+        leadTime: "2 Days",
+        leadGems: "Panchamrut & Ganga Jal",
+        status: "Approved"
+      }
+    ],
+    expenses: [
+      {
+        id: "EXP-101",
+        title: "Lunar Cleansing Sandalwood Paste",
+        category: "Ritual Consecration",
+        amount: 4200,
+        date: "2026-05-20",
+        notes: "Grown on organic farms in Mysore"
+      },
+      {
+        id: "EXP-102",
+        title: "Custom Velvet Protection Pouches",
+        category: "Packaging",
+        amount: 8500,
+        date: "2026-05-22",
+        notes: "Saffron-dyed lining for energetic insulation"
+      },
+      {
+        id: "EXP-103",
+        title: "Laboratory Geological Verification Fees",
+        category: "Quality Inspection",
+        amount: 12e3,
+        date: "2026-05-24",
+        notes: "Refractive Index and Mohs Hardness certification batch #411"
+      },
+      {
+        id: "EXP-104",
+        title: "Temple Astro-Scholars Commision",
+        category: "Ritual Consecration",
+        amount: 25e3,
+        date: "2026-05-25",
+        notes: "Bathing chant leaders over moon cycles"
+      },
+      {
+        id: "EXP-105",
+        title: "Ganga Jal Sacred Liquid Logistic Refills",
+        category: "Sourcing & Shipping",
+        amount: 6200,
+        date: "2026-05-18",
+        notes: "Pure glass canisters from Himalayan descent coordinates"
+      }
+    ],
+    tasks: [
+      {
+        id: "TSK-501",
+        title: "Wash Batch #409 Clear Quartz in Panchamrut",
+        status: "Water Cleanse",
+        priority: "High",
+        assignee: "Pandit Sharma",
+        daysLeft: 1
+      },
+      {
+        id: "TSK-502",
+        title: "Calibrate Amethyst beads with 432Hz Saturn frequencies",
+        status: "Moon Bath Bathing",
+        priority: "High",
+        assignee: "Shastry Ji",
+        daysLeft: 2
+      },
+      {
+        id: "TSK-503",
+        title: "Review laboratory hardness scores for Green Aventirine arrival",
+        status: "Backlog",
+        priority: "Medium",
+        assignee: "Dr. Vivek Soni",
+        daysLeft: 5
+      },
+      {
+        id: "TSK-504",
+        title: "Seal and pack Aarav Mehta Certified Prosperity Combo",
+        status: "Sealed / Composed",
+        priority: "Low",
+        assignee: "Meera Patel",
+        daysLeft: 0
+      },
+      {
+        id: "TSK-505",
+        title: "Program Solar Warmth on Carnelian material locks",
+        status: "Moon Bath Bathing",
+        priority: "Medium",
+        assignee: "Shastry Ji",
+        daysLeft: 1
+      },
+      {
+        id: "TSK-506",
+        title: "Verify signature holographic seals of Vedic certificate series 900",
+        status: "Backlog",
+        priority: "High",
+        assignee: "Meera Patel",
+        daysLeft: 3
+      }
+    ],
+    terminalLog: [
+      {
+        id: "log-1",
+        timestamp: "10:32 AM",
+        message: "SECURE COGNITIVE LEDGER INITIALIZED: Welcome to Aura & Stone Central Operations."
+      },
+      {
+        id: "log-2",
+        timestamp: "10:45 AM",
+        message: "RITUAL BATCH UPDATE COMPLETED: 12 Pure Citrine conductors advanced to lunar purification stage."
+      },
+      {
+        id: "log-3",
+        timestamp: "11:15 AM",
+        message: "QUALITY CHECK SYSTEM VERIFICATION: Geologist verified Mohs index 7 on raw amethyst crystal bulk VND-302."
+      }
+    ],
+    emailRecords: [],
+    products: PRODUCTS,
+    websiteContent: DEFAULT_WEBSITE_CONTENT,
+    checkpoints: [],
+    astroContent: []
+  };
+}
+var LocalFileService = class {
+  load() {
+    if (IS_PRODUCTION2) {
+      return getInitialData();
+    }
+    try {
+      if (fs3.existsSync(DB_FILE2)) {
+        const fileContent = fs3.readFileSync(DB_FILE2, "utf-8");
+        const data = JSON.parse(fileContent);
+        const initial = getInitialData();
+        return { ...initial, ...data };
+      }
+    } catch (e) {
+      logger.error({ err: e }, "Error reading database file, using defaults");
+    }
+    return getInitialData();
+  }
+  save(data) {
+    if (IS_PRODUCTION2) return;
+    try {
+      fs3.writeFileSync(DB_FILE2, JSON.stringify(data, null, 2), "utf-8");
+    } catch (e) {
+      logger.error({ err: e }, "CRITICAL: Failed to write to database file");
+    }
+  }
+  getCollection(collectionName) {
+    return this.load()[collectionName];
+  }
+  setCollection(collectionName, data) {
+    const db = this.load();
+    db[collectionName] = data;
+    this.save(db);
+  }
+  findById(collectionName, id) {
+    const items = this.getCollection(collectionName);
+    return items.find((item) => item.id === id) || null;
+  }
+  create(collectionName, item) {
+    const items = this.getCollection(collectionName);
+    items.unshift(item);
+    this.setCollection(collectionName, items);
+    return item;
+  }
+  update(collectionName, id, updates) {
+    const items = this.getCollection(collectionName);
+    const index = items.findIndex((item) => item.id === id);
+    if (index === -1) return null;
+    items[index] = { ...items[index], ...updates };
+    this.setCollection(collectionName, items);
+    return items[index];
+  }
+  delete(collectionName, id) {
+    const items = this.getCollection(collectionName);
+    const filtered = items.filter((item) => item.id !== id);
+    if (filtered.length === items.length) return false;
+    this.setCollection(collectionName, filtered);
+    return true;
+  }
+  bulkCreate(collectionName, items) {
+    const existing = this.getCollection(collectionName);
+    this.setCollection(collectionName, [...items, ...existing]);
+    return items;
+  }
+  bulkDelete(collectionName, ids) {
+    const items = this.getCollection(collectionName);
+    const before = items.length;
+    const filtered = items.filter((item) => !ids.includes(item.id));
+    this.setCollection(collectionName, filtered);
+    return before - filtered.length;
+  }
+};
+var localFileService = new LocalFileService();
+
+// server/services/RepositoryFactory.ts
+var currentBackend = "local";
+function getStorageBackend() {
+  if (isFirebaseActive2()) {
+    currentBackend = "firestore";
+  } else {
+    currentBackend = "local";
+  }
+  return currentBackend;
+}
+function generateId(collectionName) {
+  const prefixes = {
+    invoices: "INV",
+    vendors: "VND",
+    expenses: "EXP",
+    tasks: "TSK",
+    products: "PROD",
+    astro_content: "ASTRO",
+    checkpoints: "CHK",
+    terminalLog: "LOG",
+    emailRecords: "EMAIL"
+  };
+  const prefix = prefixes[collectionName] || "ID";
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+function createFirestoreRepository(collectionName) {
+  const db = getFirestoreDB2();
+  if (!db) {
+    logger.warn("Firestore not available, falling back to local");
+    return createLocalRepository(collectionName);
+  }
+  const collection = db.collection(collectionName);
+  return {
+    async findAll() {
+      const snapshot = await collection.get();
+      return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    },
+    async findById(id) {
+      const doc = await collection.doc(id).get();
+      if (!doc.exists) return null;
+      return { id: doc.id, ...doc.data() };
+    },
+    async create(data) {
+      const id = data.id || generateId(collectionName);
+      const newData = { ...data, id };
+      await collection.doc(id).set(newData);
+      return newData;
+    },
+    async update(id, data) {
+      const docRef = collection.doc(id);
+      const doc = await docRef.get();
+      if (!doc.exists) return null;
+      await docRef.update(data);
+      const updated = await docRef.get();
+      return { id: updated.id, ...updated.data() };
+    },
+    async delete(id) {
+      const docRef = collection.doc(id);
+      const doc = await docRef.get();
+      if (!doc.exists) return false;
+      await docRef.delete();
+      return true;
+    },
+    async bulkCreate(items) {
+      const batch = db.batch();
+      const results = [];
+      for (const item of items) {
+        const id = item.id || generateId(collectionName);
+        const newItem = { ...item, id };
+        batch.set(collection.doc(id), newItem);
+        results.push(newItem);
+      }
+      await batch.commit();
+      return results;
+    },
+    async bulkDelete(ids) {
+      const batch = db.batch();
+      for (const id of ids) {
+        batch.delete(collection.doc(id));
+      }
+      await batch.commit();
+      return ids.length;
+    }
+  };
+}
+function createLocalRepository(collectionName) {
+  return {
+    async findAll() {
+      return localFileService.getCollection(
+        collectionName
+      );
+    },
+    async findById(id) {
+      return localFileService.findById(
+        collectionName,
+        id
+      );
+    },
+    async create(data) {
+      return localFileService.create(
+        collectionName,
+        data
+      );
+    },
+    async update(id, data) {
+      return localFileService.update(
+        collectionName,
+        id,
+        data
+      );
+    },
+    async delete(id) {
+      return localFileService.delete(
+        collectionName,
+        id
+      );
+    },
+    async bulkCreate(items) {
+      return localFileService.bulkCreate(
+        collectionName,
+        items
+      );
+    },
+    async bulkDelete(ids) {
+      return localFileService.bulkDelete(
+        collectionName,
+        ids
+      );
+    }
+  };
+}
+function getRepository(collectionName) {
+  const backend = getStorageBackend();
+  logger.debug({ collectionName, backend }, "Using storage backend");
+  if (backend === "firestore") {
+    return createFirestoreRepository(collectionName);
+  }
+  return createLocalRepository(collectionName);
+}
+
+// server/repositories/InvoiceRepository.ts
+var COLLECTION = "invoices";
+var invoiceRepository = {
+  async findAll() {
+    return getRepository(COLLECTION).findAll();
+  },
+  async findById(id) {
+    return getRepository(COLLECTION).findById(id);
+  },
+  async create(data) {
+    const invoice = {
+      ...data,
+      id: data.id || `INV-2026-${Math.floor(Math.random() * 900 + 100)}`,
+      date: data.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
+      status: data.status || "Sent",
+      alignment: data.alignment || "Universal Alignment"
+    };
+    const created = await getRepository(COLLECTION).create(invoice);
+    logger.info(
+      { invoiceId: created.id, client: created.client, amount: created.amount },
+      "Invoice created"
+    );
+    return created;
+  },
+  async update(id, data) {
+    const updated = await getRepository(COLLECTION).update(id, data);
+    if (updated) {
+      logger.info({ invoiceId: id }, "Invoice updated");
+    }
+    return updated;
+  },
+  async delete(id) {
+    const result = await getRepository(COLLECTION).delete(id);
+    if (result) {
+      logger.info({ invoiceId: id }, "Invoice deleted");
+    }
+    return result;
+  },
+  async bulkCreate(items) {
+    const invoices = items.map((item) => ({
+      ...item,
+      id: item.id || `INV-2026-${Math.floor(Math.random() * 900 + 100)}`,
+      date: item.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
+      status: item.status || "Sent",
+      alignment: item.alignment || "Universal Alignment"
+    }));
+    const created = await getRepository(COLLECTION).bulkCreate(invoices);
+    logger.info({ count: created.length }, "Bulk invoices created");
+    return created;
+  },
+  async bulkDelete(ids) {
+    const deleted = await getRepository(COLLECTION).bulkDelete(ids);
+    logger.info({ count: deleted }, "Bulk invoices deleted");
+    return deleted;
+  }
+};
+
+// server/repositories/VendorRepository.ts
+var COLLECTION2 = "vendors";
+var vendorRepository = {
+  async findAll() {
+    return getRepository(COLLECTION2).findAll();
+  },
+  async findById(id) {
+    return getRepository(COLLECTION2).findById(id);
+  },
+  async create(data) {
+    const vendor = {
+      ...data,
+      id: data.id || `VND-${Math.floor(Math.random() * 90 + 300)}`,
+      rating: data.rating || 5,
+      status: data.status || "Approved"
+    };
+    const created = await getRepository(COLLECTION2).create(vendor);
+    logger.info({ vendorId: created.id, name: created.name }, "Vendor created");
+    return created;
+  },
+  async update(id, data) {
+    const updated = await getRepository(COLLECTION2).update(id, data);
+    if (updated) {
+      logger.info({ vendorId: id }, "Vendor updated");
+    }
+    return updated;
+  },
+  async delete(id) {
+    const result = await getRepository(COLLECTION2).delete(id);
+    if (result) {
+      logger.info({ vendorId: id }, "Vendor deleted");
+    }
+    return result;
+  },
+  async bulkCreate(items) {
+    const vendors = items.map((item) => ({
+      ...item,
+      id: item.id || `VND-${Math.floor(Math.random() * 90 + 300)}`,
+      rating: item.rating || 5,
+      status: item.status || "Approved"
+    }));
+    const created = await getRepository(COLLECTION2).bulkCreate(vendors);
+    logger.info({ count: created.length }, "Bulk vendors created");
+    return created;
+  },
+  async bulkDelete(ids) {
+    const deleted = await getRepository(COLLECTION2).bulkDelete(ids);
+    logger.info({ count: deleted }, "Bulk vendors deleted");
+    return deleted;
+  }
+};
+
+// server/repositories/ExpenseRepository.ts
+var COLLECTION3 = "expenses";
+var expenseRepository = {
+  async findAll() {
+    return getRepository(COLLECTION3).findAll();
+  },
+  async findById(id) {
+    return getRepository(COLLECTION3).findById(id);
+  },
+  async create(data) {
+    const expense = {
+      ...data,
+      id: data.id || `EXP-${Math.floor(Math.random() * 90 + 100)}`,
+      date: data.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0]
+    };
+    const created = await getRepository(COLLECTION3).create(expense);
+    logger.info(
+      { expenseId: created.id, title: created.title, amount: created.amount },
+      "Expense created"
+    );
+    return created;
+  },
+  async update(id, data) {
+    const updated = await getRepository(COLLECTION3).update(id, data);
+    if (updated) {
+      logger.info({ expenseId: id }, "Expense updated");
+    }
+    return updated;
+  },
+  async delete(id) {
+    const result = await getRepository(COLLECTION3).delete(id);
+    if (result) {
+      logger.info({ expenseId: id }, "Expense deleted");
+    }
+    return result;
+  },
+  async bulkCreate(items) {
+    const expenses = items.map((item) => ({
+      ...item,
+      id: item.id || `EXP-${Math.floor(Math.random() * 90 + 100)}`,
+      date: item.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0]
+    }));
+    const created = await getRepository(COLLECTION3).bulkCreate(expenses);
+    logger.info({ count: created.length }, "Bulk expenses created");
+    return created;
+  },
+  async bulkDelete(ids) {
+    const deleted = await getRepository(COLLECTION3).bulkDelete(ids);
+    logger.info({ count: deleted }, "Bulk expenses deleted");
+    return deleted;
+  }
+};
+
+// server/repositories/TaskRepository.ts
+var COLLECTION4 = "tasks";
+var taskRepository = {
+  async findAll() {
+    return getRepository(COLLECTION4).findAll();
+  },
+  async findById(id) {
+    return getRepository(COLLECTION4).findById(id);
+  },
+  async create(data) {
+    const task = {
+      ...data,
+      id: data.id || `TSK-${Math.floor(Math.random() * 90 + 500)}`
+    };
+    const created = await getRepository(COLLECTION4).create(task);
+    logger.info(
+      { taskId: created.id, title: created.title, assignee: created.assignee },
+      "Task created"
+    );
+    return created;
+  },
+  async update(id, data) {
+    const updated = await getRepository(COLLECTION4).update(id, data);
+    if (updated) {
+      logger.info({ taskId: id }, "Task updated");
+    }
+    return updated;
+  },
+  async updateStatus(id, status) {
+    return this.update(id, { status });
+  },
+  async delete(id) {
+    const result = await getRepository(COLLECTION4).delete(id);
+    if (result) {
+      logger.info({ taskId: id }, "Task deleted");
+    }
+    return result;
+  },
+  async bulkCreate(items) {
+    const tasks = items.map((item) => ({
+      ...item,
+      id: item.id || `TSK-${Math.floor(Math.random() * 90 + 500)}`
+    }));
+    const created = await getRepository(COLLECTION4).bulkCreate(tasks);
+    logger.info({ count: created.length }, "Bulk tasks created");
+    return created;
+  },
+  async bulkDelete(ids) {
+    const deleted = await getRepository(COLLECTION4).bulkDelete(ids);
+    logger.info({ count: deleted }, "Bulk tasks deleted");
+    return deleted;
+  }
+};
+
+// server/repositories/ProductRepository.ts
+var COLLECTION5 = "products";
+var productRepository = {
+  async findAll() {
+    const repo = getRepository(COLLECTION5);
+    const products = await repo.findAll();
+    if (products.length === 0) {
+      for (const p of PRODUCTS) {
+        await repo.create(p);
+      }
+      return PRODUCTS;
+    }
+    return products;
+  },
+  async findById(id) {
+    return getRepository(COLLECTION5).findById(id);
+  },
+  async create(data) {
+    const created = await getRepository(COLLECTION5).create(
+      data
+    );
+    logger.info({ productId: created.id, name: created.name }, "Product created");
+    return created;
+  },
+  async update(id, data) {
+    const updated = await getRepository(COLLECTION5).update(id, data);
+    if (updated) {
+      logger.info({ productId: id }, "Product updated");
+    }
+    return updated;
+  },
+  async delete(id) {
+    const result = await getRepository(COLLECTION5).delete(id);
+    if (result) {
+      logger.info({ productId: id }, "Product deleted");
+    }
+    return result;
+  },
+  async bulkCreate(items) {
+    const created = await getRepository(COLLECTION5).bulkCreate(items);
+    logger.info({ count: created.length }, "Bulk products created");
+    return created;
+  },
+  async bulkDelete(ids) {
+    const deleted = await getRepository(COLLECTION5).bulkDelete(ids);
+    logger.info({ count: deleted }, "Bulk products deleted");
+    return deleted;
+  }
+};
+
+// server/repositories/WebsiteContentRepository.ts
+var COLLECTION6 = "websiteContent";
+var websiteContentRepository = {
+  async findAll() {
+    const repo = getRepository(COLLECTION6);
+    const content = await repo.findAll();
+    return content[0] || DEFAULT_WEBSITE_CONTENT;
+  },
+  async findById(id) {
+    return getRepository(COLLECTION6).findById(id);
+  },
+  async create(data) {
+    const created = await getRepository(COLLECTION6).create({
+      ...data,
+      id: "homepage"
+    });
+    logger.info("Website content created");
+    return created;
+  },
+  async update(id, data) {
+    const updated = await getRepository(COLLECTION6).update(id, data);
+    if (updated) {
+      logger.info({ contentId: id }, "Website content updated");
+    }
+    return updated;
+  },
+  async save(data) {
+    const repo = getRepository(COLLECTION6);
+    const existing = await repo.findAll();
+    if (existing && existing[0]?.id) {
+      return repo.update(existing[0].id, data);
+    }
+    return repo.create({ ...data, id: "homepage" });
+  }
+};
+
+// server/repositories/AstroContentRepository.ts
+var COLLECTION7 = "astro_content";
+var astroContentRepository = {
+  async findAll() {
+    return getRepository(COLLECTION7).findAll();
+  },
+  async findById(id) {
+    return getRepository(COLLECTION7).findById(id);
+  },
+  async create(data) {
+    const astroContent = {
+      ...data,
+      id: data.id || `astro-${data.type}-${data.key}-${Date.now()}`,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      updatedBy: data.updatedBy || "system"
+    };
+    const created = await getRepository(COLLECTION7).create(astroContent);
+    logger.info({ astroContentId: created.id, type: created.type }, "Astro content created");
+    return created;
+  },
+  async update(id, data) {
+    const updated = await getRepository(COLLECTION7).update(id, {
+      ...data,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    });
+    if (updated) {
+      logger.info({ astroContentId: id }, "Astro content updated");
+    }
+    return updated;
+  },
+  async delete(id) {
+    const result = await getRepository(COLLECTION7).delete(id);
+    if (result) {
+      logger.info({ astroContentId: id }, "Astro content deleted");
+    }
+    return result;
+  },
+  async bulkCreate(items) {
+    const contents = items.map((item) => ({
+      ...item,
+      id: item.id || `astro-${item.type}-${item.key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      updatedBy: item.updatedBy || "system"
+    }));
+    const created = await getRepository(COLLECTION7).bulkCreate(contents);
+    logger.info({ count: created.length }, "Bulk astro content created");
+    return created;
+  },
+  async bulkDelete(ids) {
+    const deleted = await getRepository(COLLECTION7).bulkDelete(ids);
+    logger.info({ count: deleted }, "Bulk astro content deleted");
+    return deleted;
+  }
+};
+
+// server/repositories/LogRepository.ts
+var COLLECTION8 = "terminalLog";
+var logRepository = {
+  async findAll(limit = 10) {
+    const logs = await getRepository(
+      COLLECTION8
+    ).findAll();
+    return logs.slice(0, limit);
+  },
+  async create(message) {
+    const timestamp = (/* @__PURE__ */ new Date()).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+    const log = {
+      id: `log-${Date.now()}`,
+      timestamp,
+      message
+    };
+    const created = await getRepository(
+      COLLECTION8
+    ).create(log);
+    return created;
+  },
+  async delete(id) {
+    return getRepository(COLLECTION8).delete(id);
+  }
+};
+
+// server/repositories/EmailRecordRepository.ts
+var COLLECTION9 = "emailRecords";
+var emailRecordRepository = {
+  async findAll(limit = 50) {
+    const records = await getRepository(COLLECTION9).findAll();
+    return records.slice(0, limit);
+  },
+  async create(data) {
+    const record = {
+      ...data,
+      id: data.id || `email-${Date.now()}`,
+      dateStr: data.dateStr || (/* @__PURE__ */ new Date()).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      })
+    };
+    const created = await getRepository(COLLECTION9).create(record);
+    logger.info({ emailRecordId: created.id, email: created.email }, "Email record created");
+    return created;
+  },
+  async delete(id) {
+    return getRepository(COLLECTION9).delete(id);
+  }
+};
+
+// server/repositories/CheckpointRepository.ts
+var COLLECTION10 = "checkpoints";
+var MAX_CHECKPOINTS = 25;
+var checkpointRepository = {
+  async findAll() {
+    return getRepository(COLLECTION10).findAll();
+  },
+  async findById(id) {
+    return getRepository(COLLECTION10).findById(id);
+  },
+  async create(title, user) {
+    const websiteContent = await websiteContentRepository.findAll();
+    const products = await productRepository.findAll();
+    const checkpoint = {
+      id: `chk-${Date.now()}`,
+      timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+      title: title || "Periodic Operational Checkpoint",
+      user,
+      websiteContent,
+      products
+    };
+    const created = await getRepository(COLLECTION10).create(checkpoint);
+    await this.cleanupOldCheckpoints();
+    logger.info({ checkpointId: created.id, title: created.title }, "Checkpoint created");
+    return created;
+  },
+  async rollback(id) {
+    const checkpoint = await this.findById(id);
+    if (!checkpoint) {
+      throw new Error(`Checkpoint with ID "${id}" not found`);
+    }
+    await websiteContentRepository.save(checkpoint.websiteContent);
+    const repo = getRepository("products");
+    const existingProducts = await repo.findAll();
+    for (const product of existingProducts) {
+      await repo.delete(product.id);
+    }
+    for (const product of checkpoint.products) {
+      await repo.create(product);
+    }
+    logger.info({ checkpointId: id, title: checkpoint.title }, "Rollback completed");
+    return true;
+  },
+  async cleanupOldCheckpoints() {
+    const checkpoints = await this.findAll();
+    if (checkpoints.length > MAX_CHECKPOINTS) {
+      const toDelete = checkpoints.slice(MAX_CHECKPOINTS).map((c) => c.id);
+      await getRepository(COLLECTION10).bulkDelete(toDelete);
+    }
+  },
+  async delete(id) {
+    return getRepository(COLLECTION10).delete(id);
+  }
+};
+
+// server/routes/astro.routes.ts
+var router2 = Router2();
+var astroContentCreateSchema = z2.object({
+  type: z2.enum(["planet", "ascendant", "aspect", "nakshatra"]),
+  key: z2.string().min(1).max(100),
+  title: z2.string().min(1).max(200),
+  interpretation: z2.string().min(1).max(1e4),
+  updatedBy: z2.string().email().optional()
+});
+var astroContentUpdateSchema = astroContentCreateSchema.partial();
+var astroContentBulkCreateSchema = z2.object({
+  entries: z2.array(astroContentCreateSchema).min(1)
+});
+router2.get("/", authenticateToken, async (_req, res) => {
+  try {
+    const entries = await astroContentRepository.findAll();
     res.json(entries);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     res.status(500).json({ error: message });
   }
 });
-router.post("/", authenticateToken, async (req, res) => {
-  try {
-    const { type, key, title, interpretation, updatedBy } = req.body;
-    if (!type || !key || !title || !interpretation) {
-      return res.status(400).json({ error: "type, key, title, and interpretation are required." });
+router2.post(
+  "/",
+  authenticateToken,
+  validate(astroContentCreateSchema),
+  async (req, res) => {
+    try {
+      const entry = await astroContentRepository.create(req.body);
+      res.status(200).json(entry);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      res.status(500).json({ error: message });
     }
-    const validTypes = ["planet", "ascendant", "aspect", "nakshatra"];
-    if (!validTypes.includes(type)) {
-      return res.status(400).json({ error: `type must be one of: ${validTypes.join(", ")}` });
-    }
-    const entry = await DB.upsertAstroContent({
-      type,
-      key,
-      title,
-      interpretation,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      updatedBy: updatedBy || "admin"
-    });
-    res.status(200).json(entry);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
   }
-});
-router.put("/:id", authenticateToken, async (req, res) => {
+);
+router2.put(
+  "/:id",
+  authenticateToken,
+  validate(astroContentUpdateSchema),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        res.status(400).json({ error: "Missing content ID." });
+        return;
+      }
+      const entry = await astroContentRepository.update(id, req.body);
+      if (entry) {
+        res.status(200).json(entry);
+      } else {
+        res.status(404).json({ error: "Content not found." });
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
+  }
+);
+router2.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const { type, key, title, interpretation, updatedBy } = req.body;
-    if (!type || !key || !title || !interpretation) {
-      return res.status(400).json({ error: "type, key, title, and interpretation are required." });
+    if (!id) {
+      res.status(400).json({ error: "Missing content ID." });
+      return;
     }
-    const entry = await DB.upsertAstroContent({
-      id,
-      type,
-      key,
-      title,
-      interpretation,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      updatedBy: updatedBy || "admin"
-    });
-    res.status(200).json(entry);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-router.delete("/:id", authenticateToken, async (req, res) => {
-  try {
-    const { id } = req.params;
-    await DB.deleteAstroContent(id);
+    await astroContentRepository.delete(id);
     res.status(200).json({ success: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     res.status(500).json({ error: message });
   }
 });
-router.post("/bulk-seed", authenticateToken, async (_req, res) => {
-  try {
-    const { buildAstroDefaults: buildAstroDefaults2 } = await Promise.resolve().then(() => (init_astroDefaults(), astroDefaults_exports));
-    const defaults = buildAstroDefaults2();
-    const created = await DB.bulkUpsertAstroContent(defaults);
-    res.status(200).json({ created: created.length, entries: created });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
+router2.post(
+  "/bulk-seed",
+  authenticateToken,
+  validate(astroContentBulkCreateSchema),
+  async (req, res) => {
+    try {
+      const { entries } = req.body;
+      const created = await astroContentRepository.bulkCreate(entries);
+      res.status(200).json({ created: created.length, entries: created });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
   }
-});
-var astro_routes_default = router;
+);
+var astro_routes_default = router2;
 
 // server/routes/auth.routes.ts
-import { Router as Router2 } from "express";
+import { Router as Router3 } from "express";
 
 // server/config.ts
 var DEFAULT_ADMIN_EMAIL = "debarghapakhira@gmail.com";
@@ -2097,8 +3103,8 @@ var paymentLimiter = rateLimit({
 });
 
 // server/routes/auth.routes.ts
-var router2 = Router2();
-router2.post("/google-login", authLimiter, async (req, res) => {
+var router3 = Router3();
+router3.post("/google-login", authLimiter, async (req, res) => {
   const { email, uid, displayName } = req.body;
   if (!email) {
     return res.status(400).json({ error: "Google email coordinate is required." });
@@ -2121,150 +3127,542 @@ router2.post("/google-login", authLimiter, async (req, res) => {
   );
   return res.json({ token, role: "admin", username: emailLower });
 });
-var auth_routes_default = router2;
+var auth_routes_default = router3;
 
 // server/routes/expense.routes.ts
-import { Router as Router3 } from "express";
-var router3 = Router3();
-router3.get("/", authenticateToken, async (_req, res) => {
-  const expenses = await DB.getExpenses();
+import { Router as Router4 } from "express";
+import { z as z3 } from "zod";
+var router4 = Router4();
+var expenseCreateSchema = z3.object({
+  title: z3.string().min(1).max(200),
+  category: z3.string().max(100).optional(),
+  amount: z3.number().int().positive(),
+  notes: z3.string().max(1e3).optional()
+});
+var expenseUpdateSchema = expenseCreateSchema.partial();
+var expenseBatchCreateSchema = z3.object({
+  items: z3.array(expenseCreateSchema).min(1)
+});
+var expenseBatchDeleteSchema = z3.object({
+  ids: z3.array(z3.string().min(1)).min(1)
+});
+router4.get("/", authenticateToken, async (_req, res) => {
+  const expenses = await expenseRepository.findAll();
   res.json(expenses);
 });
-router3.post("/", authenticateToken, async (req, res) => {
-  const { title, category, amount, notes } = req.body;
-  if (!title || !amount) {
-    return res.status(400).json({ error: "Title and amount parameters have not been compiled." });
+router4.post(
+  "/",
+  authenticateToken,
+  validate(expenseCreateSchema),
+  async (req, res) => {
+    const expense = await expenseRepository.create(req.body);
+    res.status(201).json(expense);
   }
-  const expense = await DB.addExpense({
-    title,
-    category: category || "Ritual Consecration",
-    amount: Number(amount),
-    notes: notes || ""
-  });
-  res.status(201).json(expense);
-});
-router3.post("/batch", authenticateToken, async (req, res) => {
-  const { items } = req.body;
-  if (!items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: "items array is required." });
+);
+router4.post(
+  "/batch",
+  authenticateToken,
+  validate(expenseBatchCreateSchema),
+  async (req, res) => {
+    const { items } = req.body;
+    const created = await expenseRepository.bulkCreate(items);
+    res.status(201).json({ count: created.length, items: created });
   }
-  const created = await DB.bulkCreateExpenses(
-    items.map((i) => ({
-      title: i.title || "Unknown Expense",
-      category: i.category || "Ritual Consecration",
-      amount: Number(i.amount) || 0,
-      notes: i.notes || ""
-    }))
-  );
-  res.status(201).json({ count: created.length, items: created });
-});
-router3.put("/:id", authenticateToken, async (req, res) => {
-  const { title, category, amount, notes } = req.body;
-  const updates = {};
-  if (title !== void 0) updates.title = title;
-  if (category !== void 0) updates.category = category;
-  if (amount !== void 0) updates.amount = Number(amount);
-  if (notes !== void 0) updates.notes = notes;
-  const updated = await DB.updateExpense(req.params.id, updates);
-  if (updated) {
-    res.json(updated);
-  } else {
-    res.status(404).json({ error: "Expense code reference not found." });
+);
+router4.put(
+  "/:id",
+  authenticateToken,
+  validate(expenseUpdateSchema),
+  async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Missing expense ID." });
+      return;
+    }
+    const updated = await expenseRepository.update(id, req.body);
+    if (updated) {
+      res.json(updated);
+    } else {
+      res.status(404).json({ error: "Expense not found." });
+    }
   }
-});
-router3.delete("/:id", authenticateToken, async (req, res) => {
-  const success = await DB.deleteExpense(req.params.id);
+);
+router4.delete("/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(400).json({ error: "Missing expense ID." });
+    return;
+  }
+  const success = await expenseRepository.delete(id);
   if (success) {
     res.json({ message: "Expense records successfully archived." });
   } else {
-    res.status(404).json({ error: "Expense code reference not found." });
+    res.status(404).json({ error: "Expense not found." });
   }
 });
-router3.delete("/batch", authenticateToken, async (req, res) => {
-  const { ids } = req.body;
-  if (!ids || !Array.isArray(ids) || ids.length === 0) {
-    return res.status(400).json({ error: "ids array is required." });
+router4.delete(
+  "/batch",
+  authenticateToken,
+  validate(expenseBatchDeleteSchema),
+  async (req, res) => {
+    const { ids } = req.body;
+    const deleted = await expenseRepository.bulkDelete(ids);
+    res.json({ deleted, total: ids.length });
   }
-  const deleted = await DB.bulkDeleteExpenses(ids);
-  res.json({ deleted, total: ids.length });
-});
-var expense_routes_default = router3;
+);
+var expense_routes_default = router4;
 
 // server/routes/invoice.routes.ts
-import { Router as Router4 } from "express";
-var router4 = Router4();
-router4.get("/", authenticateToken, async (_req, res) => {
-  const invoices = await DB.getInvoices();
+import { Router as Router5 } from "express";
+import { z as z4 } from "zod";
+var router5 = Router5();
+var invoiceCreateSchema = z4.object({
+  client: z4.string().min(1).max(200),
+  item: z4.string().max(500).optional(),
+  amount: z4.number().int().positive(),
+  status: z4.enum(["Paid", "Sent", "Overdue", "Draft"]).optional(),
+  alignment: z4.string().max(200).optional()
+});
+var invoiceUpdateSchema = invoiceCreateSchema.partial();
+var invoiceBatchCreateSchema = z4.object({
+  items: z4.array(invoiceCreateSchema).min(1)
+});
+var invoiceBatchDeleteSchema = z4.object({
+  ids: z4.array(z4.string().min(1)).min(1)
+});
+router5.get("/", authenticateToken, async (_req, res) => {
+  const invoices = await invoiceRepository.findAll();
   res.json(invoices);
 });
-router4.post("/", authenticateToken, async (req, res) => {
-  const { client, item, amount, status, alignment } = req.body;
-  if (!client || !amount) {
-    return res.status(400).json({ error: "Missing client coordinates or total payment amount." });
+router5.post(
+  "/",
+  authenticateToken,
+  validate(invoiceCreateSchema),
+  async (req, res) => {
+    const invoice = await invoiceRepository.create(req.body);
+    res.status(201).json(invoice);
   }
-  const invoice = await DB.addInvoice({
-    client,
-    date: (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
-    item: item || "Planetary Crystal Alignment Package",
-    amount: Number(amount),
-    status: status || "Sent",
-    alignment: alignment || "Universal Alignment"
-  });
-  res.status(201).json(invoice);
-});
-router4.post("/batch", authenticateToken, async (req, res) => {
-  const { items } = req.body;
-  if (!items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: "items array is required." });
+);
+router5.post(
+  "/batch",
+  authenticateToken,
+  validate(invoiceBatchCreateSchema),
+  async (req, res) => {
+    const { items } = req.body;
+    const created = await invoiceRepository.bulkCreate(items);
+    res.status(201).json({ count: created.length, items: created });
   }
-  const created = await DB.bulkCreateInvoices(
-    items.map((i) => ({
-      client: i.client || "Unknown",
-      date: i.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
-      item: i.item || "Planetary Crystal Alignment Package",
-      amount: Number(i.amount) || 0,
-      status: i.status || "Sent",
-      alignment: i.alignment || "Universal Alignment"
-    }))
-  );
-  res.status(201).json({ count: created.length, items: created });
-});
-router4.put("/:id", authenticateToken, async (req, res) => {
-  const { client, item, amount, status, alignment } = req.body;
-  const updates = {};
-  if (client !== void 0) updates.client = client;
-  if (item !== void 0) updates.item = item;
-  if (amount !== void 0) updates.amount = Number(amount);
-  if (status !== void 0) updates.status = status;
-  if (alignment !== void 0) updates.alignment = alignment;
-  const updated = await DB.updateInvoice(req.params.id, updates);
-  if (updated) {
-    res.json(updated);
-  } else {
-    res.status(404).json({ error: "Invoice signature reference not found." });
+);
+router5.put(
+  "/:id",
+  authenticateToken,
+  validate(invoiceUpdateSchema),
+  async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Missing invoice ID." });
+      return;
+    }
+    const updated = await invoiceRepository.update(id, req.body);
+    if (updated) {
+      res.json(updated);
+    } else {
+      res.status(404).json({ error: "Invoice not found." });
+    }
   }
-});
-router4.delete("/:id", authenticateToken, async (req, res) => {
-  const success = await DB.deleteInvoice(req.params.id);
+);
+router5.delete("/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(400).json({ error: "Missing invoice ID." });
+    return;
+  }
+  const success = await invoiceRepository.delete(id);
   if (success) {
     res.json({ message: "Invoice successfully pruned." });
   } else {
-    res.status(404).json({ error: "Invoice signature reference not found." });
+    res.status(404).json({ error: "Invoice not found." });
   }
 });
-router4.delete("/batch", authenticateToken, async (req, res) => {
-  const { ids } = req.body;
-  if (!ids || !Array.isArray(ids) || ids.length === 0) {
-    return res.status(400).json({ error: "ids array is required." });
+router5.delete(
+  "/batch",
+  authenticateToken,
+  validate(invoiceBatchDeleteSchema),
+  async (req, res) => {
+    const { ids } = req.body;
+    const deleted = await invoiceRepository.bulkDelete(ids);
+    res.json({ deleted, total: ids.length });
   }
-  const deleted = await DB.bulkDeleteInvoices(ids);
-  res.json({ deleted, total: ids.length });
+);
+var invoice_routes_default = router5;
+
+// server/routes/openapi.routes.ts
+import { Router as Router6 } from "express";
+import swaggerUi from "swagger-ui-express";
+
+// server/openapi.ts
+var openApiSpec = {
+  openapi: "3.1.0",
+  info: {
+    title: "Aura & Stone API",
+    version: "1.0.0",
+    description: "API for Aura & Stone - Vedic Crystal Astrology E-commerce",
+    contact: {
+      name: "Aura & Stone",
+      email: "operations@aurastone.in"
+    }
+  },
+  servers: [
+    {
+      url: "/api",
+      description: "API Base Path"
+    }
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT"
+      },
+      csrfToken: {
+        type: "apiKey",
+        in: "header",
+        name: "X-CSRF-Token"
+      }
+    },
+    schemas: {
+      Product: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          name: { type: "string" },
+          originalPrice: { type: "integer" },
+          salePrice: { type: "integer" },
+          rating: { type: "number" },
+          reviewsCount: { type: "integer" },
+          description: { type: "string" },
+          shortDescription: { type: "string" },
+          benefits: { type: "array", items: { type: "string" } },
+          crystalsUsed: { type: "array", items: { type: "string" } },
+          imageUrl: { type: "string", format: "uri" },
+          videoUrl: { type: "string", format: "uri", nullable: true },
+          category: { type: "string", enum: ["bracelet", "ring", "combo", "zodiac"] },
+          stockStatus: { type: "string", enum: ["in-stock", "low-stock", "pre-order"] },
+          zodiacConnection: { type: "array", items: { type: "string" } },
+          isBestSeller: { type: "boolean" },
+          specifications: {
+            type: "object",
+            properties: {
+              beadSize: { type: "string" },
+              beadCount: { type: "integer" },
+              threadMaterial: { type: "string" },
+              origin: { type: "string" },
+              chargeTime: { type: "string" }
+            }
+          }
+        }
+      },
+      Invoice: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          client: { type: "string" },
+          date: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$" },
+          item: { type: "string" },
+          amount: { type: "integer" },
+          status: { type: "string", enum: ["Paid", "Sent", "Overdue", "Draft"] },
+          alignment: { type: "string" }
+        }
+      },
+      Vendor: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          name: { type: "string" },
+          contact: { type: "string" },
+          origin: { type: "string" },
+          rating: { type: "integer", minimum: 1, maximum: 5 },
+          category: { type: "string" },
+          leadTime: { type: "string" },
+          leadGems: { type: "string" },
+          status: { type: "string", enum: ["Approved", "Under Review", "Suspended"] }
+        }
+      },
+      Expense: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          title: { type: "string" },
+          category: { type: "string" },
+          amount: { type: "integer" },
+          date: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$" },
+          notes: { type: "string" }
+        }
+      },
+      Task: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          title: { type: "string" },
+          status: {
+            type: "string",
+            enum: ["Backlog", "Water Cleanse", "Moon Bath Bathing", "Sealed / Composed"]
+          },
+          priority: { type: "string", enum: ["Low", "Medium", "High"] },
+          assignee: { type: "string" },
+          daysLeft: { type: "integer" }
+        }
+      },
+      Error: {
+        type: "object",
+        properties: {
+          error: { type: "string" }
+        }
+      }
+    }
+  },
+  paths: {
+    "/products": {
+      get: {
+        summary: "Get all products",
+        responses: {
+          "200": {
+            description: "List of products",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "array",
+                  items: { $ref: "#/components/schemas/Product" }
+                }
+              }
+            }
+          }
+        }
+      },
+      post: {
+        summary: "Create a product",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/Product" }
+            }
+          }
+        },
+        responses: {
+          "201": {
+            description: "Product created",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Product" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invoices": {
+      get: {
+        summary: "Get all invoices",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          "200": {
+            description: "List of invoices",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "array",
+                  items: { $ref: "#/components/schemas/Invoice" }
+                }
+              }
+            }
+          }
+        }
+      },
+      post: {
+        summary: "Create an invoice",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["client", "amount"],
+                properties: {
+                  client: { type: "string" },
+                  item: { type: "string" },
+                  amount: { type: "integer" },
+                  status: { type: "string", enum: ["Paid", "Sent", "Overdue", "Draft"] },
+                  alignment: { type: "string" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "201": {
+            description: "Invoice created",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Invoice" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/recommendations": {
+      post: {
+        summary: "Get AI product recommendations",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["userBirthDetails"],
+                properties: {
+                  userBirthDetails: {
+                    type: "object",
+                    required: ["name", "birthDate"],
+                    properties: {
+                      name: { type: "string" },
+                      birthDate: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$" },
+                      birthTime: { type: "string" },
+                      birthPlace: { type: "string" }
+                    }
+                  },
+                  currentCart: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "string" },
+                        name: { type: "string" },
+                        category: { type: "string" },
+                        crystalsUsed: { type: "array", items: { type: "string" } }
+                      }
+                    }
+                  },
+                  purchaseHistory: { type: "array", items: { type: "string" } },
+                  userPreferences: {
+                    type: "object",
+                    properties: {
+                      budget: { type: "string", enum: ["low", "medium", "high"] },
+                      style: { type: "string", enum: ["minimal", "statement", "spiritual"] },
+                      intent: {
+                        type: "string",
+                        enum: [
+                          "wealth",
+                          "protection",
+                          "health",
+                          "relationships",
+                          "career",
+                          "general"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": {
+            description: "AI recommendations",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    result: { type: "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/chatbot": {
+      post: {
+        summary: "Chat with AI assistant",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["message"],
+                properties: {
+                  message: { type: "string" },
+                  conversationHistory: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        role: { type: "string", enum: ["user", "assistant"] },
+                        content: { type: "string" }
+                      }
+                    }
+                  },
+                  userContext: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string" },
+                      isAuthenticated: { type: "boolean" },
+                      cartItems: { type: "integer" },
+                      currentPage: { type: "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "200": {
+            description: "Chatbot response",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    result: { type: "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+// server/routes/openapi.routes.ts
+var router6 = Router6();
+router6.get("/spec", (_req, res) => {
+  res.json(openApiSpec);
 });
-var invoice_routes_default = router4;
+router6.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(openApiSpec, {
+    customCss: ".swagger-ui .topbar { display: none }",
+    customSiteTitle: "Aura & Stone API Documentation"
+  })
+);
+var openapi_routes_default = router6;
 
 // server/routes/payment.routes.ts
-import crypto2 from "crypto";
-import { Router as Router5 } from "express";
+import crypto3 from "crypto";
+import { Router as Router7 } from "express";
 
 // server/services/email.ts
 import nodemailer from "nodemailer";
@@ -2333,18 +3731,18 @@ Aura & Stone Private Ltd.`;
         `TRANSACTIONAL EMAIL DESPATCHED: Verification notice sent to client ${clientEmail}`
       );
     } catch (err) {
-      console.error("Email dispatch error", err);
+      logger.error({ err }, "Email dispatch error");
       await DB.addLog(`EMAIL ANOMALY: Failed to dispatch real SMTP transmission.`);
     }
   } else {
-    console.log(`[SMTP SIMULATION] sending email to ${clientEmail}`);
+    logger.info(`[SMTP SIMULATION] sending email to ${clientEmail}`);
     await DB.addLog(`EMAIL SIMULATOR INTERACTION: Mock receipt transmitted to: ${clientEmail}`);
   }
 }
 
 // server/routes/payment.routes.ts
-var router5 = Router5();
-router5.post("/razorpay/order", paymentLimiter, async (req, res) => {
+var router7 = Router7();
+router7.post("/razorpay/order", paymentLimiter, async (req, res) => {
   const {
     amount,
     currency = "INR",
@@ -2353,9 +3751,10 @@ router5.post("/razorpay/order", paymentLimiter, async (req, res) => {
     cartItems
   } = req.body;
   if (!amount || amount <= 0) {
-    return res.status(400).json({ error: "Total amount is required for setting up order tunnels." });
+    res.status(400).json({ error: "Total amount is required for setting up order tunnels." });
+    return;
   }
-  const orderId = "order_" + crypto2.randomBytes(6).toString("hex");
+  const orderId = "order_" + crypto3.randomBytes(6).toString("hex");
   const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
   const razorpaySecret = process.env.RAZORPAY_KEY_SECRET;
   if (razorpayKeyId && razorpaySecret) {
@@ -2385,7 +3784,7 @@ router5.post("/razorpay/order", paymentLimiter, async (req, res) => {
       await DB.addLog(`RAZORPAY LIVE: Registered order ${orderData.id} for \u20B9${amount}`);
       return res.status(201).json(orderData);
     } catch (err) {
-      console.error("Razorpay processing exception: ", err);
+      logger.error({ err }, "Razorpay processing exception");
       await DB.addLog(
         "RAZORPAY EXCEPTION: Live channel failover. Generating sandboxed transaction."
       );
@@ -2408,21 +3807,23 @@ router5.post("/razorpay/order", paymentLimiter, async (req, res) => {
     },
     created_at: Math.floor(Date.now() / 1e3)
   });
+  return;
 });
-router5.post("/razorpay/webhook", async (req, res) => {
+router7.post("/razorpay/webhook", async (req, res) => {
   const signatureHeader = req.headers["x-razorpay-signature"];
   const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader;
   const razorpaySecret = process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET || "sacred_webhook7592_signature";
   if (!signature) {
-    return res.status(400).json({ error: "Missing security signature block." });
+    res.status(400).json({ error: "Missing security signature block." });
+    return;
   }
   let isSignatureValid = false;
   try {
     const rawBodyBuffer = req.rawBody || Buffer.from(JSON.stringify(req.body));
-    const hmac = crypto2.createHmac("sha256", razorpaySecret);
+    const hmac = crypto3.createHmac("sha256", razorpaySecret);
     hmac.update(rawBodyBuffer);
     const expectedSignature = hmac.digest("hex");
-    isSignatureValid = crypto2.timingSafeEqual(
+    isSignatureValid = crypto3.timingSafeEqual(
       Buffer.from(signature),
       Buffer.from(expectedSignature)
     );
@@ -2432,7 +3833,8 @@ router5.post("/razorpay/webhook", async (req, res) => {
   const isBypassActive = process.env.NODE_ENV !== "production" && signature === "bypass_test_mode";
   if (!isSignatureValid && !isBypassActive) {
     await DB.addLog("CRITICAL: Unauthorized signature received on payment webhook.");
-    return res.status(403).json({ error: "Signature failure. Connection unauthorized." });
+    res.status(403).json({ error: "Signature failure. Connection unauthorized." });
+    return;
   }
   const body = req.body;
   const event = body?.event;
@@ -2441,15 +3843,16 @@ router5.post("/razorpay/webhook", async (req, res) => {
     const paymentEntity = payload?.payment?.entity || {};
     const razorpayOrderId = paymentEntity.order_id || "order_sandbox_re";
     const amountPaidInRupees = (paymentEntity.amount || body?.amount || 1e4) / 100;
-    const clientName = paymentEntity.notes?.clientName || body?.clientName || "Vrishabha Devotee";
-    const clientEmail = paymentEntity.notes?.clientEmail || body?.receiptEmail || "operations@aurastone.in";
-    const itemNames = paymentEntity.notes?.itemsDescription || body?.cartItems || "Planetary Crystal Alignment Package";
+    const clientName = paymentEntity.notes?.clientName ?? body?.clientName ?? "Vrishabha Devotee";
+    const clientEmail = paymentEntity.notes?.clientEmail ?? body?.receiptEmail ?? "operations@aurastone.in";
+    const itemNames = paymentEntity.notes?.itemsDescription ?? body?.cartItems ?? "Planetary Crystal Alignment Package";
     await DB.addLog(
       `WEBHOOK TRANSACTION VERIFIED: Secured Order ID ${razorpayOrderId} (\u20B9${amountPaidInRupees})`
     );
+    const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
     await DB.addInvoice({
       client: clientName,
-      date: (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
+      date: today,
       item: itemNames,
       amount: amountPaidInRupees,
       status: "Paid",
@@ -2463,40 +3866,101 @@ router5.post("/razorpay/webhook", async (req, res) => {
       daysLeft: 3
     });
     await sendFulfillmentEmail(clientEmail, clientName, itemNames, razorpayOrderId);
-    return res.json({
+    res.json({
       status: "success",
       message: "Fulfillment sequence synced",
       orderId: razorpayOrderId
     });
+    return;
   }
   res.json({ status: "ignored", event });
 });
-var payment_routes_default = router5;
+var payment_routes_default = router7;
 
 // server/routes/product.routes.ts
-import { Router as Router6 } from "express";
-var router6 = Router6();
-router6.get("/", async (_req, res) => {
+import { Router as Router8 } from "express";
+import { z as z5 } from "zod";
+var router8 = Router8();
+var productCreateSchema = z5.object({
+  id: z5.string().min(1),
+  name: z5.string().min(1).max(200),
+  originalPrice: z5.number().int().positive(),
+  salePrice: z5.number().int().positive(),
+  rating: z5.number().min(0).max(5),
+  reviewsCount: z5.number().int().nonnegative(),
+  description: z5.string().min(1),
+  shortDescription: z5.string().min(1).max(500),
+  benefits: z5.array(z5.string().min(1)).min(1),
+  crystalsUsed: z5.array(z5.string().min(1)).min(1),
+  imageUrl: z5.union([z5.string().url(), z5.string().startsWith("/")]),
+  videoUrl: z5.union([z5.string().url(), z5.string().startsWith("/")]).optional(),
+  category: z5.enum(["bracelet", "ring", "combo", "zodiac"]),
+  stockStatus: z5.enum(["in-stock", "low-stock", "pre-order"]),
+  zodiacConnection: z5.array(z5.string()).optional(),
+  isBestSeller: z5.boolean().optional(),
+  specifications: z5.object({
+    beadSize: z5.string().optional(),
+    beadCount: z5.number().int().positive().optional(),
+    threadMaterial: z5.string().optional(),
+    origin: z5.string().optional(),
+    chargeTime: z5.string().optional()
+  })
+});
+var productUpdateSchema = productCreateSchema.partial();
+router8.get("/", async (_req, res) => {
   try {
-    const products = await DB.getProducts();
+    const products = await productRepository.findAll();
     res.json(products);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     res.status(500).json({ error: message });
   }
 });
-router6.post("/", authenticateToken, async (req, res) => {
-  try {
-    const product = await DB.saveProduct(req.body);
-    res.status(200).json(product);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
+router8.post(
+  "/",
+  authenticateToken,
+  validate(productCreateSchema),
+  async (req, res) => {
+    try {
+      const product = await productRepository.create(req.body);
+      res.status(200).json(product);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
   }
-});
-router6.delete("/:id", authenticateToken, async (req, res) => {
+);
+router8.put(
+  "/:id",
+  authenticateToken,
+  validate(productUpdateSchema),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        res.status(400).json({ error: "Missing product ID." });
+        return;
+      }
+      const product = await productRepository.update(id, req.body);
+      if (product) {
+        res.json(product);
+      } else {
+        res.status(404).json({ error: "Product not found." });
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
+  }
+);
+router8.delete("/:id", authenticateToken, async (req, res) => {
   try {
-    const success = await DB.deleteProduct(req.params.id);
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Missing product ID." });
+      return;
+    }
+    const success = await productRepository.delete(id);
     if (success) {
       res.json({ message: "Product deleted." });
     } else {
@@ -2507,232 +3971,296 @@ router6.delete("/:id", authenticateToken, async (req, res) => {
     res.status(500).json({ error: message });
   }
 });
-var product_routes_default = router6;
+var product_routes_default = router8;
 
 // server/routes/system.routes.ts
-import { Router as Router7 } from "express";
-var router7 = Router7();
-router7.get("/csrf-token", (req, res) => {
-  res.json({ csrfToken: req.csrfToken() });
+import { Router as Router9 } from "express";
+import { z as z6 } from "zod";
+var router9 = Router9();
+var emailRecordCreateSchema = z6.object({
+  clientName: z6.string().max(200).optional(),
+  email: z6.string().email(),
+  subject: z6.string().min(1).max(500)
 });
-router7.get("/logs", authenticateToken, async (_req, res) => {
-  const logs = await DB.getLogs();
+router9.get("/csrf-token", (req, res) => {
+  const token = req.csrfToken?.();
+  res.json({ csrfToken: token || "" });
+});
+router9.get("/logs", authenticateToken, async (_req, res) => {
+  const logs = await logRepository.findAll();
   res.json(logs);
 });
-router7.get("/email-records", authenticateToken, async (_req, res) => {
-  const records = await DB.getEmailRecords();
-  res.json(records);
-});
-router7.post("/email-records", authenticateToken, async (req, res) => {
-  const { clientName, email, subject } = req.body;
-  if (!email || !subject) {
-    return res.status(400).json({ error: "Email and subject are required." });
+router9.get(
+  "/email-records",
+  authenticateToken,
+  async (_req, res) => {
+    const records = await emailRecordRepository.findAll();
+    res.json(records);
   }
-  const record = await DB.addEmailRecord({
-    clientName: clientName || "Staff Dispatcher",
-    email,
-    subject,
-    dateStr: (/* @__PURE__ */ new Date()).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric"
-    })
-  });
-  res.status(201).json(record);
-});
-var system_routes_default = router7;
+);
+router9.post(
+  "/email-records",
+  authenticateToken,
+  validate(emailRecordCreateSchema),
+  async (req, res) => {
+    const record = await emailRecordRepository.create(req.body);
+    res.status(201).json(record);
+  }
+);
+var system_routes_default = router9;
 
 // server/routes/task.routes.ts
-import { Router as Router8 } from "express";
-var router8 = Router8();
-router8.get("/", authenticateToken, async (_req, res) => {
-  const tasks = await DB.getTasks();
+import { Router as Router10 } from "express";
+import { z as z7 } from "zod";
+var router10 = Router10();
+var taskCreateSchema = z7.object({
+  title: z7.string().min(1).max(300),
+  status: z7.enum(["Backlog", "Water Cleanse", "Moon Bath Bathing", "Sealed / Composed"]).optional(),
+  priority: z7.enum(["Low", "Medium", "High"]).optional(),
+  assignee: z7.string().min(1).max(100),
+  daysLeft: z7.number().int().nonnegative().optional()
+});
+var taskUpdateSchema = taskCreateSchema.partial();
+var taskStatusUpdateSchema = z7.object({
+  status: z7.enum(["Backlog", "Water Cleanse", "Moon Bath Bathing", "Sealed / Composed"])
+});
+router10.get("/", authenticateToken, async (_req, res) => {
+  const tasks = await taskRepository.findAll();
   res.json(tasks);
 });
-router8.post("/", authenticateToken, async (req, res) => {
-  const { title, status, priority, assignee, daysLeft } = req.body;
-  if (!title || !assignee) {
-    return res.status(400).json({ error: "Title and responsible assignee are mandatory fields." });
+router10.post(
+  "/",
+  authenticateToken,
+  validate(taskCreateSchema),
+  async (req, res) => {
+    const task = await taskRepository.create(req.body);
+    res.status(201).json(task);
   }
-  const task = await DB.addTask({
-    title,
-    status: status || "Backlog",
-    priority: priority || "Medium",
-    assignee,
-    daysLeft: Number(daysLeft) || 3
-  });
-  res.status(201).json(task);
-});
-router8.put("/:id", authenticateToken, async (req, res) => {
-  const { title, status, priority, assignee, daysLeft } = req.body;
-  const updates = {};
-  if (title !== void 0) updates.title = title;
-  if (status !== void 0) updates.status = status;
-  if (priority !== void 0) updates.priority = priority;
-  if (assignee !== void 0) updates.assignee = assignee;
-  if (daysLeft !== void 0) updates.daysLeft = Number(daysLeft);
-  const updated = await DB.updateTask(req.params.id, updates);
-  if (updated) {
-    res.json(updated);
-  } else {
-    res.status(404).json({ error: "Vedic task identifier not discovered." });
+);
+router10.put(
+  "/:id",
+  authenticateToken,
+  validate(taskUpdateSchema),
+  async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Missing task ID." });
+      return;
+    }
+    const updated = await taskRepository.update(id, req.body);
+    if (updated) {
+      res.json(updated);
+    } else {
+      res.status(404).json({ error: "Task not found." });
+    }
   }
-});
-router8.put("/:id/status", authenticateToken, async (req, res) => {
-  const { status } = req.body;
-  if (!status) {
-    return res.status(400).json({ error: "Missing state status parameter." });
+);
+router10.put(
+  "/:id/status",
+  authenticateToken,
+  validate(taskStatusUpdateSchema),
+  async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Missing task ID." });
+      return;
+    }
+    const updatedTask = await taskRepository.updateStatus(id, req.body.status);
+    if (updatedTask) {
+      res.json(updatedTask);
+    } else {
+      res.status(404).json({ error: "Task not found." });
+    }
   }
-  const updatedTask = await DB.updateTaskStatus(
-    req.params.id,
-    status
-  );
-  if (updatedTask) {
-    res.json(updatedTask);
-  } else {
-    res.status(404).json({ error: "Vedic task identifier not discovered." });
+);
+router10.delete("/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(400).json({ error: "Missing task ID." });
+    return;
   }
-});
-router8.delete("/:id", authenticateToken, async (req, res) => {
-  const success = await DB.deleteTask(req.params.id);
+  const success = await taskRepository.delete(id);
   if (success) {
     res.json({ message: "Task resolved/archived." });
   } else {
-    res.status(404).json({ error: "Task signature reference not found." });
+    res.status(404).json({ error: "Task not found." });
   }
 });
-var task_routes_default = router8;
+var task_routes_default = router10;
 
 // server/routes/vendor.routes.ts
-import { Router as Router9 } from "express";
-var router9 = Router9();
-router9.get("/", authenticateToken, async (_req, res) => {
-  const vendors = await DB.getVendors();
+import { Router as Router11 } from "express";
+import { z as z8 } from "zod";
+var router11 = Router11();
+var vendorCreateSchema = z8.object({
+  name: z8.string().min(1).max(200),
+  contact: z8.string().min(1).max(200),
+  origin: z8.string().max(200).optional(),
+  category: z8.string().max(100).optional(),
+  leadTime: z8.string().max(50).optional(),
+  leadGems: z8.string().max(200).optional()
+});
+var vendorUpdateSchema = vendorCreateSchema.partial().extend({
+  rating: z8.number().int().min(1).max(5).optional(),
+  status: z8.enum(["Approved", "Under Review", "Suspended"]).optional()
+});
+var vendorBatchCreateSchema = z8.object({
+  items: z8.array(vendorCreateSchema).min(1)
+});
+router11.get("/", authenticateToken, async (_req, res) => {
+  const vendors = await vendorRepository.findAll();
   res.json(vendors);
 });
-router9.post("/", authenticateToken, async (req, res) => {
-  const { name, contact, origin, category, leadTime, leadGems } = req.body;
-  if (!name || !contact) {
-    return res.status(400).json({ error: "Name and contact person are required." });
+router11.post(
+  "/",
+  authenticateToken,
+  validate(vendorCreateSchema),
+  async (req, res) => {
+    const vendor = await vendorRepository.create(req.body);
+    res.status(201).json(vendor);
   }
-  const vendor = await DB.addVendor({
-    name,
-    contact,
-    origin: origin || "Himalayan Foothills",
-    category: category || "Raw Crystals",
-    leadTime: leadTime || "5 Days",
-    leadGems: leadGems || "Crystalline beads"
-  });
-  res.status(201).json(vendor);
-});
-router9.post("/batch", authenticateToken, async (req, res) => {
-  const { items } = req.body;
-  if (!items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: "items array is required." });
+);
+router11.post(
+  "/batch",
+  authenticateToken,
+  validate(vendorBatchCreateSchema),
+  async (req, res) => {
+    const { items } = req.body;
+    const created = await vendorRepository.bulkCreate(items);
+    res.status(201).json({ count: created.length, items: created });
   }
-  const created = await DB.bulkCreateVendors(
-    items.map((i) => ({
-      name: i.name || "Unknown Vendor",
-      contact: i.contact || "Unknown",
-      origin: i.origin || "Himalayan Foothills",
-      category: i.category || "Raw Crystals",
-      leadTime: i.leadTime || "5 Days",
-      leadGems: i.leadGems || "Crystalline beads"
-    }))
-  );
-  res.status(201).json({ count: created.length, items: created });
-});
-router9.put("/:id", authenticateToken, async (req, res) => {
-  const { name, contact, origin, category, leadTime, leadGems, status, rating } = req.body;
-  const updates = {};
-  if (name !== void 0) updates.name = name;
-  if (contact !== void 0) updates.contact = contact;
-  if (origin !== void 0) updates.origin = origin;
-  if (category !== void 0) updates.category = category;
-  if (leadTime !== void 0) updates.leadTime = leadTime;
-  if (leadGems !== void 0) updates.leadGems = leadGems;
-  if (status !== void 0) updates.status = status;
-  if (rating !== void 0) updates.rating = rating;
-  const updated = await DB.updateVendor(req.params.id, updates);
-  if (updated) {
-    res.json(updated);
-  } else {
-    res.status(404).json({ error: "Vendor signature reference not found." });
+);
+router11.put(
+  "/:id",
+  authenticateToken,
+  validate(vendorUpdateSchema),
+  async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Missing vendor ID." });
+      return;
+    }
+    const updated = await vendorRepository.update(id, req.body);
+    if (updated) {
+      res.json(updated);
+    } else {
+      res.status(404).json({ error: "Vendor not found." });
+    }
   }
-});
-router9.delete("/:id", authenticateToken, async (req, res) => {
-  const success = await DB.deleteVendor(req.params.id);
+);
+router11.delete("/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(400).json({ error: "Missing vendor ID." });
+    return;
+  }
+  const success = await vendorRepository.delete(id);
   if (success) {
     res.json({ message: "Vendor registration successfully suspended." });
   } else {
-    res.status(404).json({ error: "Vendor signature reference not found." });
+    res.status(404).json({ error: "Vendor not found." });
   }
 });
-var vendor_routes_default = router9;
+var vendor_routes_default = router11;
 
 // server/routes/website.routes.ts
-import { Router as Router10 } from "express";
-var router10 = Router10();
-router10.get("/content", async (_req, res) => {
+import { Router as Router12 } from "express";
+import { z as z9 } from "zod";
+var router12 = Router12();
+var websiteContentSchema = z9.object({
+  brandName: z9.string().min(1).max(100),
+  brandSubtitle: z9.string().min(1).max(100),
+  heroHeadline: z9.string().min(1).max(100),
+  heroHighlight: z9.string().min(1).max(100),
+  heroParagraph: z9.string().min(1).max(1e3),
+  founderQuote: z9.string().min(1).max(2e3),
+  founderQuoteSubtitle: z9.string().min(1).max(200),
+  historyHeadline: z9.string().min(1).max(200),
+  historyParagraph1: z9.string().min(1).max(2e3),
+  historyParagraph2: z9.string().min(1).max(2e3),
+  bannerImage: z9.union([z9.string().url(), z9.string().startsWith("/")])
+});
+var checkpointCreateSchema = z9.object({
+  title: z9.string().min(1).max(200).optional()
+});
+router12.get("/content", async (_req, res) => {
   try {
-    const content = await DB.getWebsiteContent();
+    const content = await websiteContentRepository.findAll();
     res.json(content);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     res.status(500).json({ error: message });
   }
 });
-router10.post("/content", authenticateToken, async (req, res) => {
-  try {
-    const content = await DB.saveWebsiteContent(req.body);
-    res.status(200).json(content);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-router10.get("/checkpoints", authenticateToken, async (_req, res) => {
-  try {
-    const checkpoints = await DB.getCheckpoints();
-    res.json(checkpoints);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-router10.post("/checkpoints", authenticateToken, async (req, res) => {
-  try {
-    const { title } = req.body;
-    const checkpoint = await DB.createCheckpoint(
-      title || "Periodic Operational Checkpoint",
-      req.user?.username || "debarghapakhira@gmail.com"
-    );
-    res.status(201).json(checkpoint);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
-  }
-});
-router10.post("/checkpoints/:id/rollback", authenticateToken, async (req, res) => {
-  try {
-    const success = await DB.rollbackToCheckpoint(req.params.id);
-    if (success) {
-      res.json({ message: "Rollback succeeded." });
-    } else {
-      res.status(404).json({ error: "Rollback failed." });
+router12.post(
+  "/content",
+  authenticateToken,
+  validate(websiteContentSchema),
+  async (req, res) => {
+    try {
+      const content = await websiteContentRepository.save(req.body);
+      res.status(200).json(content);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      res.status(500).json({ error: message });
     }
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(500).json({ error: message });
   }
-});
-var website_routes_default = router10;
+);
+router12.get(
+  "/checkpoints",
+  authenticateToken,
+  async (_req, res) => {
+    try {
+      const checkpoints = await checkpointRepository.findAll();
+      res.json(checkpoints);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
+  }
+);
+router12.post(
+  "/checkpoints",
+  authenticateToken,
+  validate(checkpointCreateSchema),
+  async (req, res) => {
+    try {
+      const { title } = req.body;
+      const user = req.user?.username || "debarghapakhira@gmail.com";
+      const checkpoint = await checkpointRepository.create(title, user);
+      res.status(201).json(checkpoint);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
+  }
+);
+router12.post(
+  "/checkpoints/:id/rollback",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        res.status(400).json({ error: "Missing checkpoint ID." });
+        return;
+      }
+      await checkpointRepository.rollback(id);
+      res.json({ message: "Rollback succeeded." });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      res.status(500).json({ error: message });
+    }
+  }
+);
+var website_routes_default = router12;
 
 // server/app.ts
 var app = express();
+var isDev = process.env.NODE_ENV !== "production";
 app.use(
   helmet({
-    contentSecurityPolicy: {
+    contentSecurityPolicy: isDev ? false : {
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'", "https://checkout.razorpay.com"],
@@ -2751,6 +4279,8 @@ app.use(
   })
 );
 app.set("trust proxy", 1);
+app.use(requestId);
+app.use(requestLogger);
 app.use(
   express.json({
     limit: "100kb",
@@ -2759,34 +4289,56 @@ app.use(
     }
   })
 );
-var cookieSecret = process.env.COOKIE_SECRET || process.env.JWT_SECRET;
-if (!cookieSecret) {
-  if (process.env.NODE_ENV === "production") {
-    throw new Error(
-      "COOKIE_SECRET or JWT_SECRET must be set in production. Refusing to start with a default cookie secret."
+function getCookieSecret() {
+  const cookieSecret = process.env.COOKIE_SECRET || process.env.JWT_SECRET;
+  if (!cookieSecret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "COOKIE_SECRET or JWT_SECRET must be set in production. Refusing to start with a default cookie secret."
+      );
+    }
+    logger.warn(
+      "\u26A0\uFE0F  COOKIE_SECRET/JWT_SECRET not set. Falling back to insecure development cookie secret."
     );
+    return "aurastone-dev-cookie-secret-change-in-production-please";
   }
-  console.warn(
-    "\u26A0\uFE0F  COOKIE_SECRET/JWT_SECRET not set. Falling back to insecure development cookie secret."
-  );
+  return cookieSecret;
 }
-var finalCookieSecret = cookieSecret || "aurastone-dev-cookie-secret-change-in-production-please";
-app.use(cookieParser(finalCookieSecret));
+var cookieParserInitialized = false;
+function ensureCookieParser() {
+  if (!cookieParserInitialized) {
+    const finalCookieSecret = getCookieSecret();
+    app.use(cookieParser(finalCookieSecret));
+    cookieParserInitialized = true;
+  }
+}
 var CSRF_EXEMPT_PATHS = /* @__PURE__ */ new Set(["/api/payments/razorpay/webhook"]);
-var csrfProtection = createCsrfProtection({
-  cookieSecret: finalCookieSecret,
-  exemptPaths: CSRF_EXEMPT_PATHS
+var csrfProtectionInitialized = false;
+function ensureCsrfProtection() {
+  if (!csrfProtectionInitialized) {
+    const csrfProtection = createCsrfProtection({
+      cookieSecret: getCookieSecret(),
+      exemptPaths: CSRF_EXEMPT_PATHS
+    });
+    app.use(csrfProtection);
+    csrfProtectionInitialized = true;
+  }
+}
+app.use((req, res, next) => {
+  ensureCookieParser();
+  ensureCsrfProtection();
+  next();
 });
-app.use(csrfProtection);
+initRedisRateLimiter();
 if (isFirebaseActive()) {
-  DB.addLog("SYSTEM INITIALIZATION: Connect successfully to Firebase Firestore Instance.");
+  logger.info("SYSTEM INITIALIZATION: Connect successfully to Firebase Firestore Instance.");
 } else {
-  DB.addLog(
+  logger.warn(
     "SYSTEM INITIALIZATION: No Active Firebase configuration. Running with active JSON flat-file clusters."
   );
 }
-app.use("/api", system_routes_default);
-app.use("/api/auth", auth_routes_default);
+app.use("/api", apiRateLimiter, system_routes_default);
+app.use("/api/auth", authRateLimiter, auth_routes_default);
 app.use("/api/invoices", invoice_routes_default);
 app.use("/api/vendors", vendor_routes_default);
 app.use("/api/expenses", expense_routes_default);
@@ -2794,7 +4346,9 @@ app.use("/api/tasks", task_routes_default);
 app.use("/api/astro-content", astro_routes_default);
 app.use("/api/products", product_routes_default);
 app.use("/api/website", website_routes_default);
-app.use("/api/payments", payment_routes_default);
+app.use("/api/payments", paymentRateLimiter, payment_routes_default);
+app.use("/api/ai", aiRateLimiter, ai_routes_default);
+app.use("/api/docs", openapi_routes_default);
 app.use((err, _req, res, _next) => {
   const code = err?.code;
   if (code === "EBADCSRFTOKEN") {
@@ -2804,7 +4358,7 @@ app.use((err, _req, res, _next) => {
   if (message.toLowerCase().includes("csrf")) {
     return res.status(403).json({ error: "CSRF validation failed." });
   }
-  console.error("Unhandled server error:", err);
+  logger.error({ err }, "Unhandled server error");
   return res.status(500).json({ error: "Internal server error." });
 });
 var app_default = app;

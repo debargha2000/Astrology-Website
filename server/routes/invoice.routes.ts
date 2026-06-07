@@ -1,95 +1,96 @@
 import { Router, Request, Response } from 'express';
+import { z } from 'zod';
 
-import { DB } from '../db.js';
 import { authenticateToken } from '../middleware/auth.js';
+import { validate } from '../middleware/validation.js';
+import { invoiceRepository } from '../repositories/index.js';
 
 const router = Router();
 
-router.get('/', authenticateToken, async (_req: Request, res: Response) => {
-  const invoices = await DB.getInvoices();
+const invoiceCreateSchema = z.object({
+  client: z.string().min(1).max(200),
+  item: z.string().max(500).optional(),
+  amount: z.number().int().positive(),
+  status: z.enum(['Paid', 'Sent', 'Overdue', 'Draft']).optional(),
+  alignment: z.string().max(200).optional(),
+});
+
+const invoiceUpdateSchema = invoiceCreateSchema.partial();
+const invoiceBatchCreateSchema = z.object({
+  items: z.array(invoiceCreateSchema).min(1),
+});
+const invoiceBatchDeleteSchema = z.object({
+  ids: z.array(z.string().min(1)).min(1),
+});
+
+router.get('/', authenticateToken, async (_req: Request, res: Response): Promise<void> => {
+  const invoices = await invoiceRepository.findAll();
   res.json(invoices);
 });
 
-router.post('/', authenticateToken, async (req: Request, res: Response) => {
-  const { client, item, amount, status, alignment } = req.body as {
-    client?: string;
-    item?: string;
-    amount?: number | string;
-    status?: string;
-    alignment?: string;
-  };
-  if (!client || !amount) {
-    return res.status(400).json({ error: 'Missing client coordinates or total payment amount.' });
+router.post(
+  '/',
+  authenticateToken,
+  validate(invoiceCreateSchema),
+  async (req: Request, res: Response): Promise<void> => {
+    const invoice = await invoiceRepository.create(req.body);
+    res.status(201).json(invoice);
   }
+);
 
-  const invoice = await DB.addInvoice({
-    client,
-    date: new Date().toISOString().split('T')[0],
-    item: item || 'Planetary Crystal Alignment Package',
-    amount: Number(amount),
-    status: (status as 'Paid' | 'Sent' | 'Overdue' | 'Draft') || 'Sent',
-    alignment: alignment || 'Universal Alignment',
-  });
-  res.status(201).json(invoice);
-});
-
-router.post('/batch', authenticateToken, async (req: Request, res: Response) => {
-  const { items } = req.body as { items?: any[] };
-  if (!items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: 'items array is required.' });
+router.post(
+  '/batch',
+  authenticateToken,
+  validate(invoiceBatchCreateSchema),
+  async (req: Request, res: Response): Promise<void> => {
+    const { items } = req.body;
+    const created = await invoiceRepository.bulkCreate(items);
+    res.status(201).json({ count: created.length, items: created });
   }
-  const created = await DB.bulkCreateInvoices(
-    items.map((i) => ({
-      client: i.client || 'Unknown',
-      date: i.date || new Date().toISOString().split('T')[0],
-      item: i.item || 'Planetary Crystal Alignment Package',
-      amount: Number(i.amount) || 0,
-      status: i.status || 'Sent',
-      alignment: i.alignment || 'Universal Alignment',
-    }))
-  );
-  res.status(201).json({ count: created.length, items: created });
-});
+);
 
-router.put('/:id', authenticateToken, async (req: Request, res: Response) => {
-  const { client, item, amount, status, alignment } = req.body as {
-    client?: string;
-    item?: string;
-    amount?: number | string;
-    status?: string;
-    alignment?: string;
-  };
-  const updates: Record<string, unknown> = {};
-  if (client !== undefined) updates.client = client;
-  if (item !== undefined) updates.item = item;
-  if (amount !== undefined) updates.amount = Number(amount);
-  if (status !== undefined) updates.status = status;
-  if (alignment !== undefined) updates.alignment = alignment;
-
-  const updated = await DB.updateInvoice(req.params.id, updates as any);
-  if (updated) {
-    res.json(updated);
-  } else {
-    res.status(404).json({ error: 'Invoice signature reference not found.' });
+router.put(
+  '/:id',
+  authenticateToken,
+  validate(invoiceUpdateSchema),
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: 'Missing invoice ID.' });
+      return;
+    }
+    const updated = await invoiceRepository.update(id, req.body);
+    if (updated) {
+      res.json(updated);
+    } else {
+      res.status(404).json({ error: 'Invoice not found.' });
+    }
   }
-});
+);
 
-router.delete('/:id', authenticateToken, async (req: Request, res: Response) => {
-  const success = await DB.deleteInvoice(req.params.id);
+router.delete('/:id', authenticateToken, async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(400).json({ error: 'Missing invoice ID.' });
+    return;
+  }
+  const success = await invoiceRepository.delete(id);
   if (success) {
     res.json({ message: 'Invoice successfully pruned.' });
   } else {
-    res.status(404).json({ error: 'Invoice signature reference not found.' });
+    res.status(404).json({ error: 'Invoice not found.' });
   }
 });
 
-router.delete('/batch', authenticateToken, async (req: Request, res: Response) => {
-  const { ids } = req.body as { ids?: string[] };
-  if (!ids || !Array.isArray(ids) || ids.length === 0) {
-    return res.status(400).json({ error: 'ids array is required.' });
+router.delete(
+  '/batch',
+  authenticateToken,
+  validate(invoiceBatchDeleteSchema),
+  async (req: Request, res: Response): Promise<void> => {
+    const { ids } = req.body;
+    const deleted = await invoiceRepository.bulkDelete(ids);
+    res.json({ deleted, total: ids.length });
   }
-  const deleted = await DB.bulkDeleteInvoices(ids);
-  res.json({ deleted, total: ids.length });
-});
+);
 
 export default router;

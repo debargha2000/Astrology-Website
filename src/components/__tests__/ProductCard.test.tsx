@@ -1,12 +1,17 @@
 import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 
 import ProductCard from '../ProductCard';
 
 vi.mock('motion/react', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+      <div {...props}>{children}</div>
+    ),
+    button: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+      <button {...props}>{children}</button>
+    ),
   },
 }));
 
@@ -27,7 +32,7 @@ describe('ProductCard', () => {
     category: 'bracelet' as const,
     stockStatus: 'in-stock' as const,
     isBestSeller: false,
-    zodiacConnection: 'Aries',
+    zodiacConnection: ['Aries'],
     specifications: {
       beadSize: '8mm',
       beadCount: 24,
@@ -38,7 +43,14 @@ describe('ProductCard', () => {
   };
 
   it('renders product name and price', () => {
-    render(<ProductCard product={mockProduct} onAddToCart={() => {}} />);
+    render(
+      <ProductCard
+        product={mockProduct}
+        onAddToCart={() => {}}
+        onViewDetails={() => {}}
+        isAdded={false}
+      />
+    );
     expect(screen.getByText('Test Crystal')).toBeInTheDocument();
   });
 });

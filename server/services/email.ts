@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 
 import { DB } from '../db.js';
+import { logger } from '../middleware/logging.js';
 
 function getMailTransporter() {
   const host = process.env.SMTP_HOST;
@@ -69,12 +70,12 @@ export async function sendFulfillmentEmail(
       await DB.addLog(
         `TRANSACTIONAL EMAIL DESPATCHED: Verification notice sent to client ${clientEmail}`
       );
-    } catch (err: any) {
-      console.error('Email dispatch error', err);
+    } catch (err: unknown) {
+      logger.error({ err }, 'Email dispatch error');
       await DB.addLog(`EMAIL ANOMALY: Failed to dispatch real SMTP transmission.`);
     }
   } else {
-    console.log(`[SMTP SIMULATION] sending email to ${clientEmail}`);
+    logger.info(`[SMTP SIMULATION] sending email to ${clientEmail}`);
     await DB.addLog(`EMAIL SIMULATOR INTERACTION: Mock receipt transmitted to: ${clientEmail}`);
   }
 }

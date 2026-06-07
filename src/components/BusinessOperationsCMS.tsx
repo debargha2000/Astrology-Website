@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import type { Product, WebsiteContent } from '../types';
 
 import { AstroTab } from './cms/AstroTab';
 import { AuthGate } from './cms/AuthGate';
 import { CmsHeader } from './cms/CmsHeader';
 import { DashboardTab } from './cms/DashboardTab';
 import { ExpensesTab } from './cms/ExpensesTab';
-import { TasksTab } from './cms/TasksTab';
 import { GmailTab } from './cms/GmailTab';
 import { InvoicesTab } from './cms/InvoicesTab';
-import { ProductsTab } from './cms/ProductsTab';
 import { LogsTab } from './cms/LogsTab';
+import { ProductsTab } from './cms/ProductsTab';
 import { SiteTab } from './cms/SiteTab';
+import { TasksTab } from './cms/TasksTab';
 import { ToastContainer } from './cms/Toast';
 import type { CmsSubTab } from './cms/types';
 import { useCmsHandlers } from './cms/useCmsHandlers';
@@ -20,8 +22,8 @@ import { VendorsTab } from './cms/VendorsTab';
 
 interface BusinessOperationsCMSProps {
   onDataChange?: () => void;
-  currentProducts?: any[];
-  currentWebsiteContent?: any;
+  currentProducts?: Product[];
+  currentWebsiteContent?: WebsiteContent;
 }
 
 export default function BusinessOperationsCMS(_props: BusinessOperationsCMSProps = {}) {

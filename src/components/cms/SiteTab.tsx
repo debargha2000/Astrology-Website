@@ -1,5 +1,5 @@
 import { Sparkles, Clock, Plus, RefreshCw } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { ConfirmDialog } from './ConfirmDialog';
 import { ImageUpload } from './ImageUpload';

@@ -35,9 +35,11 @@ if (appCheckSiteKey) {
       isTokenAutoRefreshEnabled: true,
     });
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.warn('Firebase App Check failed to initialize. Continuing without attestation.', e);
   }
 } else if (import.meta.env.PROD) {
+  // eslint-disable-next-line no-console
   console.warn(
     'VITE_FIREBASE_APPCHECK_SITE_KEY is unset. ' +
       'Firebase services will run without App Check attestation in production.'
@@ -90,7 +92,8 @@ export async function googleSignIn(
 
     cachedAccessToken = credential.accessToken;
     return { user: result.user, accessToken: cachedAccessToken };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    // eslint-disable-next-line no-console
     console.error('Google OAuth Handshake Error:', error);
     throw error;
   } finally {
@@ -158,6 +161,7 @@ export function handleFirestoreError(
     operationType,
     path,
   };
+  // eslint-disable-next-line no-console
   console.error('Firestore SEC_RULE Error: ', JSON.stringify(errInfo, null, 2));
   throw new Error(JSON.stringify(errInfo));
 }

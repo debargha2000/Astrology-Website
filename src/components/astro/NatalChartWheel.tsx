@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { NatalChart } from '../../types';
 
 const SIGNS = [

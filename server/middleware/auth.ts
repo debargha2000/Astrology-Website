@@ -27,24 +27,27 @@ declare global {
   }
 }
 
-export function authenticateToken(req: Request, res: Response, next: NextFunction) {
+export function authenticateToken(req: Request, res: Response, next: NextFunction): void {
   let secret: string;
   try {
     secret = getJwtSecret();
   } catch {
-    return res.status(500).json({ error: 'Server misconfigured: JWT secret unavailable.' });
+    res.status(500).json({ error: 'Server misconfigured: JWT secret unavailable.' });
+    return;
   }
 
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ error: 'Missing divine session credentials.' });
+    res.status(401).json({ error: 'Missing divine session credentials.' });
+    return;
   }
 
   jwt.verify(token, secret, (err, decoded) => {
     if (err) {
-      return res.status(403).json({ error: 'Astral session expired or corrupt.' });
+      res.status(403).json({ error: 'Astral session expired or corrupt.' });
+      return;
     }
     req.user = decoded as AuthUser;
     next();

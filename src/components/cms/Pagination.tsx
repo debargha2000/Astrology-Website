@@ -1,5 +1,4 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React from 'react';
 
 interface Props {
   page: number;
@@ -12,9 +11,6 @@ interface Props {
 
 export function Pagination({ page, totalPages, perPage, total, onChange, onPerPageChange }: Props) {
   if (total === 0) return null;
-
-  const start = (page - 1) * perPage + 1;
-  const end = Math.min(page * perPage, total);
 
   const pages: (number | '...')[] = [];
   if (totalPages <= 7) {

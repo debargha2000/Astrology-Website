@@ -1,5 +1,5 @@
 import { Bold, Italic, Underline, List, ListOrdered, Link, Heading2 } from 'lucide-react';
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 
 interface Props {
   value: string;
@@ -7,6 +7,25 @@ interface Props {
   placeholder?: string;
   rows?: number;
 }
+
+const ToolButton = ({
+  onClick,
+  children,
+  title,
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+  title: string;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    title={title}
+    className="cursor-pointer p-1.5 rounded hover:bg-cream text-clay hover:text-ink transition-colors"
+  >
+    {children}
+  </button>
+);
 
 export function RichTextEditor({
   value,
@@ -16,17 +35,20 @@ export function RichTextEditor({
 }: Props) {
   const editorRef = useRef<HTMLDivElement>(null);
 
-  const execCmd = useCallback((command: string, val?: string) => {
-    document.execCommand(command, false, val);
-    editorRef.current?.focus();
-    syncValue();
-  }, []);
-
   const syncValue = useCallback(() => {
     if (editorRef.current) {
       onChange(editorRef.current.innerHTML);
     }
   }, [onChange]);
+
+  const execCmd = useCallback(
+    (command: string, val?: string) => {
+      document.execCommand(command, false, val);
+      editorRef.current?.focus();
+      syncValue();
+    },
+    [syncValue]
+  );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -50,25 +72,6 @@ export function RichTextEditor({
     const url = prompt('Enter URL:');
     if (url) execCmd('createLink', url);
   }, [execCmd]);
-
-  const ToolButton = ({
-    onClick,
-    children,
-    title,
-  }: {
-    onClick: () => void;
-    children: React.ReactNode;
-    title: string;
-  }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      title={title}
-      className="cursor-pointer p-1.5 rounded hover:bg-cream text-clay hover:text-ink transition-colors"
-    >
-      {children}
-    </button>
-  );
 
   const minHeight = `${rows * 1.5}rem`;
 

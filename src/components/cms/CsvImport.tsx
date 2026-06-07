@@ -1,5 +1,5 @@
 import { Upload, FileText, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface CsvImportProps {
   entityLabel: string;
@@ -11,7 +11,9 @@ function parseCsv(text: string): { headers: string[]; rows: Record<string, strin
   const lines = text.split(/\r?\n/).filter((l) => l.trim());
   if (lines.length === 0) return { headers: [], rows: [] };
 
-  const headers = lines[0].split(',').map((h) => h.trim().replace(/^"|"$/g, ''));
+  const firstLine = lines[0];
+  if (!firstLine) return { headers: [], rows: [] };
+  const headers = firstLine.split(',').map((h) => h.trim().replace(/^"|"$/g, ''));
   const rows = lines.slice(1).map((line) => {
     const values: string[] = [];
     let current = '';
@@ -72,8 +74,8 @@ export function CsvImport({ entityLabel, requiredFields, onImport }: CsvImportPr
         message: `Successfully imported ${preview.rows.length} ${entityLabel}.`,
       });
       setPreview(null);
-    } catch (err: any) {
-      setResult({ success: false, message: err.message || 'Import failed.' });
+    } catch (err: unknown) {
+      setResult({ success: false, message: err instanceof Error ? err.message : 'Import failed.' });
     } finally {
       setImporting(false);
     }

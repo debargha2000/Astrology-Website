@@ -3,11 +3,35 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ShoppingBag, Sparkles, Menu, X, Compass, BookOpen, Clock, Heart } from 'lucide-react';
+import { ShoppingBag, Sparkles, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-import { PageId } from '../types';
+import type { PageId } from '../types';
+
+function getInitialMuhurta(): { muhurta: string; cycle: string } {
+  const hours = new Date().getHours();
+  if (hours >= 6 && hours < 11) {
+    return {
+      muhurta: 'Amrit Hora (Peak Vitality & Wisdom)',
+      cycle: 'Solar Purified • Crown Opening',
+    };
+  } else if (hours >= 11 && hours < 16) {
+    return {
+      muhurta: 'Shubh Hora (Auspicious Commerce & Success)',
+      cycle: 'Sun in Zenit • Prosperity Charging',
+    };
+  } else if (hours >= 16 && hours < 21) {
+    return {
+      muhurta: 'Labh Hora (Gainful Business & Networks)',
+      cycle: 'Venus Aspecting • Aura Strengthening',
+    };
+  }
+  return {
+    muhurta: 'Luna Hora (Night Cleansing & Psychic Shields)',
+    cycle: 'Moon Bathing Active • Protection Aura',
+  };
+}
 
 interface HeaderProps {
   currentPage: PageId;
@@ -30,26 +54,8 @@ export default function Header({
   const resolvedBrandSubtitle =
     brandSubtitle && brandSubtitle.trim().length > 0 ? brandSubtitle : 'Crystalline Astrology';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [muhurtaTime, setMuhurtaTime] = useState('Shubh Hora (Auspicious Wealth Focus)');
-  const [astronomicalCycle, setAstronomicalCycle] = useState('Sun in Gemini • Moon Waxing');
-
-  useEffect(() => {
-    // Dynamically change astrological hours to simulate genuine real-time alignment
-    const hours = new Date().getHours();
-    if (hours >= 6 && hours < 11) {
-      setMuhurtaTime('Amrit Hora (Peak Vitality & Wisdom)');
-      setAstronomicalCycle('Solar Purified • Crown Opening');
-    } else if (hours >= 11 && hours < 16) {
-      setMuhurtaTime('Shubh Hora (Auspicious Commerce & Success)');
-      setAstronomicalCycle('Sun in Zenit • Prosperity Charging');
-    } else if (hours >= 16 && hours < 21) {
-      setMuhurtaTime('Labh Hora (Gainful Business & Networks)');
-      setAstronomicalCycle('Venus Aspecting • Aura Strengthening');
-    } else {
-      setMuhurtaTime('Luna Hora (Night Cleansing & Psychic Shields)');
-      setAstronomicalCycle('Moon Bathing Active • Protection Aura');
-    }
-  }, []);
+  const [muhurtaTime] = useState(() => getInitialMuhurta().muhurta);
+  const [astronomicalCycle] = useState(() => getInitialMuhurta().cycle);
 
   const navItems = [
     { id: 'home', label: 'Ethereal Space' },

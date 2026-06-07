@@ -5,29 +5,21 @@
 
 import {
   Sparkles,
-  Calendar,
-  User,
-  Compass,
-  TrendingUp,
-  ShieldAlert,
-  ArrowRight,
   Zap,
   RefreshCw,
   Star,
-  Info,
-  Sun,
   Moon,
   Flame,
   Wind,
   Droplet,
   Gem,
-  ShieldCheck,
-  Heart,
+  TrendingUp,
+  ShieldAlert,
   Compass as OrbitIcon,
   LucideIcon,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import {
   ZODIAC_DATA,
@@ -195,7 +187,7 @@ export default function ZodiacCalculator({
       case 'earth':
         return Gem;
       default:
-        return Compass;
+        return OrbitIcon;
     }
   };
 
@@ -262,8 +254,6 @@ export default function ZodiacCalculator({
     ? PRODUCTS.filter((p) => activeSignData.recommendedProductIds.includes(p.id))
     : [];
 
-  const currentRotationAngle = activeSignMeta ? -activeSignMeta.angle : 0;
-
   return (
     <div
       className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-20 font-sans"
@@ -297,7 +287,7 @@ export default function ZodiacCalculator({
 
             <h3 className="font-serif text-xl text-[#1A1A1A] mb-6 flex items-center gap-3">
               <span className="p-2 bg-[#C5A880]/10 rounded-xl text-[#C5A880]">
-                <Compass className="h-5 w-5 animate-spin-slow" />
+                <OrbitIcon className="h-5 w-5 animate-spin-slow" />
               </span>
               Enter Natal Coordinates
             </h3>
@@ -415,7 +405,7 @@ export default function ZodiacCalculator({
                   <div className="absolute h-32 w-32 rounded-full border-2 border-dashed border-[#C5A880]/15 animate-spin-reverse" />
                   {/* Innermost rotating glyph core */}
                   <div className="absolute h-20 w-20 rounded-full bg-[#C5A880]/10 border border-[#C5A880]/40 flex items-center justify-center">
-                    <Compass className="h-8 w-8 text-[#C5A880] animate-pulse" />
+                    <OrbitIcon className="h-8 w-8 text-[#C5A880] animate-pulse" />
                   </div>
                   {/* Orbiting celestial sphere marker */}
                   <div className="absolute top-0 h-4 w-4 rounded-full bg-[#C5A880] shadow-[0_0_12px_#C5A880] animate-ping" />
@@ -504,7 +494,7 @@ export default function ZodiacCalculator({
                     <div className="relative h-14 w-14 rounded-full border border-[#C5A880]/40 flex items-center justify-center bg-[#1E1A16] shadow-[0_0_15px_rgba(197,168,128,0.25)] overflow-hidden">
                       <div className="absolute inset-0.5 rounded-full border border-dashed border-[#C5A880]/20 animate-spin-slow z-10 pointer-events-none" />
                       <img
-                        src={(activeSignMeta as any)?.image}
+                        src={activeSignMeta?.image}
                         alt={`${selectedSign} astronomical symbol`}
                         referrerPolicy="no-referrer"
                         className="relative z-0 h-full w-full object-cover"
@@ -523,9 +513,10 @@ export default function ZodiacCalculator({
                   {/* Planet & Element Pills with bespoke icons */}
                   <div className="flex flex-wrap gap-2">
                     <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1C1A18] border border-[#C5A880]/30 text-[#C5A880] text-[10px] font-mono tracking-widest uppercase">
-                      {React.createElement(getElementIcon(activeSignData.element), {
-                        className: 'h-3 w-3 text-[#C5A880]',
-                      })}
+                      {(() => {
+                        const ElementIcon = getElementIcon(activeSignData.element);
+                        return <ElementIcon className="h-3 w-3 text-[#C5A880]" />;
+                      })()}
                       Element: {activeSignData.element}
                     </div>
                     <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1C1A18] border border-[#FAF8F5]/10 text-white text-[10px] font-mono tracking-widest uppercase">
@@ -537,8 +528,8 @@ export default function ZodiacCalculator({
 
                 {/* Dynamic Planetary Energy Balance Chart */}
                 <div
-                  className="space-y-4"
-                  id="planetary-harmonic-meters bg-[#1C1A18]/50 p-6 rounded-2xl border border-white/5"
+                  className="space-y-4 bg-[#1C1A18]/50 p-6 rounded-2xl border border-white/5"
+                  id="planetary-harmonic-meters"
                 >
                   <div className="flex items-center justify-between">
                     <h5 className="text-[10px] font-mono uppercase tracking-widest text-[#C5A880] flex items-center gap-1.5 font-bold">
@@ -739,7 +730,7 @@ export default function ZodiacCalculator({
                       {/* Ascendant (Rising Sign) */}
                       <div className="bg-[#1C1A18] p-5 rounded-xl border border-white/5 space-y-2">
                         <span className="text-[10px] font-mono text-[#C5A880] uppercase tracking-widest flex items-center gap-1.5 font-bold">
-                          <Compass className="h-4 w-4" /> Ascendant (Rising Sign)
+                          <OrbitIcon className="h-4 w-4" /> Ascendant (Rising Sign)
                         </span>
                         <div className="h-px bg-gradient-to-r from-[#C5A880]/20 to-transparent mb-1" />
                         <div className="flex items-center gap-3 mb-1.5">

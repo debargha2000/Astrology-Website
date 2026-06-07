@@ -1,6 +1,5 @@
 import { Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
-import React from 'react';
 
 interface Props {
   authError: string;

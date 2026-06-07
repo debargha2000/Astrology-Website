@@ -7,11 +7,11 @@ import {
   DollarSign,
   CheckSquare,
 } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { googleSignIn } from '../../lib/firebase';
 
-import type { CmsSubTab } from './types';
+import type { CmsSubTab, Invoice, Expense } from './types';
 import type { CmsHandlers } from './useCmsHandlers';
 import type { CmsState } from './useCmsState';
 
@@ -21,7 +21,7 @@ interface Props {
   onNavigate: (tab: CmsSubTab) => void;
 }
 
-function buildChart(invoices: any[], expenses: any[]) {
+function buildChart(invoices: Invoice[], expenses: Expense[]) {
   const months = [
     'Jan',
     'Feb',

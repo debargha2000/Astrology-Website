@@ -1,5 +1,5 @@
 import { Search, Terminal, Clock, Info } from 'lucide-react';
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 
 import type { CmsState } from './useCmsState';
 

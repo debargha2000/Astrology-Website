@@ -20,6 +20,7 @@ const localStorageMock = (() => {
   };
 })();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).localStorage = localStorageMock;
 
 import {
@@ -46,7 +47,7 @@ describe('CMS auth token storage', () => {
   });
 
   it('migrates any legacy Signtific India token to the new key', () => {
-    const legacy = LEGACY_ADMIN_TOKEN_KEYS[0];
+    const legacy = LEGACY_ADMIN_TOKEN_KEYS[0] ?? 'signtific_admin_token';
     localStorage.setItem(legacy, 'legacy-jwt');
     expect(getAdminToken()).toBe('legacy-jwt');
     expect(localStorage.getItem(ADMIN_TOKEN_KEY)).toBe('legacy-jwt');
@@ -61,7 +62,7 @@ describe('CMS auth token storage', () => {
   });
 
   it('clears both new and legacy keys', () => {
-    const legacy = LEGACY_ADMIN_TOKEN_KEYS[0];
+    const legacy = LEGACY_ADMIN_TOKEN_KEYS[0] ?? 'signtific_admin_token';
     localStorage.setItem(ADMIN_TOKEN_KEY, 'a');
     localStorage.setItem(legacy, 'b');
     clearAdminToken();

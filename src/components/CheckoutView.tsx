@@ -5,27 +5,31 @@
 
 import {
   ShieldCheck,
-  Calendar,
   MapPin,
   CreditCard,
   Sparkles,
   CheckCircle,
   Download,
   ArrowLeft,
-  Send,
   RefreshCw,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import { apiFetch } from '../services/apiFetch';
-import { CartItem, Product } from '../types';
+import { CartItem } from '../types';
 
 interface CheckoutViewProps {
   cartItems: CartItem[];
   onClearCart: () => void;
   onGoBack: () => void;
   onAddReviewToggle: () => void;
+}
+
+function generateRegistrationId(): string {
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  return `ARS-${100000 + ((array[0] ?? 0) % 800000)}`;
 }
 
 export default function CheckoutView({
@@ -46,6 +50,8 @@ export default function CheckoutView({
   const [isProcessing, setIsProcessing] = useState(false);
   const [timeLeft, setTimeLeft] = useState(180); // 3 mins for QR code
   const [certDownloaded, setCertDownloaded] = useState(false);
+
+  const [registrationId] = useState(generateRegistrationId);
 
   const subtotal = cartItems.reduce((acc, curr) => {
     let price = curr.product.salePrice * curr.quantity;
@@ -72,6 +78,7 @@ export default function CheckoutView({
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((window as any).Razorpay) {
         resolve(true);
         return;
@@ -118,6 +125,7 @@ export default function CheckoutView({
 
       // 3. Setup standard options block for triggering local systems dialog
       const options = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         key: (import.meta as any).env?.VITE_RAZORPAY_KEY_ID || 'rzp_test_mock_sandbox_key',
         amount: orderData.amount,
         currency: orderData.currency,
@@ -139,7 +147,7 @@ export default function CheckoutView({
         theme: {
           color: '#151313',
         },
-        handler: async function (response: any) {
+        handler: async function (response: Record<string, string>) {
           try {
             // Reconcile and secure signature capture details with backend databases
             const syncResponse = await apiFetch('/api/payments/razorpay/webhook', {
@@ -180,6 +188,7 @@ export default function CheckoutView({
               setStep('success');
             }
           } catch (err) {
+            // eslint-disable-next-line no-console
             console.error('Ledger sync failover:', err);
             setStep('success');
           } finally {
@@ -193,13 +202,15 @@ export default function CheckoutView({
         },
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const rzp = new (window as any).Razorpay(options);
-      rzp.on('payment.failed', function (resp: any) {
+      rzp.on('payment.failed', function (resp: { error: { description: string } }) {
         alert(`❌ Transmissal Block: ${resp.error.description}`);
         setIsProcessing(false);
       });
       rzp.open();
-    } catch (e: any) {
+    } catch (e: unknown) {
+      // eslint-disable-next-line no-console
       console.warn('Failover active for sandbox checkout execution', e);
       // Failover elegant simulator logic (useful in sandbox/iframe restrictions or if offline)
       setTimeout(async () => {
@@ -219,6 +230,7 @@ export default function CheckoutView({
             },
           });
         } catch (err) {
+          // eslint-disable-next-line no-console
           console.error('Simulated webhook sync skipped', err);
         }
         setIsProcessing(false);
@@ -705,7 +717,7 @@ export default function CheckoutView({
                   <div className="flex justify-between">
                     <span className="text-[#1A1A1A]/50">REGISTRATION ID:</span>
                     <strong className="text-emerald-800 select-all font-bold">
-                      ARS-{Math.floor(Math.random() * 900000 + 100000)}
+                      {registrationId}
                     </strong>
                   </div>
                 </div>

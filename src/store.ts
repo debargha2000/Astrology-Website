@@ -68,6 +68,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             quantity: 1,
             size: 'standard-unisex',
             personalizedCertification: false,
+            birthDetails: undefined,
           },
         ],
       });

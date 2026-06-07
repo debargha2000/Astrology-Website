@@ -3,20 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {
-  Sparkles,
-  Play,
-  CheckCircle,
-  Moon,
-  Sun,
-  Flame,
-  Wind,
-  HelpCircle,
-  Eye,
-  RefreshCw,
-} from 'lucide-react';
+import { CheckCircle, Moon, Sun, Wind, Play } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import { PRODUCTS, RITUAL_IMAGE } from '../data';
 import { Product } from '../types';
@@ -26,8 +15,17 @@ interface ChargingStationProps {
   onAddToCart: (product: Product) => void;
 }
 
-export default function ChargingStation({ cartProducts, onAddToCart }: ChargingStationProps) {
-  const [selectedProduct, setSelectedProduct] = useState<Product>(PRODUCTS[0]);
+function generateVedicRefNumber(): number {
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  return 100000 + ((array[0] ?? 0) % 800000);
+}
+
+export default function ChargingStation({
+  cartProducts: _cartProducts,
+  onAddToCart: _onAddToCart,
+}: ChargingStationProps) {
+  const [selectedProduct, setSelectedProduct] = useState<Product>(PRODUCTS[0]!);
   const [selectedMantra, setSelectedMantra] = useState<
     'wealth' | 'protection' | 'serenity' | 'focus'
   >('wealth');
@@ -36,7 +34,9 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
   >('idle');
   const [progress, setProgress] = useState(0);
   const [ritualLogs, setRitualLogs] = useState<string[]>([]);
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
+  // Stable reference number generated once per mount
+  const [vedicRefNumber] = useState(generateVedicRefNumber);
 
   const mantras = {
     wealth: {
@@ -61,25 +61,6 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
     },
   };
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    if (ritualState !== 'idle' && ritualState !== 'complete') {
-      interval = setInterval(() => {
-        setProgress((prev) => {
-          const next = prev + 1.5;
-          if (next >= 100) {
-            transitionRitualState();
-            return 0;
-          }
-          return next;
-        });
-      }, 50);
-    }
-
-    return () => clearInterval(interval);
-  }, [ritualState]);
-
   const addLog = (message: string) => {
     setRitualLogs((prev) => [message, ...prev.slice(0, 5)]);
   };
@@ -98,6 +79,26 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
       addLog('✓ Astro-Ritual complete. Holy certificate of Consecration sealed.');
     }
   };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (ritualState !== 'idle' && ritualState !== 'complete') {
+      interval = setInterval(() => {
+        setProgress((prev) => {
+          const next = prev + 1.5;
+          if (next >= 100) {
+            transitionRitualState();
+            return 0;
+          }
+          return next;
+        });
+      }, 50);
+    }
+
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ritualState]);
 
   const startRitual = () => {
     setRitualLogs([]);
@@ -411,9 +412,7 @@ export default function ChargingStation({ cartProducts, onAddToCart }: ChargingS
                         </div>
                         <div className="flex justify-between">
                           <span>Vedic Signature Ref:</span>
-                          <span className="text-white select-all">
-                            STF-{Math.floor(Math.random() * 900000 + 100000)}
-                          </span>
+                          <span className="text-white select-all">STF-{vedicRefNumber}</span>
                         </div>
                       </div>
                     </div>
