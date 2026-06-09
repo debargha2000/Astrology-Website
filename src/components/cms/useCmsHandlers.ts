@@ -1,8 +1,8 @@
 import { doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { useCallback } from 'react';
 
+import { api, ApiError } from '../../lib/api';
 import { handleFirestoreError, OperationType } from '../../lib/firebase';
-import { apiFetch } from '../../services/apiFetch';
 
 import { getAdminToken } from './types';
 import type {
@@ -20,11 +20,8 @@ import type { CmsState } from './useCmsState';
 
 const TOKEN_HEADER = () => ({ Authorization: `Bearer ${getAdminToken()}` });
 
-async function authedFetch(
-  path: string,
-  init: Parameters<typeof apiFetch>[1] = {}
-): Promise<Response> {
-  return apiFetch(path, {
+async function authedFetch<T>(path: string, init: Parameters<typeof api.raw>[1] = {}): Promise<T> {
+  return api.raw<T>(path, {
     ...init,
     headers: {
       ...(init.headers || {}),
@@ -48,7 +45,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   const addTerminalLog = useCallback(
     async (msg: string) => {
       if (!getAdminToken()) return;
-      setTerminalLog((prev) => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev]);
+      const timestamp = new Date().toLocaleTimeString();
+      setTerminalLog((prev) => [{ timestamp, message: msg }, ...prev]);
     },
     [setTerminalLog]
   );
@@ -92,23 +90,22 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
                 .map((z) => z.trim())
                 .filter(Boolean),
         };
-        const res = await authedFetch('/api/products', {
+        await authedFetch('/api/products', {
           method: 'POST',
-          body: JSON.stringify(cleanProduct),
+          body: cleanProduct,
         });
-        if (res.ok) {
-          await authedFetch('/api/website/checkpoints', {
-            method: 'POST',
-            body: JSON.stringify({ title: `AutoBackup: Updated product "${cleanProduct.name}"` }),
-          });
-          notify(`Product "${cleanProduct.name}" synchronized and backup created.`);
-          await loadData();
-        } else {
-          const err = await res.json();
-          notify(`Error saving product: ${err.error}`, 'error');
-        }
+        await authedFetch('/api/website/checkpoints', {
+          method: 'POST',
+          body: { title: `AutoBackup: Updated product "${cleanProduct.name}"` },
+        });
+        notify(`Product "${cleanProduct.name}" synchronized and backup created.`);
+        await loadData();
       } catch (e: unknown) {
-        notify(`Save error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        if (e instanceof ApiError) {
+          notify(`Error saving product: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify(`Save error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -120,19 +117,19 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string, name: string) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/products/${id}`, { method: 'DELETE' });
-        if (res.ok) {
-          await authedFetch('/api/website/checkpoints', {
-            method: 'POST',
-            body: JSON.stringify({ title: `AutoBackup: Deleted product "${name}"` }),
-          });
-          notify(`Product "${name}" deleted.`);
-          await loadData();
-        } else {
-          notify('Failed to delete product.', 'error');
-        }
+        await authedFetch(`/api/products/${id}`, { method: 'DELETE' });
+        await authedFetch('/api/website/checkpoints', {
+          method: 'POST',
+          body: { title: `AutoBackup: Deleted product "${name}"` },
+        });
+        notify(`Product "${name}" deleted.`);
+        await loadData();
       } catch (e: unknown) {
-        notify(`Delete error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        if (e instanceof ApiError) {
+          notify(`Failed to delete product: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify(`Delete error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -144,22 +141,22 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (next: SiteForm) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch('/api/website/content', {
+        await authedFetch('/api/website/content', {
           method: 'POST',
-          body: JSON.stringify(next),
+          body: next,
         });
-        if (res.ok) {
-          await authedFetch('/api/website/checkpoints', {
-            method: 'POST',
-            body: JSON.stringify({ title: 'AutoBackup: Website customization settings updated' }),
-          });
-          notify('Website settings synchronized live and backed up!');
-          await loadData();
-        } else {
-          notify('Failed to update website customization.', 'error');
-        }
+        await authedFetch('/api/website/checkpoints', {
+          method: 'POST',
+          body: { title: 'AutoBackup: Website customization settings updated' },
+        });
+        notify('Website settings synchronized live and backed up!');
+        await loadData();
       } catch (e: unknown) {
-        notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        if (e instanceof ApiError) {
+          notify(`Failed to update website customization: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -172,18 +169,18 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     if (!title) return;
     try {
       setIsLoading(true);
-      const res = await authedFetch('/api/website/checkpoints', {
+      await authedFetch('/api/website/checkpoints', {
         method: 'POST',
-        body: JSON.stringify({ title }),
+        body: { title },
       });
-      if (res.ok) {
-        notify('Manual checkpoint saved!');
-        await loadData();
-      } else {
-        notify('Failed to create checkpoint.', 'error');
-      }
+      notify('Manual checkpoint saved!');
+      await loadData();
     } catch (e: unknown) {
-      notify(`Error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+      if (e instanceof ApiError) {
+        notify(`Failed to create checkpoint: ${e.data?.error || e.message}`, 'error');
+      } else {
+        notify(`Error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -193,17 +190,17 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string, title: string) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/website/checkpoints/${id}/rollback`, {
+        await authedFetch(`/api/website/checkpoints/${id}/rollback`, {
           method: 'POST',
         });
-        if (res.ok) {
-          notify(`Rollback succeeded! Reverted to: ${title}`);
-          await loadData();
-        } else {
-          notify('Failed to execute system rollback.', 'error');
-        }
+        notify(`Rollback succeeded! Reverted to: ${title}`);
+        await loadData();
       } catch (e: unknown) {
-        notify(`Error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        if (e instanceof ApiError) {
+          notify(`Failed to execute system rollback: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify(`Error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -257,14 +254,12 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         return;
       }
 
-      const res = await authedFetch('/api/invoices', {
+      await authedFetch('/api/invoices', {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: payload,
       });
-      if (res.ok) {
-        notify(`Invoice created for ${payload.client}.`);
-        await loadData();
-      }
+      notify(`Invoice created for ${payload.client}.`);
+      await loadData();
     },
     [loadData, requireGoogle, useFirestoreSource, notify]
   );
@@ -273,18 +268,18 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string, updates: Partial<Invoice>) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/invoices/${id}`, {
+        await authedFetch(`/api/invoices/${id}`, {
           method: 'PUT',
-          body: JSON.stringify(updates),
+          body: updates,
         });
-        if (res.ok) {
-          notify('Invoice updated.');
-          await loadData();
-        } else {
-          notify('Failed to update invoice.', 'error');
-        }
+        notify('Invoice updated.');
+        await loadData();
       } catch (e: unknown) {
-        notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        if (e instanceof ApiError) {
+          notify(`Failed to update invoice: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -330,14 +325,12 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         return;
       }
 
-      const res = await authedFetch('/api/vendors', {
+      await authedFetch('/api/vendors', {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: payload,
       });
-      if (res.ok) {
-        notify(`Vendor "${payload.name}" onboarded.`);
-        await loadData();
-      }
+      notify(`Vendor "${payload.name}" onboarded.`);
+      await loadData();
     },
     [loadData, requireGoogle, useFirestoreSource, notify]
   );
@@ -346,18 +339,18 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string, updates: Partial<Vendor>) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/vendors/${id}`, {
+        await authedFetch(`/api/vendors/${id}`, {
           method: 'PUT',
-          body: JSON.stringify(updates),
+          body: updates,
         });
-        if (res.ok) {
-          notify('Vendor updated.');
-          await loadData();
-        } else {
-          notify('Failed to update vendor.', 'error');
-        }
+        notify('Vendor updated.');
+        await loadData();
       } catch (e: unknown) {
-        notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        if (e instanceof ApiError) {
+          notify(`Failed to update vendor: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -394,14 +387,12 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         return;
       }
 
-      const res = await authedFetch('/api/expenses', {
+      await authedFetch('/api/expenses', {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: payload,
       });
-      if (res.ok) {
-        notify(`Expense "${payload.title}" logged.`);
-        await loadData();
-      }
+      notify(`Expense "${payload.title}" logged.`);
+      await loadData();
     },
     [loadData, requireGoogle, useFirestoreSource, notify]
   );
@@ -410,18 +401,18 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string, updates: Partial<Expense>) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/expenses/${id}`, {
+        await authedFetch(`/api/expenses/${id}`, {
           method: 'PUT',
-          body: JSON.stringify(updates),
+          body: updates,
         });
-        if (res.ok) {
-          notify('Expense updated.');
-          await loadData();
-        } else {
-          notify('Failed to update expense.', 'error');
-        }
+        notify('Expense updated.');
+        await loadData();
       } catch (e: unknown) {
-        notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        if (e instanceof ApiError) {
+          notify(`Failed to update expense: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -463,14 +454,12 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         return;
       }
 
-      const res = await authedFetch('/api/tasks', {
+      await authedFetch('/api/tasks', {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: payload,
       });
-      if (res.ok) {
-        notify(`Task created for ${payload.assignee}.`);
-        await loadData();
-      }
+      notify(`Task created for ${payload.assignee}.`);
+      await loadData();
     },
     [loadData, requireGoogle, useFirestoreSource, notify]
   );
@@ -479,18 +468,18 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string, updates: Partial<Task>) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/tasks/${id}`, {
+        await authedFetch(`/api/tasks/${id}`, {
           method: 'PUT',
-          body: JSON.stringify(updates),
+          body: updates,
         });
-        if (res.ok) {
-          notify('Task updated.');
-          await loadData();
-        } else {
-          notify('Failed to update task.', 'error');
-        }
+        notify('Task updated.');
+        await loadData();
       } catch (e: unknown) {
-        notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        if (e instanceof ApiError) {
+          notify(`Failed to update task: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify(`Update error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -529,11 +518,11 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         return;
       }
 
-      const res = await authedFetch(`/api/tasks/${taskId}/status`, {
+      await authedFetch(`/api/tasks/${taskId}/status`, {
         method: 'PUT',
-        body: JSON.stringify({ status: nextStatus }),
+        body: { status: nextStatus },
       });
-      if (res.ok) await loadData();
+      await loadData();
     },
     [loadData, requireGoogle, state.tasks, useFirestoreSource]
   );
@@ -542,15 +531,15 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     async (id: string) => {
       try {
         setIsLoading(true);
-        const res = await authedFetch(`/api/tasks/${id}`, { method: 'DELETE' });
-        if (res.ok) {
-          notify('Task deleted.');
-          await loadData();
-        } else {
-          notify('Failed to delete task.', 'error');
-        }
+        await authedFetch(`/api/tasks/${id}`, { method: 'DELETE' });
+        notify('Task deleted.');
+        await loadData();
       } catch (e: unknown) {
-        notify(`Delete error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        if (e instanceof ApiError) {
+          notify(`Failed to delete task: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify(`Delete error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -574,10 +563,16 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         }
         return;
       }
-      const res = await authedFetch(`/api/expenses/${id}`, { method: 'DELETE' });
-      if (res.ok) {
+      try {
+        await authedFetch(`/api/expenses/${id}`, { method: 'DELETE' });
         notify('Expense removed.');
         await loadData();
+      } catch (e: unknown) {
+        if (e instanceof ApiError) {
+          notify(`Failed to remove expense: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify(`Delete error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        }
       }
     },
     [loadData, requireGoogle, useFirestoreSource, notify]
@@ -587,18 +582,11 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
     if (!googleUser) return;
     try {
       setIsLoading(true);
-      const headers = TOKEN_HEADER();
-      const [resInvoices, resVendors, resExpenses, resTasks] = await Promise.all([
-        apiFetch('/api/invoices', { headers }),
-        apiFetch('/api/vendors', { headers }),
-        apiFetch('/api/expenses', { headers }),
-        apiFetch('/api/tasks', { headers }),
-      ]);
       const [dataInvoices, dataVendors, dataExpenses, dataTasks] = await Promise.all([
-        resInvoices.json(),
-        resVendors.json(),
-        resExpenses.json(),
-        resTasks.json(),
+        authedFetch<typeof state.invoices>('/api/invoices'),
+        authedFetch<typeof state.vendors>('/api/vendors'),
+        authedFetch<typeof state.expenses>('/api/expenses'),
+        authedFetch<typeof state.tasks>('/api/tasks'),
       ]);
       for (const inv of dataInvoices) {
         await setDoc(doc(firestoreDb, 'invoices', inv.id), inv).catch((err) =>
@@ -659,16 +647,19 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         status: r.Status || r.status || 'Sent',
         alignment: r.Alignment || r.alignment || 'Universal Alignment',
       }));
-      const res = await authedFetch('/api/invoices/batch', {
-        method: 'POST',
-        body: JSON.stringify({ items }),
-      });
-      if (res.ok) {
-        const data = await res.json();
+      try {
+        const data = await authedFetch<{ count: number }>('/api/invoices/batch', {
+          method: 'POST',
+          body: { items },
+        });
         notify(`Imported ${data.count} invoices.`);
         await loadData();
-      } else {
-        notify('Failed to import invoices.', 'error');
+      } catch (e: unknown) {
+        if (e instanceof ApiError) {
+          notify(`Failed to import invoices: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify('Failed to import invoices.', 'error');
+        }
       }
     },
     [loadData, notify]
@@ -682,16 +673,19 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         amount: parseFloat(r.Amount || r.amount || r['COST (INR)'] || '0') || 0,
         notes: r.Notes || r.notes || '',
       }));
-      const res = await authedFetch('/api/expenses/batch', {
-        method: 'POST',
-        body: JSON.stringify({ items }),
-      });
-      if (res.ok) {
-        const data = await res.json();
+      try {
+        const data = await authedFetch<{ count: number }>('/api/expenses/batch', {
+          method: 'POST',
+          body: { items },
+        });
         notify(`Imported ${data.count} expenses.`);
         await loadData();
-      } else {
-        notify('Failed to import expenses.', 'error');
+      } catch (e: unknown) {
+        if (e instanceof ApiError) {
+          notify(`Failed to import expenses: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify('Failed to import expenses.', 'error');
+        }
       }
     },
     [loadData, notify]
@@ -707,16 +701,19 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         leadTime: r['Lead Time'] || r.leadTime || '5 Days',
         leadGems: r['Lead Gems'] || r.leadGems || 'Crystalline beads',
       }));
-      const res = await authedFetch('/api/vendors/batch', {
-        method: 'POST',
-        body: JSON.stringify({ items }),
-      });
-      if (res.ok) {
-        const data = await res.json();
+      try {
+        const data = await authedFetch<{ count: number }>('/api/vendors/batch', {
+          method: 'POST',
+          body: { items },
+        });
         notify(`Imported ${data.count} vendors.`);
         await loadData();
-      } else {
-        notify('Failed to import vendors.', 'error');
+      } catch (e: unknown) {
+        if (e instanceof ApiError) {
+          notify(`Failed to import vendors: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify('Failed to import vendors.', 'error');
+        }
       }
     },
     [loadData, notify]
@@ -724,16 +721,19 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
 
   const bulkDeleteInvoices = useCallback(
     async (ids: string[]) => {
-      const res = await authedFetch('/api/invoices/batch', {
-        method: 'DELETE',
-        body: JSON.stringify({ ids }),
-      });
-      if (res.ok) {
-        const data = await res.json();
+      try {
+        const data = await authedFetch<{ deleted: number }>('/api/invoices/batch', {
+          method: 'DELETE',
+          body: { ids },
+        });
         notify(`Deleted ${data.deleted} invoices.`);
         await loadData();
-      } else {
-        notify('Failed to batch delete invoices.', 'error');
+      } catch (e: unknown) {
+        if (e instanceof ApiError) {
+          notify(`Failed to batch delete invoices: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify('Failed to batch delete invoices.', 'error');
+        }
       }
     },
     [loadData, notify]
@@ -741,16 +741,19 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
 
   const bulkDeleteExpenses = useCallback(
     async (ids: string[]) => {
-      const res = await authedFetch('/api/expenses/batch', {
-        method: 'DELETE',
-        body: JSON.stringify({ ids }),
-      });
-      if (res.ok) {
-        const data = await res.json();
+      try {
+        const data = await authedFetch<{ deleted: number }>('/api/expenses/batch', {
+          method: 'DELETE',
+          body: { ids },
+        });
         notify(`Deleted ${data.deleted} expenses.`);
         await loadData();
-      } else {
-        notify('Failed to batch delete expenses.', 'error');
+      } catch (e: unknown) {
+        if (e instanceof ApiError) {
+          notify(`Failed to batch delete expenses: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify('Failed to batch delete expenses.', 'error');
+        }
       }
     },
     [loadData, notify]
@@ -767,44 +770,56 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
       const updatedBy = state.googleUser?.email || 'admin';
       const url = entry.id ? `/api/astro-content/${entry.id}` : '/api/astro-content';
       const method = entry.id ? 'PUT' : 'POST';
-      const res = await authedFetch(url, {
-        method,
-        body: JSON.stringify({ ...entry, updatedBy }),
-      });
-      if (res.ok) {
-        const data = await res.json();
+      try {
+        const data = await authedFetch<AstroContent>(url, {
+          method,
+          body: { ...entry, updatedBy },
+        });
         notify(`Saved "${data.title}".`, 'success');
         await loadData();
-        return data as AstroContent;
+        return data;
+      } catch (e: unknown) {
+        if (e instanceof ApiError) {
+          notify(`Error: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify(`Error: ${e instanceof Error ? e.message : String(e)}`, 'error');
+        }
+        return null;
       }
-      const err = await res.json().catch(() => ({ error: 'Save failed' }));
-      notify(`Error: ${err.error}`, 'error');
-      return null;
     },
     [loadData, notify, state.googleUser]
   );
 
   const deleteAstroEntry = useCallback(
     async (id: string, title: string) => {
-      const res = await authedFetch(`/api/astro-content/${id}`, { method: 'DELETE' });
-      if (res.ok) {
+      try {
+        await authedFetch(`/api/astro-content/${id}`, { method: 'DELETE' });
         notify(`Deleted "${title}".`, 'success');
         await loadData();
-      } else {
-        notify('Failed to delete entry.', 'error');
+      } catch (e: unknown) {
+        if (e instanceof ApiError) {
+          notify(`Failed to delete entry: ${e.data?.error || e.message}`, 'error');
+        } else {
+          notify('Failed to delete entry.', 'error');
+        }
       }
     },
     [loadData, notify]
   );
 
   const seedAstroDefaults = useCallback(async () => {
-    const res = await authedFetch('/api/astro-content/bulk-seed', { method: 'POST' });
-    if (res.ok) {
-      const data = await res.json();
+    try {
+      const data = await authedFetch<{ created: number }>('/api/astro-content/bulk-seed', {
+        method: 'POST',
+      });
       notify(`Seeded ${data.created} default interpretations.`, 'success');
       await loadData();
-    } else {
-      notify('Failed to seed defaults.', 'error');
+    } catch (e: unknown) {
+      if (e instanceof ApiError) {
+        notify(`Failed to seed defaults: ${e.data?.error || e.message}`, 'error');
+      } else {
+        notify('Failed to seed defaults.', 'error');
+      }
     }
   }, [loadData, notify]);
 

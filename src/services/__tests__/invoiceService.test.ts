@@ -1,10 +1,24 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import { apiFetch } from '../apiFetch';
+import { api, ApiError } from '../../lib/api';
 import { invoiceService } from '../invoiceService';
 
-vi.mock('../apiFetch', () => ({
-  apiFetch: vi.fn(),
+vi.mock('../../lib/api', () => ({
+  api: {
+    get: vi.fn(),
+    post: vi.fn(),
+    delete: vi.fn(),
+  },
+  ApiError: class extends Error {
+    constructor(
+      message: string,
+      public status: number,
+      public data?: unknown
+    ) {
+      super(message);
+      this.name = 'ApiError';
+    }
+  },
 }));
 
 describe('invoiceService', () => {
@@ -19,21 +33,15 @@ describe('invoiceService', () => {
   describe('getAll', () => {
     it('should fetch all invoices successfully', async () => {
       const mockInvoices = [{ id: 'INV-1', client: 'Test Client', amount: 1000, status: 'Paid' }];
-      vi.mocked(apiFetch).mockResolvedValue({
-        ok: true,
-        json: async () => mockInvoices,
-      } as Response);
+      vi.mocked(api.get).mockResolvedValue(mockInvoices);
 
       const result = await invoiceService.getAll();
       expect(result).toEqual(mockInvoices);
-      expect(apiFetch).toHaveBeenCalledWith('/api/invoices');
+      expect(api.get).toHaveBeenCalledWith('/api/invoices');
     });
 
     it('should throw error when fetch fails', async () => {
-      vi.mocked(apiFetch).mockResolvedValue({
-        ok: false,
-        status: 500,
-      } as Response);
+      vi.mocked(api.get).mockRejectedValue(new ApiError('Failed to fetch invoices', 500));
 
       await expect(invoiceService.getAll()).rejects.toThrow('Failed to fetch invoices: 500');
     });
@@ -50,30 +58,24 @@ describe('invoiceService', () => {
         alignment: 'Test',
       };
       const created = { ...newInvoice, id: 'INV-NEW' };
-      vi.mocked(apiFetch).mockResolvedValue({
-        ok: true,
-        json: async () => created,
-      } as Response);
+      vi.mocked(api.post).mockResolvedValue(created);
 
       const result = await invoiceService.create(newInvoice);
       expect(result).toEqual(created);
-      expect(apiFetch).toHaveBeenCalledWith('/api/invoices', {
-        method: 'POST',
-        body: newInvoice,
-      });
+      expect(api.post).toHaveBeenCalledWith('/api/invoices', newInvoice);
     });
   });
 
   describe('delete', () => {
     it('should delete an invoice', async () => {
-      vi.mocked(apiFetch).mockResolvedValue({ ok: true } as Response);
+      vi.mocked(api.delete).mockResolvedValue(undefined);
 
       await invoiceService.delete('INV-1');
-      expect(apiFetch).toHaveBeenCalledWith('/api/invoices/INV-1', { method: 'DELETE' });
+      expect(api.delete).toHaveBeenCalledWith('/api/invoices/INV-1');
     });
 
     it('should throw on delete failure', async () => {
-      vi.mocked(apiFetch).mockResolvedValue({ ok: false, status: 404 } as Response);
+      vi.mocked(api.delete).mockRejectedValue(new ApiError('Failed to delete invoice', 404));
       await expect(invoiceService.delete('INV-1')).rejects.toThrow('Failed to delete invoice: 404');
     });
   });

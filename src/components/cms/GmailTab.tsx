@@ -1,8 +1,8 @@
 import { Send, X, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
+import { api } from '../../lib/api';
 import { googleSignIn } from '../../lib/firebase';
-import { apiFetch } from '../../services/apiFetch';
 
 import { RichTextEditor } from './RichTextEditor';
 import { GMAIL_TEMPLATES } from './seedData';
@@ -36,13 +36,10 @@ export function GmailTab({ state }: Props) {
       const token = getAdminToken();
       if (!token) return;
       try {
-        const res = await apiFetch('/api/email-records', {
+        const data = await api.get<MailRecord[]>('/api/email-records', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (res.ok) {
-          const data = await res.json();
-          setHistory(data || []);
-        }
+        setHistory(data || []);
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error('Failed to load email history:', e);
@@ -61,19 +58,16 @@ export function GmailTab({ state }: Props) {
     const token = getAdminToken();
     if (!token) return;
     try {
-      const res = await apiFetch('/api/email-records', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
+      const record = await api.post<MailRecord>(
+        '/api/email-records',
+        {
           clientName: 'Staff Dispatcher',
           email,
           subject: subjectLine,
-        }),
-      });
-      if (res.ok) {
-        const record = await res.json();
-        setHistory((prev) => [record, ...prev]);
-      }
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setHistory((prev) => [record, ...prev]);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('Failed to save email record:', e);

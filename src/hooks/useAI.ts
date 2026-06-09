@@ -16,6 +16,7 @@ export interface RecommendationInput {
     style?: 'minimal' | 'statement' | 'spiritual';
     intent?: 'wealth' | 'protection' | 'health' | 'relationships' | 'career' | 'general';
   };
+  [key: string]: unknown;
 }
 
 export interface ChatbotInput {
@@ -27,6 +28,7 @@ export interface ChatbotInput {
     cartItems?: number;
     currentPage?: string;
   };
+  [key: string]: unknown;
 }
 
 export interface ContentGenerationInput {
@@ -36,6 +38,7 @@ export interface ContentGenerationInput {
   tone: 'professional' | 'spiritual' | 'luxury' | 'educational';
   keyPoints: string[];
   maxLength: number;
+  [key: string]: unknown;
 }
 
 export interface AstrologyInsightInput {
@@ -48,6 +51,7 @@ export interface AstrologyInsightInput {
   currentTransits?: string[];
   focusArea: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'specific';
   specificQuestion?: string;
+  [key: string]: unknown;
 }
 
 export function useProductRecommendations() {

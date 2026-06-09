@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--no-deprecation tsx server.ts",
-    "build": "npm run build:frontend && npm run build:server && npm run build:api",
+    "build": "npm run build:schemas && npm run build:frontend && npm run build:server && npm run build:api",
+    "build:schemas": "npm run build --prefix packages/schemas",
     "build:frontend": "vite build",
     "build:server": "esbuild server.ts --bundle --platform=node --format=esm --packages=external --sourcemap --outfile=dist/server.js",
     "build:api": "esbuild api/index.src.ts --bundle --platform=node --format=esm --packages=external --outfile=api/index.js",
@@ -23,6 +24,7 @@
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",
+    "@aurastone/schemas": "file:./packages/schemas",
     "@google-cloud/vertexai": "^1.12.0",
     "@hookform/resolvers": "^5.4.0",
     "@radix-ui/react-avatar": "^1.1.11",
@@ -63,6 +65,7 @@
     "react-router-dom": "^7.17.0",
     "swagger-ui-express": "^5.0.1",
     "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
@@ -74,7 +77,6 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/cookie-parser": "^1.4.8",
     "@types/express": "^4.17.21",
-    "@types/express-rate-limit": "^5.1.3",
     "@types/helmet": "^4.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.10.0",
@@ -101,13 +103,12 @@
     "rollup-plugin-visualizer": "^7.0.1",
     "supertest": "^7.2.2",
     "tailwindcss": "^4.0.0",
-    "tsx": "^4.19.2",
+    "tsx": "^4.22.4",
     "typescript": "^5.7.2",
     "vite": "^6.4.2",
     "vite-plugin-pwa": "^1.3.0",
     "vitest": "^4.1.0",
-    "workbox-window": "^7.4.1",
-    "zod": "^4.4.3"
+    "workbox-window": "^7.4.1"
   },
   "overrides": {
     "esbuild": "^0.25.0",

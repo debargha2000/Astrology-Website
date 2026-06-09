@@ -2,6 +2,7 @@ import type { User } from 'firebase/auth';
 import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { api, ApiError } from '../../lib/api';
 import {
   db as firestoreDb,
   auth as firebaseAuth,
@@ -13,7 +14,6 @@ import {
   handleFirestoreError,
   OperationType,
 } from '../../lib/firebase';
-import { apiFetch } from '../../services/apiFetch';
 import type { Product } from '../../types';
 
 import { DEFAULT_SITE_FORM } from './seedData';
@@ -40,16 +40,23 @@ export function useCmsAuth() {
 
   const exchangeForJwt = useCallback(
     async (user: { email: string | null; uid: string; displayName: string | null }) => {
-      const response = await apiFetch('/api/auth/google-login', {
-        method: 'POST',
-        body: { email: user.email, uid: user.uid, displayName: user.displayName },
-      });
-      const data = await response.json();
-      if (!response.ok || !data.token) {
-        throw new Error(data.error || 'Server validation failed. Access denied.');
+      try {
+        const data = await api.post<{ token: string; error?: string }>('/api/auth/google-login', {
+          email: user.email,
+          uid: user.uid,
+          displayName: user.displayName,
+        });
+        if (!data.token) {
+          throw new Error(data.error || 'Server validation failed. Access denied.');
+        }
+        setAdminToken(data.token);
+        return data.token as string;
+      } catch (error) {
+        if (error instanceof ApiError) {
+          throw new Error(error.data?.error || error.message);
+        }
+        throw error;
       }
-      setAdminToken(data.token);
-      return data.token as string;
     },
     []
   );
@@ -160,7 +167,7 @@ export function useCmsData() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [terminalLog, setTerminalLog] = useState<string[]>([]);
+  const [terminalLog, setTerminalLog] = useState<Array<{ timestamp: string; message: string }>>([]);
   const [productsList, setProductsList] = useState<Product[]>([]);
   const [checkpointsList, setCheckpointsList] = useState<Checkpoint[]>([]);
   const [siteForm, setSiteForm] = useState<SiteForm>(DEFAULT_SITE_FORM);
@@ -204,7 +211,7 @@ export function useCmsData() {
       query(collection(firestoreDb, 'logs'), orderBy('id', 'desc'), limit(10)),
       (snap) => {
         const dataLogs = snap.docs.map((d) => d.data() as { timestamp: string; message: string });
-        setTerminalLog(dataLogs.map((l) => `[${l.timestamp}] ${l.message}`));
+        setTerminalLog(dataLogs);
       },
       (err) => handleFirestoreError(err, OperationType.GET, 'logs')
     );
@@ -245,36 +252,8 @@ export function useCmsData() {
     const token = getAdminToken();
     if (!token) return;
     setIsLoading(true);
-    const headers = { Authorization: `Bearer ${token}` };
 
     try {
-      const [
-        resInvoices,
-        resVendors,
-        resExpenses,
-        resTasks,
-        resLogs,
-        resProducts,
-        resContent,
-        resCheckpoints,
-        resAstro,
-      ] = await Promise.all([
-        apiFetch('/api/invoices', { headers }),
-        apiFetch('/api/vendors', { headers }),
-        apiFetch('/api/expenses', { headers }),
-        apiFetch('/api/tasks', { headers }),
-        apiFetch('/api/logs', { headers }),
-        apiFetch('/api/products', { headers }),
-        apiFetch('/api/website/content', { headers }),
-        apiFetch('/api/website/checkpoints', { headers }),
-        apiFetch('/api/astro-content', { headers }),
-      ]);
-
-      if (resInvoices.status === 401 || resInvoices.status === 403) {
-        clearAdminToken();
-        return;
-      }
-
       const [
         dataInvoices,
         dataVendors,
@@ -286,15 +265,27 @@ export function useCmsData() {
         dataCheckpoints,
         dataAstro,
       ] = await Promise.all([
-        resInvoices.json(),
-        resVendors.json(),
-        resExpenses.json(),
-        resTasks.json(),
-        resLogs.json(),
-        resProducts.json(),
-        resContent.json(),
-        resCheckpoints.json(),
-        resAstro.json(),
+        api.get<typeof invoices>('/api/invoices', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get<typeof vendors>('/api/vendors', { headers: { Authorization: `Bearer ${token}` } }),
+        api.get<typeof expenses>('/api/expenses', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get<typeof tasks>('/api/tasks', { headers: { Authorization: `Bearer ${token}` } }),
+        api.get<typeof terminalLog>('/api/logs', { headers: { Authorization: `Bearer ${token}` } }),
+        api.get<typeof productsList>('/api/products', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get<typeof siteForm>('/api/website/content', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get<typeof checkpointsList>('/api/website/checkpoints', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get<typeof astroContent>('/api/astro-content', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       ]);
 
       setInvoices(dataInvoices || []);
@@ -305,12 +296,12 @@ export function useCmsData() {
       setSiteForm({ ...DEFAULT_SITE_FORM, ...(dataContent || {}) });
       setCheckpointsList(dataCheckpoints || []);
       setAstroContent(dataAstro || []);
-      setTerminalLog(
-        (dataLogs || []).map(
-          (l: { timestamp: string; message: string }) => `[${l.timestamp}] ${l.message}`
-        )
-      );
+      setTerminalLog(dataLogs || []);
     } catch (err) {
+      if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+        clearAdminToken();
+        return;
+      }
       // eslint-disable-next-line no-console
       console.error('Failed to align temple records', err);
     } finally {

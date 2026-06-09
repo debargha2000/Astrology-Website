@@ -11,8 +11,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://checkout.razorpay.com" />
     <link rel="preconnect" href="https://api.razorpay.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://api.razorpay.com" />
     <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -30,6 +28,13 @@
     <meta name="msapplication-TileColor" content="#1C1917" />
     <meta name="msapplication-TileImage" content="/pwa-192x192.png" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
+    <meta property="og:title" content="Aura & Stone | Crystalline Astrology & Signs" />
+    <meta property="og:description" content="Fine crystal jewelry engineered from verified planetary minerals. Cleansed, moon bathed, and programmed to your birth chart." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/pwa-512x512.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Aura & Stone | Crystalline Astrology" />
+    <meta name="twitter:description" content="Fine crystal jewelry engineered from verified planetary minerals." />
     <title>Aura & Stone | Crystalline Astrology & Signs</title>
     <script>
       if ('serviceWorker' in navigator) {
@@ -41,6 +46,14 @@
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <div style="text-align:center;padding:4rem 2rem;background:#1C1917;color:#C5A880;min-height:100vh;display:flex;align-items:center;justify-content:center;">
+        <div>
+          <h1 style="font-size:2rem;margin-bottom:1rem;">Aura & Stone</h1>
+          <p>This application requires JavaScript to be enabled. Please enable JavaScript in your browser settings and reload.</p>
+        </div>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

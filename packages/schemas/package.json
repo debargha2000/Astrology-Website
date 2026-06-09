@@ -1,0 +1,61 @@
+{
+  "name": "@aurastone/schemas",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./product": {
+      "import": "./dist/product.js",
+      "types": "./dist/product.d.ts"
+    },
+    "./invoice": {
+      "import": "./dist/invoice.js",
+      "types": "./dist/invoice.d.ts"
+    },
+    "./vendor": {
+      "import": "./dist/vendor.js",
+      "types": "./dist/vendor.d.ts"
+    },
+    "./expense": {
+      "import": "./dist/expense.js",
+      "types": "./dist/expense.d.ts"
+    },
+    "./task": {
+      "import": "./dist/task.js",
+      "types": "./dist/task.d.ts"
+    },
+    "./websiteContent": {
+      "import": "./dist/websiteContent.js",
+      "types": "./dist/websiteContent.d.ts"
+    },
+    "./astroContent": {
+      "import": "./dist/astroContent.js",
+      "types": "./dist/astroContent.d.ts"
+    },
+    "./checkpoint": {
+      "import": "./dist/checkpoint.js",
+      "types": "./dist/checkpoint.d.ts"
+    },
+    "./auth": {
+      "import": "./dist/auth.js",
+      "types": "./dist/auth.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --declaration --outDir dist",
+    "dev": "tsc --declaration --outDir dist --watch"
+  },
+  "peerDependencies": {
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "zod": "^4.0.0"
+  }
+}

@@ -7,4 +7,5 @@ coverage/
 .env*
 !.env.example
 serviceAccountKey.json
+firebase-applet-config.json
 .vercel

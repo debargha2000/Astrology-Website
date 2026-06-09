@@ -18,7 +18,9 @@
     "paths": {
       "@/*": [
         "./*"
-      ]
+      ],
+      "@aurastone/schemas": ["./packages/schemas/src"],
+      "@aurastone/schemas/*": ["./packages/schemas/src/*"]
     },
     "allowImportingTsExtensions": true,
     "noEmit": true,
@@ -32,6 +34,6 @@
     "noUnusedParameters": false,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src", "server", "vite.config.ts"],
+  "include": ["src", "server", "vite.config.ts", "vitest.config.ts", "packages/schemas/src"],
   "exclude": ["node_modules", "dist"]
 }

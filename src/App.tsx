@@ -9,6 +9,7 @@ const EncyclopediaPage = lazy(() => import('./pages/EncyclopediaPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const CMSPage = lazy(() => import('./pages/CMSPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 function LoadingFallback() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/admin" element={<CMSPage />} />
         <Route path="/cms" element={<CMSPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
   );

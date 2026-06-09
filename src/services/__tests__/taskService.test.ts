@@ -1,10 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { apiFetch } from '../apiFetch';
+import { api } from '../../lib/api';
 import { taskService } from '../taskService';
 
-vi.mock('../apiFetch', () => ({
-  apiFetch: vi.fn(),
+vi.mock('../../lib/api', () => ({
+  api: {
+    get: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+  },
+  ApiError: class extends Error {
+    constructor(
+      message: string,
+      public status: number,
+      public data?: unknown
+    ) {
+      super(message);
+      this.name = 'ApiError';
+    }
+  },
 }));
 
 describe('taskService', () => {
@@ -24,10 +38,7 @@ describe('taskService', () => {
           daysLeft: 1,
         },
       ];
-      vi.mocked(apiFetch).mockResolvedValue({
-        ok: true,
-        json: async () => mockTasks,
-      } as Response);
+      vi.mocked(api.get).mockResolvedValue(mockTasks);
       const result = await taskService.getAll();
       expect(result).toEqual(mockTasks);
     });
@@ -43,10 +54,7 @@ describe('taskService', () => {
         assignee: 'A',
         daysLeft: 1,
       };
-      vi.mocked(apiFetch).mockResolvedValue({
-        ok: true,
-        json: async () => updatedTask,
-      } as Response);
+      vi.mocked(api.put).mockResolvedValue(updatedTask);
       const result = await taskService.updateStatus('T-1', 'Water Cleanse');
       expect(result.status).toBe('Water Cleanse');
     });
@@ -54,9 +62,9 @@ describe('taskService', () => {
 
   describe('delete', () => {
     it('should delete a task', async () => {
-      vi.mocked(apiFetch).mockResolvedValue({ ok: true } as Response);
+      vi.mocked(api.delete).mockResolvedValue(undefined);
       await taskService.delete('T-1');
-      expect(apiFetch).toHaveBeenCalledWith('/api/tasks/T-1', { method: 'DELETE' });
+      expect(api.delete).toHaveBeenCalledWith('/api/tasks/T-1');
     });
   });
 });

@@ -2,27 +2,41 @@
  * Vendor API module
  * Handles all vendor-related backend operations
  */
-import { apiFetch } from './apiFetch';
+import { api, ApiError } from '../lib/api';
+
 import type { Vendor } from './types';
 
 export const vendorService = {
   async getAll(): Promise<Vendor[]> {
-    const response = await apiFetch('/api/vendors');
-    if (!response.ok) throw new Error(`Failed to fetch vendors: ${response.status}`);
-    return response.json();
+    try {
+      return await api.get<Vendor[]>('/api/vendors');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw new Error(`${error.message}: ${error.status}`);
+      }
+      throw error;
+    }
   },
 
   async create(vendor: Omit<Vendor, 'id' | 'rating' | 'status'>): Promise<Vendor> {
-    const response = await apiFetch('/api/vendors', {
-      method: 'POST',
-      body: vendor,
-    });
-    if (!response.ok) throw new Error(`Failed to create vendor: ${response.status}`);
-    return response.json();
+    try {
+      return await api.post<Vendor>('/api/vendors', vendor);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw new Error(`${error.message}: ${error.status}`);
+      }
+      throw error;
+    }
   },
 
   async delete(id: string): Promise<void> {
-    const response = await apiFetch(`/api/vendors/${id}`, { method: 'DELETE' });
-    if (!response.ok) throw new Error(`Failed to delete vendor: ${response.status}`);
+    try {
+      await api.delete(`/api/vendors/${id}`);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw new Error(`${error.message}: ${error.status}`);
+      }
+      throw error;
+    }
   },
 };

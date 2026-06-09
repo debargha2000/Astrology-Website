@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { PRODUCTS, DEFAULT_WEBSITE_CONTENT } from '../../src/data.js';
+import { PRODUCTS, DEFAULT_WEBSITE_CONTENT } from '../../src/data/index.js';
 import { logger } from '../middleware/logging.js';
 import type { AstroContent } from '../schemas/astroContent.js';
 import type { Checkpoint } from '../schemas/checkpoint.js';

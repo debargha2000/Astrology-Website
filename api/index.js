@@ -1,5 +1,6 @@
 // server/app.ts
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 
@@ -9,7 +10,7 @@ import path from "path";
 import admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
 
-// src/data.ts
+// src/data/images.ts
 var getBaseUrl = () => {
   if (typeof window !== "undefined") {
     return window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "/");
@@ -43,6 +44,8 @@ var ZODIAC_SAGITTARIUS_IMAGE = `${IMG}/zodiac_sagittarius_1779999950620.png`;
 var ZODIAC_CAPRICORN_IMAGE = `${IMG}/zodiac_capricorn_1779999980872.png`;
 var ZODIAC_AQUARIUS_IMAGE = `${IMG}/zodiac_aquarius_1780000002499.png`;
 var ZODIAC_PISCES_IMAGE = `${IMG}/zodiac_pisces_1780000023031.png`;
+
+// src/data/products.ts
 var PRODUCTS = [
   {
     id: "money-magnet",
@@ -332,6 +335,8 @@ var PRODUCTS = [
     }
   }
 ];
+
+// src/data/websiteContent.ts
 var DEFAULT_WEBSITE_CONTENT = {
   brandName: "Aura & Stone",
   brandSubtitle: "Crystalline Astrology",
@@ -343,7 +348,7 @@ var DEFAULT_WEBSITE_CONTENT = {
   historyHeadline: "Ancient Sceptred Science Met Minimalist Form",
   historyParagraph1: "Aura & Stone was pioneered in the foothills of Jammu, Kashmir, with a deep, uncompromising mission: to de-mystify ancient Indian gemologies and elevate them to modern standards of luxury, precision, and physical authenticity. Led by three generations of Astro-scholars, we isolate specific minerals (such as green aventurine or Uruguayan amethyst clusters) that possess corresponding atomic frequencies to planetary transit nodes.",
   historyParagraph2: "By merging deep Vedic practices with laboratory testing (refractive indexes, geological hardness, chemical matrix formulas), we construct exquisite jewelry talismans that serve as protective and prosperous energy shields for daily corporate movers.",
-  bannerImage: `${IMG}/aura_stone_hero_banner_1779793774735.png`
+  bannerImage: HERO_IMAGE
 };
 
 // server/middleware/logging.ts
@@ -1539,7 +1544,6 @@ var rateLimiter = null;
 var redisInitAttempted = false;
 var redisInitFailed = false;
 var isTestEnv = process.env.NODE_ENV === "test" || process.env.DISABLE_REDIS_RATE_LIMIT === "true";
-var isDevEnv = process.env.NODE_ENV === "development";
 function initRedisRateLimiter() {
   if (isTestEnv) {
     logger.info("Redis rate limiter disabled in test environment");
@@ -2518,9 +2522,9 @@ function getRepository(collectionName) {
   return createLocalRepository(collectionName);
 }
 
-// server/repositories/InvoiceRepository.ts
+// server/services/domain/InvoiceService.ts
 var COLLECTION = "invoices";
-var invoiceRepository = {
+var invoiceService = {
   async findAll() {
     return getRepository(COLLECTION).findAll();
   },
@@ -2528,56 +2532,44 @@ var invoiceRepository = {
     return getRepository(COLLECTION).findById(id);
   },
   async create(data) {
-    const invoice = {
-      ...data,
-      id: data.id || `INV-2026-${Math.floor(Math.random() * 900 + 100)}`,
-      date: data.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
-      status: data.status || "Sent",
-      alignment: data.alignment || "Universal Alignment"
-    };
-    const created = await getRepository(COLLECTION).create(invoice);
-    logger.info(
-      { invoiceId: created.id, client: created.client, amount: created.amount },
-      "Invoice created"
-    );
+    const created = await getRepository(COLLECTION).create(data);
+    logger.info({ invoiceId: created.id, client: created.client }, "Invoice created");
     return created;
   },
   async update(id, data) {
     const updated = await getRepository(COLLECTION).update(id, data);
     if (updated) {
-      logger.info({ invoiceId: id }, "Invoice updated");
+      logger.info({ invoiceId: id, client: updated.client }, "Invoice updated");
     }
     return updated;
   },
   async delete(id) {
-    const result = await getRepository(COLLECTION).delete(id);
-    if (result) {
-      logger.info({ invoiceId: id }, "Invoice deleted");
+    const repo = getRepository(COLLECTION);
+    const existing = await repo.findById(id);
+    const deleted = await repo.delete(id);
+    if (deleted) {
+      logger.info({ invoiceId: id, client: existing?.client }, "Invoice deleted");
     }
-    return result;
+    return deleted;
   },
   async bulkCreate(items) {
-    const invoices = items.map((item) => ({
-      ...item,
-      id: item.id || `INV-2026-${Math.floor(Math.random() * 900 + 100)}`,
-      date: item.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
-      status: item.status || "Sent",
-      alignment: item.alignment || "Universal Alignment"
-    }));
-    const created = await getRepository(COLLECTION).bulkCreate(invoices);
-    logger.info({ count: created.length }, "Bulk invoices created");
+    const created = await getRepository(COLLECTION).bulkCreate(items);
+    logger.info({ count: created.length }, "Invoices bulk created");
     return created;
   },
   async bulkDelete(ids) {
     const deleted = await getRepository(COLLECTION).bulkDelete(ids);
-    logger.info({ count: deleted }, "Bulk invoices deleted");
+    logger.info({ count: deleted }, "Invoices bulk deleted");
     return deleted;
   }
 };
 
-// server/repositories/VendorRepository.ts
+// server/repositories/InvoiceRepository.ts
+var invoiceRepository = invoiceService;
+
+// server/services/domain/VendorService.ts
 var COLLECTION2 = "vendors";
-var vendorRepository = {
+var vendorService = {
   async findAll() {
     return getRepository(COLLECTION2).findAll();
   },
@@ -2585,51 +2577,50 @@ var vendorRepository = {
     return getRepository(COLLECTION2).findById(id);
   },
   async create(data) {
-    const vendor = {
+    const created = await getRepository(COLLECTION2).create({
       ...data,
-      id: data.id || `VND-${Math.floor(Math.random() * 90 + 300)}`,
-      rating: data.rating || 5,
-      status: data.status || "Approved"
-    };
-    const created = await getRepository(COLLECTION2).create(vendor);
+      rating: 5,
+      status: "Approved"
+    });
     logger.info({ vendorId: created.id, name: created.name }, "Vendor created");
     return created;
   },
   async update(id, data) {
     const updated = await getRepository(COLLECTION2).update(id, data);
     if (updated) {
-      logger.info({ vendorId: id }, "Vendor updated");
+      logger.info({ vendorId: id, name: updated.name }, "Vendor updated");
     }
     return updated;
   },
   async delete(id) {
-    const result = await getRepository(COLLECTION2).delete(id);
-    if (result) {
-      logger.info({ vendorId: id }, "Vendor deleted");
+    const repo = getRepository(COLLECTION2);
+    const existing = await repo.findById(id);
+    const deleted = await repo.delete(id);
+    if (deleted) {
+      logger.info({ vendorId: id, name: existing?.name }, "Vendor deleted");
     }
-    return result;
+    return deleted;
   },
   async bulkCreate(items) {
-    const vendors = items.map((item) => ({
-      ...item,
-      id: item.id || `VND-${Math.floor(Math.random() * 90 + 300)}`,
-      rating: item.rating || 5,
-      status: item.status || "Approved"
-    }));
-    const created = await getRepository(COLLECTION2).bulkCreate(vendors);
-    logger.info({ count: created.length }, "Bulk vendors created");
+    const created = await getRepository(COLLECTION2).bulkCreate(
+      items.map((item) => ({ ...item, rating: 5, status: "Approved" }))
+    );
+    logger.info({ count: created.length }, "Vendors bulk created");
     return created;
   },
   async bulkDelete(ids) {
     const deleted = await getRepository(COLLECTION2).bulkDelete(ids);
-    logger.info({ count: deleted }, "Bulk vendors deleted");
+    logger.info({ count: deleted }, "Vendors bulk deleted");
     return deleted;
   }
 };
 
-// server/repositories/ExpenseRepository.ts
+// server/repositories/VendorRepository.ts
+var vendorRepository = vendorService;
+
+// server/services/domain/ExpenseService.ts
 var COLLECTION3 = "expenses";
-var expenseRepository = {
+var expenseService = {
   async findAll() {
     return getRepository(COLLECTION3).findAll();
   },
@@ -2637,12 +2628,10 @@ var expenseRepository = {
     return getRepository(COLLECTION3).findById(id);
   },
   async create(data) {
-    const expense = {
+    const created = await getRepository(COLLECTION3).create({
       ...data,
-      id: data.id || `EXP-${Math.floor(Math.random() * 90 + 100)}`,
-      date: data.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0]
-    };
-    const created = await getRepository(COLLECTION3).create(expense);
+      date: (/* @__PURE__ */ new Date()).toISOString().split("T")[0]
+    });
     logger.info(
       { expenseId: created.id, title: created.title, amount: created.amount },
       "Expense created"
@@ -2652,37 +2641,39 @@ var expenseRepository = {
   async update(id, data) {
     const updated = await getRepository(COLLECTION3).update(id, data);
     if (updated) {
-      logger.info({ expenseId: id }, "Expense updated");
+      logger.info({ expenseId: id, title: updated.title }, "Expense updated");
     }
     return updated;
   },
   async delete(id) {
-    const result = await getRepository(COLLECTION3).delete(id);
-    if (result) {
-      logger.info({ expenseId: id }, "Expense deleted");
+    const repo = getRepository(COLLECTION3);
+    const existing = await repo.findById(id);
+    const deleted = await repo.delete(id);
+    if (deleted) {
+      logger.info({ expenseId: id, title: existing?.title }, "Expense deleted");
     }
-    return result;
+    return deleted;
   },
   async bulkCreate(items) {
-    const expenses = items.map((item) => ({
-      ...item,
-      id: item.id || `EXP-${Math.floor(Math.random() * 90 + 100)}`,
-      date: item.date || (/* @__PURE__ */ new Date()).toISOString().split("T")[0]
-    }));
-    const created = await getRepository(COLLECTION3).bulkCreate(expenses);
-    logger.info({ count: created.length }, "Bulk expenses created");
+    const created = await getRepository(COLLECTION3).bulkCreate(
+      items.map((item) => ({ ...item, date: (/* @__PURE__ */ new Date()).toISOString().split("T")[0] }))
+    );
+    logger.info({ count: created.length }, "Expenses bulk created");
     return created;
   },
   async bulkDelete(ids) {
     const deleted = await getRepository(COLLECTION3).bulkDelete(ids);
-    logger.info({ count: deleted }, "Bulk expenses deleted");
+    logger.info({ count: deleted }, "Expenses bulk deleted");
     return deleted;
   }
 };
 
-// server/repositories/TaskRepository.ts
+// server/repositories/ExpenseRepository.ts
+var expenseRepository = expenseService;
+
+// server/services/domain/TaskService.ts
 var COLLECTION4 = "tasks";
-var taskRepository = {
+var taskService = {
   async findAll() {
     return getRepository(COLLECTION4).findAll();
   },
@@ -2690,11 +2681,7 @@ var taskRepository = {
     return getRepository(COLLECTION4).findById(id);
   },
   async create(data) {
-    const task = {
-      ...data,
-      id: data.id || `TSK-${Math.floor(Math.random() * 90 + 500)}`
-    };
-    const created = await getRepository(COLLECTION4).create(task);
+    const created = await getRepository(COLLECTION4).create(data);
     logger.info(
       { taskId: created.id, title: created.title, assignee: created.assignee },
       "Task created"
@@ -2704,7 +2691,7 @@ var taskRepository = {
   async update(id, data) {
     const updated = await getRepository(COLLECTION4).update(id, data);
     if (updated) {
-      logger.info({ taskId: id }, "Task updated");
+      logger.info({ taskId: id, title: updated.title }, "Task updated");
     }
     return updated;
   },
@@ -2712,31 +2699,32 @@ var taskRepository = {
     return this.update(id, { status });
   },
   async delete(id) {
-    const result = await getRepository(COLLECTION4).delete(id);
-    if (result) {
-      logger.info({ taskId: id }, "Task deleted");
+    const repo = getRepository(COLLECTION4);
+    const existing = await repo.findById(id);
+    const deleted = await repo.delete(id);
+    if (deleted) {
+      logger.info({ taskId: id, title: existing?.title }, "Task deleted");
     }
-    return result;
+    return deleted;
   },
   async bulkCreate(items) {
-    const tasks = items.map((item) => ({
-      ...item,
-      id: item.id || `TSK-${Math.floor(Math.random() * 90 + 500)}`
-    }));
-    const created = await getRepository(COLLECTION4).bulkCreate(tasks);
-    logger.info({ count: created.length }, "Bulk tasks created");
+    const created = await getRepository(COLLECTION4).bulkCreate(items);
+    logger.info({ count: created.length }, "Tasks bulk created");
     return created;
   },
   async bulkDelete(ids) {
     const deleted = await getRepository(COLLECTION4).bulkDelete(ids);
-    logger.info({ count: deleted }, "Bulk tasks deleted");
+    logger.info({ count: deleted }, "Tasks bulk deleted");
     return deleted;
   }
 };
 
-// server/repositories/ProductRepository.ts
+// server/repositories/TaskRepository.ts
+var taskRepository = taskService;
+
+// server/services/domain/ProductService.ts
 var COLLECTION5 = "products";
-var productRepository = {
+var productService = {
   async findAll() {
     const repo = getRepository(COLLECTION5);
     const products = await repo.findAll();
@@ -2752,41 +2740,60 @@ var productRepository = {
     return getRepository(COLLECTION5).findById(id);
   },
   async create(data) {
-    const created = await getRepository(COLLECTION5).create(
-      data
-    );
+    const repo = getRepository(COLLECTION5);
+    const existing = await repo.findById(data.id);
+    if (existing) {
+      return repo.update(data.id, data);
+    }
+    const created = await repo.create(data);
     logger.info({ productId: created.id, name: created.name }, "Product created");
     return created;
   },
   async update(id, data) {
     const updated = await getRepository(COLLECTION5).update(id, data);
     if (updated) {
-      logger.info({ productId: id }, "Product updated");
+      logger.info({ productId: id, name: updated.name }, "Product updated");
     }
     return updated;
   },
   async delete(id) {
-    const result = await getRepository(COLLECTION5).delete(id);
-    if (result) {
-      logger.info({ productId: id }, "Product deleted");
+    const repo = getRepository(COLLECTION5);
+    const existing = await repo.findById(id);
+    const deleted = await repo.delete(id);
+    if (deleted) {
+      logger.info({ productId: id, name: existing?.name }, "Product deleted");
     }
-    return result;
-  },
-  async bulkCreate(items) {
-    const created = await getRepository(COLLECTION5).bulkCreate(items);
-    logger.info({ count: created.length }, "Bulk products created");
-    return created;
-  },
-  async bulkDelete(ids) {
-    const deleted = await getRepository(COLLECTION5).bulkDelete(ids);
-    logger.info({ count: deleted }, "Bulk products deleted");
     return deleted;
+  },
+  async save(product) {
+    const fdb = getFirestoreDB2();
+    if (fdb) {
+      try {
+        await fdb.collection(COLLECTION5).doc(product.id).set(product);
+        logger.info({ productId: product.id, name: product.name }, "Product saved to Firestore");
+        return product;
+      } catch (e) {
+        logger.error(
+          { err: e, productId: product.id },
+          "Firestore saveProduct error, falling back to local"
+        );
+      }
+    }
+    const repo = getRepository(COLLECTION5);
+    const existing = await repo.findById(product.id);
+    if (existing) {
+      return repo.update(product.id, product);
+    }
+    return repo.create(product);
   }
 };
 
-// server/repositories/WebsiteContentRepository.ts
+// server/repositories/ProductRepository.ts
+var productRepository = productService;
+
+// server/services/domain/WebsiteContentService.ts
 var COLLECTION6 = "websiteContent";
-var websiteContentRepository = {
+var websiteContentService = {
   async findAll() {
     const repo = getRepository(COLLECTION6);
     const content = await repo.findAll();
@@ -2797,6 +2804,7 @@ var websiteContentRepository = {
   },
   async create(data) {
     const created = await getRepository(COLLECTION6).create({
+      ...DEFAULT_WEBSITE_CONTENT,
       ...data,
       id: "homepage"
     });
@@ -2804,25 +2812,42 @@ var websiteContentRepository = {
     return created;
   },
   async update(id, data) {
-    const updated = await getRepository(COLLECTION6).update(id, data);
+    const updated = await getRepository(COLLECTION6).update(
+      id,
+      data
+    );
     if (updated) {
       logger.info({ contentId: id }, "Website content updated");
     }
     return updated;
   },
   async save(data) {
+    const fullData = { ...DEFAULT_WEBSITE_CONTENT, ...data };
+    const fdb = getFirestoreDB2();
+    if (fdb) {
+      try {
+        await fdb.collection(COLLECTION6).doc("homepage").set(fullData);
+        logger.info("Website content saved to Firestore");
+        return fullData;
+      } catch (e) {
+        logger.error({ err: e }, "Firestore saveWebsiteContent error, falling back to local");
+      }
+    }
     const repo = getRepository(COLLECTION6);
     const existing = await repo.findAll();
     if (existing && existing[0]?.id) {
-      return repo.update(existing[0].id, data);
+      return repo.update(existing[0].id, fullData);
     }
-    return repo.create({ ...data, id: "homepage" });
+    return repo.create({ ...fullData, id: "homepage" });
   }
 };
 
-// server/repositories/AstroContentRepository.ts
-var COLLECTION7 = "astro_content";
-var astroContentRepository = {
+// server/repositories/WebsiteContentRepository.ts
+var websiteContentRepository = websiteContentService;
+
+// server/services/domain/AstroContentService.ts
+var COLLECTION7 = "astroContent";
+var astroContentService = {
   async findAll() {
     return getRepository(COLLECTION7).findAll();
   },
@@ -2830,14 +2855,15 @@ var astroContentRepository = {
     return getRepository(COLLECTION7).findById(id);
   },
   async create(data) {
-    const astroContent = {
+    const created = await getRepository(COLLECTION7).create({
       ...data,
-      id: data.id || `astro-${data.type}-${data.key}-${Date.now()}`,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      updatedBy: data.updatedBy || "system"
-    };
-    const created = await getRepository(COLLECTION7).create(astroContent);
-    logger.info({ astroContentId: created.id, type: created.type }, "Astro content created");
+      id: `astro-${data.type}-${data.key}-${Date.now()}`,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    });
+    logger.info(
+      { astroContentId: created.id, type: created.type, key: created.key },
+      "Astro content created"
+    );
     return created;
   },
   async update(id, data) {
@@ -2851,38 +2877,43 @@ var astroContentRepository = {
     return updated;
   },
   async delete(id) {
-    const result = await getRepository(COLLECTION7).delete(id);
-    if (result) {
+    const deleted = await getRepository(COLLECTION7).delete(id);
+    if (deleted) {
       logger.info({ astroContentId: id }, "Astro content deleted");
     }
-    return result;
-  },
-  async bulkCreate(items) {
-    const contents = items.map((item) => ({
-      ...item,
-      id: item.id || `astro-${item.type}-${item.key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-      updatedBy: item.updatedBy || "system"
-    }));
-    const created = await getRepository(COLLECTION7).bulkCreate(contents);
-    logger.info({ count: created.length }, "Bulk astro content created");
-    return created;
-  },
-  async bulkDelete(ids) {
-    const deleted = await getRepository(COLLECTION7).bulkDelete(ids);
-    logger.info({ count: deleted }, "Bulk astro content deleted");
     return deleted;
+  },
+  async bulkCreate(entries) {
+    const created = await getRepository(COLLECTION7).bulkCreate(
+      entries.map((entry) => ({
+        ...entry,
+        id: `astro-${entry.type}-${entry.key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      }))
+    );
+    logger.info({ count: created.length }, "Astro content bulk created");
+    return created;
   }
 };
 
-// server/repositories/LogRepository.ts
-var COLLECTION8 = "terminalLog";
-var logRepository = {
-  async findAll(limit = 10) {
-    const logs = await getRepository(
-      COLLECTION8
-    ).findAll();
-    return logs.slice(0, limit);
+// server/repositories/AstroContentRepository.ts
+var astroContentRepository = astroContentService;
+
+// server/services/domain/LogService.ts
+var COLLECTION8 = "logs";
+var logService = {
+  async findAll() {
+    const fdb = getFirestoreDB2();
+    if (fdb) {
+      try {
+        const snapshot = await fdb.collection(COLLECTION8).orderBy("id", "desc").limit(10).get();
+        return snapshot.docs.map((doc) => doc.data());
+      } catch (e) {
+        logger.error({ err: e }, "Firestore getLogs failure, falling back to local");
+      }
+    }
+    const repo = getRepository(COLLECTION8);
+    return repo.findAll();
   },
   async create(message) {
     const timestamp = (/* @__PURE__ */ new Date()).toLocaleTimeString([], {
@@ -2890,51 +2921,67 @@ var logRepository = {
       minute: "2-digit",
       second: "2-digit"
     });
-    const log = {
-      id: `log-${Date.now()}`,
-      timestamp,
-      message
-    };
-    const created = await getRepository(
-      COLLECTION8
-    ).create(log);
-    return created;
+    const logId = `log-${Date.now()}`;
+    const newLog = { id: logId, timestamp, message };
+    const fdb = getFirestoreDB2();
+    if (fdb) {
+      try {
+        await fdb.collection(COLLECTION8).doc(logId).set(newLog);
+        return newLog;
+      } catch (e) {
+        logger.error({ err: e }, "Firestore addLog failure, falling back to local");
+      }
+    }
+    const repo = getRepository(COLLECTION8);
+    await repo.create(newLog);
+    return newLog;
+  }
+};
+
+// server/repositories/LogRepository.ts
+var logRepository = logService;
+
+// server/services/domain/EmailRecordService.ts
+var COLLECTION9 = "emailRecords";
+var emailRecordService = {
+  async findAll() {
+    const fdb = getFirestoreDB2();
+    if (fdb) {
+      try {
+        const snapshot = await fdb.collection(COLLECTION9).orderBy("id", "desc").limit(50).get();
+        return snapshot.docs.map((doc) => doc.data());
+      } catch (e) {
+        logger.error({ err: e }, "Firestore getEmailRecords failure, falling back to local");
+      }
+    }
+    const repo = getRepository(COLLECTION9);
+    return repo.findAll();
   },
-  async delete(id) {
-    return getRepository(COLLECTION8).delete(id);
+  async create(data) {
+    const id = `email-${Date.now()}`;
+    const newRecord = { ...data, id };
+    const fdb = getFirestoreDB2();
+    if (fdb) {
+      try {
+        await fdb.collection(COLLECTION9).doc(id).set(newRecord);
+        return newRecord;
+      } catch (e) {
+        logger.error({ err: e }, "Firestore addEmailRecord failure, falling back to local");
+      }
+    }
+    const repo = getRepository(COLLECTION9);
+    await repo.create(newRecord);
+    return newRecord;
   }
 };
 
 // server/repositories/EmailRecordRepository.ts
-var COLLECTION9 = "emailRecords";
-var emailRecordRepository = {
-  async findAll(limit = 50) {
-    const records = await getRepository(COLLECTION9).findAll();
-    return records.slice(0, limit);
-  },
-  async create(data) {
-    const record = {
-      ...data,
-      id: data.id || `email-${Date.now()}`,
-      dateStr: data.dateStr || (/* @__PURE__ */ new Date()).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric"
-      })
-    };
-    const created = await getRepository(COLLECTION9).create(record);
-    logger.info({ emailRecordId: created.id, email: created.email }, "Email record created");
-    return created;
-  },
-  async delete(id) {
-    return getRepository(COLLECTION9).delete(id);
-  }
-};
+var emailRecordRepository = emailRecordService;
 
-// server/repositories/CheckpointRepository.ts
+// server/services/domain/CheckpointService.ts
 var COLLECTION10 = "checkpoints";
 var MAX_CHECKPOINTS = 25;
-var checkpointRepository = {
+var checkpointService = {
   async findAll() {
     return getRepository(COLLECTION10).findAll();
   },
@@ -2942,8 +2989,8 @@ var checkpointRepository = {
     return getRepository(COLLECTION10).findById(id);
   },
   async create(title, user) {
-    const websiteContent = await websiteContentRepository.findAll();
-    const products = await productRepository.findAll();
+    const websiteContent = await websiteContentService.findAll();
+    const products = await productService.findAll();
     const checkpoint = {
       id: `chk-${Date.now()}`,
       timestamp: (/* @__PURE__ */ new Date()).toISOString(),
@@ -2962,7 +3009,7 @@ var checkpointRepository = {
     if (!checkpoint) {
       throw new Error(`Checkpoint with ID "${id}" not found`);
     }
-    await websiteContentRepository.save(checkpoint.websiteContent);
+    await websiteContentService.save(checkpoint.websiteContent);
     const repo = getRepository("products");
     const existingProducts = await repo.findAll();
     for (const product of existingProducts) {
@@ -2985,6 +3032,9 @@ var checkpointRepository = {
     return getRepository(COLLECTION10).delete(id);
   }
 };
+
+// server/repositories/CheckpointRepository.ts
+var checkpointRepository = checkpointService;
 
 // server/routes/astro.routes.ts
 var router2 = Router2();
@@ -3085,48 +3135,41 @@ function getAdminEmail() {
   return (process.env.ADMIN_EMAIL || DEFAULT_ADMIN_EMAIL).toLowerCase();
 }
 
-// server/middleware/limiter.ts
-import rateLimit from "express-rate-limit";
-var authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1e3,
-  max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: "Too many authentication attempts. Try again later." }
-});
-var paymentLimiter = rateLimit({
-  windowMs: 15 * 60 * 1e3,
-  max: 30,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: "Too many payment requests. Please slow down." }
-});
+// server/middleware/asyncHandler.ts
+function asyncHandler(fn) {
+  return (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+}
 
 // server/routes/auth.routes.ts
 var router3 = Router3();
-router3.post("/google-login", authLimiter, async (req, res) => {
-  const { email, uid, displayName } = req.body;
-  if (!email) {
-    return res.status(400).json({ error: "Google email coordinate is required." });
-  }
-  const emailLower = email.toLowerCase();
-  if (emailLower !== getAdminEmail()) {
+router3.post(
+  "/google-login",
+  asyncHandler(async (req, res) => {
+    const { email, uid, displayName } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Google email coordinate is required." });
+    }
+    const emailLower = email.toLowerCase();
+    if (emailLower !== getAdminEmail()) {
+      await DB.addLog(
+        `SECURITY AUDIT FAILURE: Unauthorized Google login attempt made by "${emailLower}".`
+      );
+      return res.status(403).json({ error: `Access Denied: ${getAdminEmail()} is the only authorized account.` });
+    }
+    const token = signToken2({
+      id: uid || "google-admin-id",
+      username: emailLower,
+      email: emailLower,
+      role: "admin"
+    });
     await DB.addLog(
-      `SECURITY AUDIT FAILURE: Unauthorized Google login attempt made by "${emailLower}".`
+      `STAFF LOG IN: Google Sign-In completed for "${emailLower}" (${displayName || "N/A"}).`
     );
-    return res.status(403).json({ error: `Access Denied: ${getAdminEmail()} is the only authorized account.` });
-  }
-  const token = signToken2({
-    id: uid || "google-admin-id",
-    username: emailLower,
-    email: emailLower,
-    role: "admin"
-  });
-  await DB.addLog(
-    `STAFF LOG IN: Google Sign-In completed for "${emailLower}" (${displayName || "N/A"}).`
-  );
-  return res.json({ token, role: "admin", username: emailLower });
-});
+    return res.json({ token, role: "admin", username: emailLower });
+  })
+);
 var auth_routes_default = router3;
 
 // server/routes/expense.routes.ts
@@ -3146,34 +3189,38 @@ var expenseBatchCreateSchema = z3.object({
 var expenseBatchDeleteSchema = z3.object({
   ids: z3.array(z3.string().min(1)).min(1)
 });
-router4.get("/", authenticateToken, async (_req, res) => {
-  const expenses = await expenseRepository.findAll();
-  res.json(expenses);
-});
+router4.get(
+  "/",
+  authenticateToken,
+  asyncHandler(async (_req, res) => {
+    const expenses = await expenseRepository.findAll();
+    res.json(expenses);
+  })
+);
 router4.post(
   "/",
   authenticateToken,
   validate(expenseCreateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const expense = await expenseRepository.create(req.body);
     res.status(201).json(expense);
-  }
+  })
 );
 router4.post(
   "/batch",
   authenticateToken,
   validate(expenseBatchCreateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { items } = req.body;
     const created = await expenseRepository.bulkCreate(items);
     res.status(201).json({ count: created.length, items: created });
-  }
+  })
 );
 router4.put(
   "/:id",
   authenticateToken,
   validate(expenseUpdateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json({ error: "Missing expense ID." });
@@ -3185,30 +3232,34 @@ router4.put(
     } else {
       res.status(404).json({ error: "Expense not found." });
     }
-  }
+  })
 );
-router4.delete("/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  if (!id) {
-    res.status(400).json({ error: "Missing expense ID." });
-    return;
-  }
-  const success = await expenseRepository.delete(id);
-  if (success) {
-    res.json({ message: "Expense records successfully archived." });
-  } else {
-    res.status(404).json({ error: "Expense not found." });
-  }
-});
+router4.delete(
+  "/:id",
+  authenticateToken,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Missing expense ID." });
+      return;
+    }
+    const success = await expenseRepository.delete(id);
+    if (success) {
+      res.json({ message: "Expense records successfully archived." });
+    } else {
+      res.status(404).json({ error: "Expense not found." });
+    }
+  })
+);
 router4.delete(
   "/batch",
   authenticateToken,
   validate(expenseBatchDeleteSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { ids } = req.body;
     const deleted = await expenseRepository.bulkDelete(ids);
     res.json({ deleted, total: ids.length });
-  }
+  })
 );
 var expense_routes_default = router4;
 
@@ -3230,34 +3281,38 @@ var invoiceBatchCreateSchema = z4.object({
 var invoiceBatchDeleteSchema = z4.object({
   ids: z4.array(z4.string().min(1)).min(1)
 });
-router5.get("/", authenticateToken, async (_req, res) => {
-  const invoices = await invoiceRepository.findAll();
-  res.json(invoices);
-});
+router5.get(
+  "/",
+  authenticateToken,
+  asyncHandler(async (_req, res) => {
+    const invoices = await invoiceRepository.findAll();
+    res.json(invoices);
+  })
+);
 router5.post(
   "/",
   authenticateToken,
   validate(invoiceCreateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const invoice = await invoiceRepository.create(req.body);
     res.status(201).json(invoice);
-  }
+  })
 );
 router5.post(
   "/batch",
   authenticateToken,
   validate(invoiceBatchCreateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { items } = req.body;
     const created = await invoiceRepository.bulkCreate(items);
     res.status(201).json({ count: created.length, items: created });
-  }
+  })
 );
 router5.put(
   "/:id",
   authenticateToken,
   validate(invoiceUpdateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json({ error: "Missing invoice ID." });
@@ -3269,30 +3324,34 @@ router5.put(
     } else {
       res.status(404).json({ error: "Invoice not found." });
     }
-  }
+  })
 );
-router5.delete("/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  if (!id) {
-    res.status(400).json({ error: "Missing invoice ID." });
-    return;
-  }
-  const success = await invoiceRepository.delete(id);
-  if (success) {
-    res.json({ message: "Invoice successfully pruned." });
-  } else {
-    res.status(404).json({ error: "Invoice not found." });
-  }
-});
+router5.delete(
+  "/:id",
+  authenticateToken,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Missing invoice ID." });
+      return;
+    }
+    const success = await invoiceRepository.delete(id);
+    if (success) {
+      res.json({ message: "Invoice successfully pruned." });
+    } else {
+      res.status(404).json({ error: "Invoice not found." });
+    }
+  })
+);
 router5.delete(
   "/batch",
   authenticateToken,
   validate(invoiceBatchDeleteSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { ids } = req.body;
     const deleted = await invoiceRepository.bulkDelete(ids);
     res.json({ deleted, total: ids.length });
-  }
+  })
 );
 var invoice_routes_default = router5;
 
@@ -3742,139 +3801,145 @@ Aura & Stone Private Ltd.`;
 
 // server/routes/payment.routes.ts
 var router7 = Router7();
-router7.post("/razorpay/order", paymentLimiter, async (req, res) => {
-  const {
-    amount,
-    currency = "INR",
-    receiptEmail,
-    clientName,
-    cartItems
-  } = req.body;
-  if (!amount || amount <= 0) {
-    res.status(400).json({ error: "Total amount is required for setting up order tunnels." });
-    return;
-  }
-  const orderId = "order_" + crypto3.randomBytes(6).toString("hex");
-  const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
-  const razorpaySecret = process.env.RAZORPAY_KEY_SECRET;
-  if (razorpayKeyId && razorpaySecret) {
-    const authString = Buffer.from(`${razorpayKeyId}:${razorpaySecret}`).toString("base64");
-    try {
-      const apiResponse = await fetch("https://api.razorpay.com/v1/orders", {
-        method: "POST",
-        headers: {
-          Authorization: `Basic ${authString}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          amount: Math.round(amount * 100),
-          currency,
-          receipt: "rec_" + Date.now().toString().slice(-6),
-          notes: {
-            clientName,
-            clientEmail: receiptEmail,
-            itemsDescription: cartItems || "High-Precision Consecration Curation Bundle"
-          }
-        })
-      });
-      if (!apiResponse.ok) {
-        throw new Error("Failure during remote Razorpay initialization.");
-      }
-      const orderData = await apiResponse.json();
-      await DB.addLog(`RAZORPAY LIVE: Registered order ${orderData.id} for \u20B9${amount}`);
-      return res.status(201).json(orderData);
-    } catch (err) {
-      logger.error({ err }, "Razorpay processing exception");
-      await DB.addLog(
-        "RAZORPAY EXCEPTION: Live channel failover. Generating sandboxed transaction."
-      );
-    }
-  }
-  await DB.addLog(`RAZORPAY SANDBOX: Allocated checkout reference ${orderId} for \u20B9${amount}`);
-  res.status(201).json({
-    id: orderId,
-    entity: "order",
-    amount: amount * 100,
-    amount_paid: 0,
-    amount_due: amount * 100,
-    currency,
-    receipt: "rec_" + Date.now().toString().slice(-6),
-    status: "created",
-    notes: {
+router7.post(
+  "/razorpay/order",
+  asyncHandler(async (req, res) => {
+    const {
+      amount,
+      currency = "INR",
+      receiptEmail,
       clientName,
-      clientEmail: receiptEmail,
-      itemsDescription: cartItems || "Sandboxed Curation Package"
-    },
-    created_at: Math.floor(Date.now() / 1e3)
-  });
-  return;
-});
-router7.post("/razorpay/webhook", async (req, res) => {
-  const signatureHeader = req.headers["x-razorpay-signature"];
-  const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader;
-  const razorpaySecret = process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET || "sacred_webhook7592_signature";
-  if (!signature) {
-    res.status(400).json({ error: "Missing security signature block." });
-    return;
-  }
-  let isSignatureValid = false;
-  try {
-    const rawBodyBuffer = req.rawBody || Buffer.from(JSON.stringify(req.body));
-    const hmac = crypto3.createHmac("sha256", razorpaySecret);
-    hmac.update(rawBodyBuffer);
-    const expectedSignature = hmac.digest("hex");
-    isSignatureValid = crypto3.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
-    );
-  } catch {
-    isSignatureValid = false;
-  }
-  const isBypassActive = process.env.NODE_ENV !== "production" && signature === "bypass_test_mode";
-  if (!isSignatureValid && !isBypassActive) {
-    await DB.addLog("CRITICAL: Unauthorized signature received on payment webhook.");
-    res.status(403).json({ error: "Signature failure. Connection unauthorized." });
-    return;
-  }
-  const body = req.body;
-  const event = body?.event;
-  const payload = body?.payload;
-  if (event === "payment.captured" || event === "simulated.payment.captured" || isBypassActive) {
-    const paymentEntity = payload?.payment?.entity || {};
-    const razorpayOrderId = paymentEntity.order_id || "order_sandbox_re";
-    const amountPaidInRupees = (paymentEntity.amount || body?.amount || 1e4) / 100;
-    const clientName = paymentEntity.notes?.clientName ?? body?.clientName ?? "Vrishabha Devotee";
-    const clientEmail = paymentEntity.notes?.clientEmail ?? body?.receiptEmail ?? "operations@aurastone.in";
-    const itemNames = paymentEntity.notes?.itemsDescription ?? body?.cartItems ?? "Planetary Crystal Alignment Package";
-    await DB.addLog(
-      `WEBHOOK TRANSACTION VERIFIED: Secured Order ID ${razorpayOrderId} (\u20B9${amountPaidInRupees})`
-    );
-    const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
-    await DB.addInvoice({
-      client: clientName,
-      date: today,
-      item: itemNames,
-      amount: amountPaidInRupees,
-      status: "Paid",
-      alignment: "Secured via Razorpay Secure checkout Gateway"
-    });
-    await DB.addTask({
-      title: `Sanctify crystals for order: ${razorpayOrderId} (${clientName})`,
-      status: "Water Cleanse",
-      priority: "High",
-      assignee: "Pandit Sharma",
-      daysLeft: 3
-    });
-    await sendFulfillmentEmail(clientEmail, clientName, itemNames, razorpayOrderId);
-    res.json({
-      status: "success",
-      message: "Fulfillment sequence synced",
-      orderId: razorpayOrderId
+      cartItems
+    } = req.body;
+    if (!amount || amount <= 0) {
+      res.status(400).json({ error: "Total amount is required for setting up order tunnels." });
+      return;
+    }
+    const orderId = "order_" + crypto3.randomBytes(6).toString("hex");
+    const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
+    const razorpaySecret = process.env.RAZORPAY_KEY_SECRET;
+    if (razorpayKeyId && razorpaySecret) {
+      const authString = Buffer.from(`${razorpayKeyId}:${razorpaySecret}`).toString("base64");
+      try {
+        const apiResponse = await fetch("https://api.razorpay.com/v1/orders", {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${authString}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            amount: Math.round(amount * 100),
+            currency,
+            receipt: "rec_" + Date.now().toString().slice(-6),
+            notes: {
+              clientName,
+              clientEmail: receiptEmail,
+              itemsDescription: cartItems || "High-Precision Consecration Curation Bundle"
+            }
+          })
+        });
+        if (!apiResponse.ok) {
+          throw new Error("Failure during remote Razorpay initialization.");
+        }
+        const orderData = await apiResponse.json();
+        await DB.addLog(`RAZORPAY LIVE: Registered order ${orderData.id} for \u20B9${amount}`);
+        return res.status(201).json(orderData);
+      } catch (err) {
+        logger.error({ err }, "Razorpay processing exception");
+        await DB.addLog(
+          "RAZORPAY EXCEPTION: Live channel failover. Generating sandboxed transaction."
+        );
+      }
+    }
+    await DB.addLog(`RAZORPAY SANDBOX: Allocated checkout reference ${orderId} for \u20B9${amount}`);
+    res.status(201).json({
+      id: orderId,
+      entity: "order",
+      amount: amount * 100,
+      amount_paid: 0,
+      amount_due: amount * 100,
+      currency,
+      receipt: "rec_" + Date.now().toString().slice(-6),
+      status: "created",
+      notes: {
+        clientName,
+        clientEmail: receiptEmail,
+        itemsDescription: cartItems || "Sandboxed Curation Package"
+      },
+      created_at: Math.floor(Date.now() / 1e3)
     });
     return;
-  }
-  res.json({ status: "ignored", event });
-});
+  })
+);
+router7.post(
+  "/razorpay/webhook",
+  asyncHandler(async (req, res) => {
+    const signatureHeader = req.headers["x-razorpay-signature"];
+    const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader;
+    const razorpaySecret = process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET || "sacred_webhook7592_signature";
+    if (!signature) {
+      res.status(400).json({ error: "Missing security signature block." });
+      return;
+    }
+    let isSignatureValid = false;
+    try {
+      const rawBodyBuffer = req.rawBody || Buffer.from(JSON.stringify(req.body));
+      const hmac = crypto3.createHmac("sha256", razorpaySecret);
+      hmac.update(rawBodyBuffer);
+      const expectedSignature = hmac.digest("hex");
+      isSignatureValid = crypto3.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expectedSignature)
+      );
+    } catch {
+      isSignatureValid = false;
+    }
+    const isBypassActive = process.env.NODE_ENV === "development" && signature === "bypass_test_mode";
+    if (!isSignatureValid && !isBypassActive) {
+      await DB.addLog("CRITICAL: Unauthorized signature received on payment webhook.");
+      res.status(403).json({ error: "Signature failure. Connection unauthorized." });
+      return;
+    }
+    const body = req.body;
+    const event = body?.event;
+    const payload = body?.payload;
+    if (event === "payment.captured" || event === "simulated.payment.captured" || isBypassActive) {
+      const paymentEntity = payload?.payment?.entity || {};
+      const razorpayOrderId = paymentEntity.order_id || "order_sandbox_re";
+      const amountPaidInRupees = (paymentEntity.amount || body?.amount || 1e4) / 100;
+      const clientName = paymentEntity.notes?.clientName ?? body?.clientName ?? "Vrishabha Devotee";
+      const clientEmail = paymentEntity.notes?.clientEmail ?? body?.receiptEmail ?? "operations@aurastone.in";
+      const itemNames = paymentEntity.notes?.itemsDescription ?? body?.cartItems ?? "Planetary Crystal Alignment Package";
+      await DB.addLog(
+        `WEBHOOK TRANSACTION VERIFIED: Secured Order ID ${razorpayOrderId} (\u20B9${amountPaidInRupees})`
+      );
+      const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+      await DB.addInvoice({
+        client: clientName,
+        date: today,
+        item: itemNames,
+        amount: amountPaidInRupees,
+        status: "Paid",
+        alignment: "Secured via Razorpay Secure checkout Gateway"
+      });
+      await DB.addTask({
+        title: `Sanctify crystals for order: ${razorpayOrderId} (${clientName})`,
+        status: "Water Cleanse",
+        priority: "High",
+        assignee: "Pandit Sharma",
+        daysLeft: 3
+      });
+      await sendFulfillmentEmail(clientEmail, clientName, itemNames, razorpayOrderId);
+      res.json({
+        status: "success",
+        message: "Fulfillment sequence synced",
+        orderId: razorpayOrderId
+      });
+      return;
+    }
+    res.json({ status: "ignored", event });
+  })
+);
 var payment_routes_default = router7;
 
 // server/routes/product.routes.ts
@@ -3986,26 +4051,30 @@ router9.get("/csrf-token", (req, res) => {
   const token = req.csrfToken?.();
   res.json({ csrfToken: token || "" });
 });
-router9.get("/logs", authenticateToken, async (_req, res) => {
-  const logs = await logRepository.findAll();
-  res.json(logs);
-});
+router9.get(
+  "/logs",
+  authenticateToken,
+  asyncHandler(async (_req, res) => {
+    const logs = await logRepository.findAll();
+    res.json(logs);
+  })
+);
 router9.get(
   "/email-records",
   authenticateToken,
-  async (_req, res) => {
+  asyncHandler(async (_req, res) => {
     const records = await emailRecordRepository.findAll();
     res.json(records);
-  }
+  })
 );
 router9.post(
   "/email-records",
   authenticateToken,
   validate(emailRecordCreateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const record = await emailRecordRepository.create(req.body);
     res.status(201).json(record);
-  }
+  })
 );
 var system_routes_default = router9;
 
@@ -4024,24 +4093,28 @@ var taskUpdateSchema = taskCreateSchema.partial();
 var taskStatusUpdateSchema = z7.object({
   status: z7.enum(["Backlog", "Water Cleanse", "Moon Bath Bathing", "Sealed / Composed"])
 });
-router10.get("/", authenticateToken, async (_req, res) => {
-  const tasks = await taskRepository.findAll();
-  res.json(tasks);
-});
+router10.get(
+  "/",
+  authenticateToken,
+  asyncHandler(async (_req, res) => {
+    const tasks = await taskRepository.findAll();
+    res.json(tasks);
+  })
+);
 router10.post(
   "/",
   authenticateToken,
   validate(taskCreateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const task = await taskRepository.create(req.body);
     res.status(201).json(task);
-  }
+  })
 );
 router10.put(
   "/:id",
   authenticateToken,
   validate(taskUpdateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json({ error: "Missing task ID." });
@@ -4053,13 +4126,13 @@ router10.put(
     } else {
       res.status(404).json({ error: "Task not found." });
     }
-  }
+  })
 );
 router10.put(
   "/:id/status",
   authenticateToken,
   validate(taskStatusUpdateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json({ error: "Missing task ID." });
@@ -4071,21 +4144,25 @@ router10.put(
     } else {
       res.status(404).json({ error: "Task not found." });
     }
-  }
+  })
 );
-router10.delete("/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  if (!id) {
-    res.status(400).json({ error: "Missing task ID." });
-    return;
-  }
-  const success = await taskRepository.delete(id);
-  if (success) {
-    res.json({ message: "Task resolved/archived." });
-  } else {
-    res.status(404).json({ error: "Task not found." });
-  }
-});
+router10.delete(
+  "/:id",
+  authenticateToken,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Missing task ID." });
+      return;
+    }
+    const success = await taskRepository.delete(id);
+    if (success) {
+      res.json({ message: "Task resolved/archived." });
+    } else {
+      res.status(404).json({ error: "Task not found." });
+    }
+  })
+);
 var task_routes_default = router10;
 
 // server/routes/vendor.routes.ts
@@ -4107,34 +4184,38 @@ var vendorUpdateSchema = vendorCreateSchema.partial().extend({
 var vendorBatchCreateSchema = z8.object({
   items: z8.array(vendorCreateSchema).min(1)
 });
-router11.get("/", authenticateToken, async (_req, res) => {
-  const vendors = await vendorRepository.findAll();
-  res.json(vendors);
-});
+router11.get(
+  "/",
+  authenticateToken,
+  asyncHandler(async (_req, res) => {
+    const vendors = await vendorRepository.findAll();
+    res.json(vendors);
+  })
+);
 router11.post(
   "/",
   authenticateToken,
   validate(vendorCreateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const vendor = await vendorRepository.create(req.body);
     res.status(201).json(vendor);
-  }
+  })
 );
 router11.post(
   "/batch",
   authenticateToken,
   validate(vendorBatchCreateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { items } = req.body;
     const created = await vendorRepository.bulkCreate(items);
     res.status(201).json({ count: created.length, items: created });
-  }
+  })
 );
 router11.put(
   "/:id",
   authenticateToken,
   validate(vendorUpdateSchema),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json({ error: "Missing vendor ID." });
@@ -4146,21 +4227,25 @@ router11.put(
     } else {
       res.status(404).json({ error: "Vendor not found." });
     }
-  }
+  })
 );
-router11.delete("/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  if (!id) {
-    res.status(400).json({ error: "Missing vendor ID." });
-    return;
-  }
-  const success = await vendorRepository.delete(id);
-  if (success) {
-    res.json({ message: "Vendor registration successfully suspended." });
-  } else {
-    res.status(404).json({ error: "Vendor not found." });
-  }
-});
+router11.delete(
+  "/:id",
+  authenticateToken,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Missing vendor ID." });
+      return;
+    }
+    const success = await vendorRepository.delete(id);
+    if (success) {
+      res.json({ message: "Vendor registration successfully suspended." });
+    } else {
+      res.status(404).json({ error: "Vendor not found." });
+    }
+  })
+);
 var vendor_routes_default = router11;
 
 // server/routes/website.routes.ts
@@ -4257,6 +4342,28 @@ var website_routes_default = router12;
 
 // server/app.ts
 var app = express();
+var allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:3001",
+  process.env.APP_URL,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : void 0
+].filter(Boolean);
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"]
+  })
+);
 var isDev = process.env.NODE_ENV !== "production";
 app.use(
   helmet({
@@ -4368,7 +4475,3 @@ var index_src_default = app_default;
 export {
   index_src_default as default
 };
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */

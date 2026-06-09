@@ -1,10 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { apiFetch } from '../apiFetch';
+import { api, ApiError } from '../../lib/api';
 import { authService } from '../authService';
 
-vi.mock('../apiFetch', () => ({
-  apiFetch: vi.fn(),
+vi.mock('../../lib/api', () => ({
+  api: {
+    post: vi.fn(),
+  },
+  ApiError: class extends Error {
+    constructor(
+      message: string,
+      public status: number,
+      public data?: unknown
+    ) {
+      super(message);
+      this.name = 'ApiError';
+    }
+  },
 }));
 
 describe('authService', () => {
@@ -15,10 +27,7 @@ describe('authService', () => {
   describe('googleLogin', () => {
     it('should login successfully with valid credentials', async () => {
       const mockResponse = { token: 'jwt-token', role: 'admin', username: 'test@test.com' };
-      vi.mocked(apiFetch).mockResolvedValue({
-        ok: true,
-        json: async () => mockResponse,
-      } as Response);
+      vi.mocked(api.post).mockResolvedValue(mockResponse);
 
       const result = await authService.googleLogin({
         email: 'test@test.com',
@@ -29,10 +38,9 @@ describe('authService', () => {
     });
 
     it('should throw on authentication failure', async () => {
-      vi.mocked(apiFetch).mockResolvedValue({
-        ok: false,
-        json: async () => ({ error: 'Access Denied' }),
-      } as Response);
+      vi.mocked(api.post).mockRejectedValue(
+        new ApiError('Access Denied', 403, { error: 'Access Denied' })
+      );
 
       await expect(
         authService.googleLogin({ email: 'bad@test.com', uid: 'uid', displayName: 'Bad' })

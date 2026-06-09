@@ -2,7 +2,8 @@
  * Authentication API module
  * Handles user authentication operations
  */
-import { apiFetch } from './apiFetch';
+import { api, ApiError } from '../lib/api';
+
 import type { AuthResponse } from './types';
 
 export const authService = {
@@ -11,14 +12,13 @@ export const authService = {
     uid: string;
     displayName: string;
   }): Promise<AuthResponse> {
-    const response = await apiFetch('/api/auth/google-login', {
-      method: 'POST',
-      body: credentials,
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Authentication failed');
+    try {
+      return await api.post<AuthResponse>('/api/auth/google-login', credentials);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw new Error(error.data?.error || error.message);
+      }
+      throw error;
     }
-    return response.json();
   },
 };

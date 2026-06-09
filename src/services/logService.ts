@@ -2,13 +2,19 @@
  * Logs API module
  * Handles terminal logs operations
  */
-import { apiFetch } from './apiFetch';
+import { api, ApiError } from '../lib/api';
+
 import type { TerminalLog } from './types';
 
 export const logService = {
   async getAll(): Promise<TerminalLog[]> {
-    const response = await apiFetch('/api/logs');
-    if (!response.ok) throw new Error(`Failed to fetch logs: ${response.status}`);
-    return response.json();
+    try {
+      return await api.get<TerminalLog[]>('/api/logs');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw new Error(`${error.message}: ${error.status}`);
+      }
+      throw error;
+    }
   },
 };

@@ -1,63 +1,107 @@
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
+interface ApiErrorData {
+  error?: string;
+  [key: string]: unknown;
+}
+
 class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public data?: unknown
+    public data?: ApiErrorData
   ) {
     super(message);
     this.name = 'ApiError';
   }
 }
 
-let csrfToken: string | null = null;
+let csrfTokenCache: string | null = null;
+let csrfTokenFetchPromise: Promise<string | null> | null = null;
+
+const UNSAFE_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+
+function isExternalUrl(input: string): boolean {
+  return /^https?:\/\//i.test(input);
+}
 
 async function fetchCsrfToken(): Promise<string | null> {
-  if (csrfToken) return csrfToken;
-  try {
-    const res = await fetch(`${API_BASE}/api/csrf-token`, {
-      credentials: 'include',
-      headers: { Accept: 'application/json' },
-    });
-    if (!res.ok) return null;
-    const data = (await res.json()) as { csrfToken?: string };
-    csrfToken = data.csrfToken ?? null;
-    return csrfToken;
-  } catch {
-    return null;
-  }
+  if (csrfTokenCache) return csrfTokenCache;
+  if (csrfTokenFetchPromise) return csrfTokenFetchPromise;
+
+  csrfTokenFetchPromise = (async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/csrf-token`, {
+        credentials: 'include',
+        headers: { Accept: 'application/json' },
+      });
+      if (!res.ok) return null;
+      const data = (await res.json()) as { csrfToken?: string };
+      csrfTokenCache = data.csrfToken ?? null;
+      return csrfTokenCache;
+    } catch {
+      return null;
+    } finally {
+      csrfTokenFetchPromise = null;
+    }
+  })();
+
+  return csrfTokenFetchPromise;
 }
 
-function clearCsrfToken(): void {
-  csrfToken = null;
+export function clearCsrfToken(): void {
+  csrfTokenCache = null;
 }
 
-async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const method = (options.method || 'GET').toUpperCase();
-  const requiresCsrf = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method);
+export interface ApiRequestOptions extends Omit<RequestInit, 'body' | 'headers'> {
+  body?: BodyInit | Record<string, unknown> | unknown[] | null;
+  headers?: HeadersInit;
+  skipCsrf?: boolean;
+}
 
-  const headers: Record<string, string> = {
+async function request<T>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> {
+  const { body, headers, skipCsrf, ...rest } = options;
+
+  const method = (rest.method || 'GET').toString().toUpperCase();
+  const external = isExternalUrl(endpoint);
+  const requiresCsrf = !external && !skipCsrf && UNSAFE_METHODS.has(method);
+
+  const finalHeaders: Record<string, string> = {
     Accept: 'application/json',
-    ...(options.headers as Record<string, string> | undefined),
+    ...(headers as Record<string, string> | undefined),
   };
 
-  if (options.body && !(options.body instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
+  if (
+    body !== undefined &&
+    body !== null &&
+    !(body instanceof FormData) &&
+    !(body instanceof Blob) &&
+    !finalHeaders['Content-Type']
+  ) {
+    finalHeaders['Content-Type'] = 'application/json';
   }
 
   if (requiresCsrf) {
     const token = await fetchCsrfToken();
     if (token) {
-      headers['X-CSRF-Token'] = token;
+      finalHeaders['X-CSRF-Token'] = token;
     }
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    credentials: 'include',
-    headers,
-  });
+  const finalInit: RequestInit = {
+    ...rest,
+    credentials: rest.credentials ?? 'include',
+    headers: finalHeaders,
+  };
+
+  if (body !== undefined && body !== null) {
+    finalInit.body =
+      typeof body === 'string' || body instanceof FormData || body instanceof Blob
+        ? body
+        : JSON.stringify(body);
+  }
+
+  const response = await fetch(`${API_BASE}${endpoint}`, finalInit);
 
   if (response.status === 403) {
     const text = await response.text();
@@ -74,10 +118,11 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     } catch {
       data = await response.text();
     }
+    const errorData = data as ApiErrorData | undefined;
     throw new ApiError(
-      (data as { error?: string })?.error || `HTTP error ${response.status}`,
+      errorData?.error || `HTTP error ${response.status}`,
       response.status,
-      data
+      errorData
     );
   }
 
@@ -88,15 +133,29 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   return response.json();
 }
 
+type RequestBody = BodyInit | Record<string, unknown> | unknown[] | null | undefined;
+
 export const api = {
-  get: <T>(endpoint: string) => request<T>(endpoint, { method: 'GET' }),
-  post: <T>(endpoint: string, body: unknown) =>
-    request<T>(endpoint, { method: 'POST', body: JSON.stringify(body) }),
-  put: <T>(endpoint: string, body: unknown) =>
-    request<T>(endpoint, { method: 'PUT', body: JSON.stringify(body) }),
-  patch: <T>(endpoint: string, body: unknown) =>
-    request<T>(endpoint, { method: 'PATCH', body: JSON.stringify(body) }),
-  delete: <T>(endpoint: string) => request<T>(endpoint, { method: 'DELETE' }),
+  get: <T>(endpoint: string, options?: Omit<ApiRequestOptions, 'method' | 'body'>) =>
+    request<T>(endpoint, { ...options, method: 'GET' }),
+  post: <T>(
+    endpoint: string,
+    body: RequestBody,
+    options?: Omit<ApiRequestOptions, 'method' | 'body'>
+  ) => request<T>(endpoint, { ...options, method: 'POST', body }),
+  put: <T>(
+    endpoint: string,
+    body: RequestBody,
+    options?: Omit<ApiRequestOptions, 'method' | 'body'>
+  ) => request<T>(endpoint, { ...options, method: 'PUT', body }),
+  patch: <T>(
+    endpoint: string,
+    body: RequestBody,
+    options?: Omit<ApiRequestOptions, 'method' | 'body'>
+  ) => request<T>(endpoint, { ...options, method: 'PATCH', body }),
+  delete: <T>(endpoint: string, options?: Omit<ApiRequestOptions, 'method' | 'body'>) =>
+    request<T>(endpoint, { ...options, method: 'DELETE' }),
+  raw: <T>(endpoint: string, options?: ApiRequestOptions) => request<T>(endpoint, options),
 };
 
-export { ApiError, clearCsrfToken };
+export { ApiError };

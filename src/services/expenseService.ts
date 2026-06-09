@@ -2,27 +2,41 @@
  * Expense API module
  * Handles all expense-related backend operations
  */
-import { apiFetch } from './apiFetch';
+import { api, ApiError } from '../lib/api';
+
 import type { Expense } from './types';
 
 export const expenseService = {
   async getAll(): Promise<Expense[]> {
-    const response = await apiFetch('/api/expenses');
-    if (!response.ok) throw new Error(`Failed to fetch expenses: ${response.status}`);
-    return response.json();
+    try {
+      return await api.get<Expense[]>('/api/expenses');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw new Error(`${error.message}: ${error.status}`);
+      }
+      throw error;
+    }
   },
 
   async create(expense: Omit<Expense, 'id' | 'date'>): Promise<Expense> {
-    const response = await apiFetch('/api/expenses', {
-      method: 'POST',
-      body: expense,
-    });
-    if (!response.ok) throw new Error(`Failed to create expense: ${response.status}`);
-    return response.json();
+    try {
+      return await api.post<Expense>('/api/expenses', expense);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw new Error(`${error.message}: ${error.status}`);
+      }
+      throw error;
+    }
   },
 
   async delete(id: string): Promise<void> {
-    const response = await apiFetch(`/api/expenses/${id}`, { method: 'DELETE' });
-    if (!response.ok) throw new Error(`Failed to delete expense: ${response.status}`);
+    try {
+      await api.delete(`/api/expenses/${id}`);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw new Error(`${error.message}: ${error.status}`);
+      }
+      throw error;
+    }
   },
 };

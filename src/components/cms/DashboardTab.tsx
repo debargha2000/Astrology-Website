@@ -400,7 +400,7 @@ export function DashboardTab({ state, handlers, onNavigate }: Props) {
           <div className="flex-1 font-mono text-[10px] space-y-2 text-paper/80 max-h-36 overflow-y-auto pr-1 scrollbar-none">
             {terminalLog.map((log, i) => (
               <p key={i} className="line-clamp-2 hover:text-gold transition-colors leading-relaxed">
-                {log}
+                {log.message}
               </p>
             ))}
           </div>

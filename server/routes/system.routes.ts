@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 
+import { asyncHandler } from '../middleware/asyncHandler.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
 import { logRepository, emailRecordRepository } from '../repositories/index.js';
@@ -18,28 +19,32 @@ router.get('/csrf-token', (req: Request, res: Response): void => {
   res.json({ csrfToken: token || '' });
 });
 
-router.get('/logs', authenticateToken, async (_req: Request, res: Response): Promise<void> => {
-  const logs = await logRepository.findAll();
-  res.json(logs);
-});
+router.get(
+  '/logs',
+  authenticateToken,
+  asyncHandler(async (_req: Request, res: Response): Promise<void> => {
+    const logs = await logRepository.findAll();
+    res.json(logs);
+  })
+);
 
 router.get(
   '/email-records',
   authenticateToken,
-  async (_req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (_req: Request, res: Response): Promise<void> => {
     const records = await emailRecordRepository.findAll();
     res.json(records);
-  }
+  })
 );
 
 router.post(
   '/email-records',
   authenticateToken,
   validate(emailRecordCreateSchema),
-  async (req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const record = await emailRecordRepository.create(req.body);
     res.status(201).json(record);
-  }
+  })
 );
 
 export default router;

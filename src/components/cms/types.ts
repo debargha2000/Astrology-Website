@@ -18,6 +18,7 @@ export interface Invoice {
   amount: number;
   status: 'Paid' | 'Sent' | 'Overdue' | 'Draft';
   alignment: string;
+  [key: string]: unknown;
 }
 
 export interface Vendor {
@@ -30,6 +31,7 @@ export interface Vendor {
   leadTime: string;
   leadGems: string;
   status: 'Approved' | 'Under Review' | 'Suspended';
+  [key: string]: unknown;
 }
 
 export interface Expense {
@@ -39,6 +41,7 @@ export interface Expense {
   amount: number;
   date: string;
   notes: string;
+  [key: string]: unknown;
 }
 
 export interface Task {
@@ -48,6 +51,7 @@ export interface Task {
   priority: 'Low' | 'Medium' | 'High';
   assignee: string;
   daysLeft: number;
+  [key: string]: unknown;
 }
 
 export interface ProductForm {
@@ -74,6 +78,7 @@ export interface ProductForm {
     origin: string;
     chargeTime: string;
   };
+  [key: string]: unknown;
 }
 
 export interface SiteForm {
@@ -88,6 +93,7 @@ export interface SiteForm {
   historyParagraph1: string;
   historyParagraph2: string;
   bannerImage: string;
+  [key: string]: unknown;
 }
 
 export interface Checkpoint {
@@ -95,6 +101,7 @@ export interface Checkpoint {
   title: string;
   timestamp: string;
   user: string;
+  [key: string]: unknown;
 }
 
 export interface MailRecord {
@@ -103,6 +110,7 @@ export interface MailRecord {
   email: string;
   subject: string;
   dateStr: string;
+  [key: string]: unknown;
 }
 
 export type AstroContentType = 'planet' | 'ascendant' | 'aspect' | 'nakshatra';
@@ -115,6 +123,7 @@ export interface AstroContent {
   interpretation: string;
   updatedAt: string;
   updatedBy: string;
+  [key: string]: unknown;
 }
 
 export const ADMIN_EMAIL = 'debarghapakhira@gmail.com';

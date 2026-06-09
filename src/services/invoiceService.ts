@@ -2,27 +2,34 @@
  * Invoice API module
  * Handles all invoice-related backend operations
  */
-import { apiFetch } from './apiFetch';
+import { api, ApiError } from '../lib/api';
+
 import type { Invoice } from './types';
 
 export const invoiceService = {
   async getAll(): Promise<Invoice[]> {
-    const response = await apiFetch('/api/invoices');
-    if (!response.ok) throw new Error(`Failed to fetch invoices: ${response.status}`);
-    return response.json();
+    try {
+      return await api.get<Invoice[]>('/api/invoices');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw new Error(`${error.message}: ${error.status}`);
+      }
+      throw error;
+    }
   },
 
   async create(invoice: Omit<Invoice, 'id'>): Promise<Invoice> {
-    const response = await apiFetch('/api/invoices', {
-      method: 'POST',
-      body: invoice,
-    });
-    if (!response.ok) throw new Error(`Failed to create invoice: ${response.status}`);
-    return response.json();
+    return api.post<Invoice>('/api/invoices', invoice);
   },
 
   async delete(id: string): Promise<void> {
-    const response = await apiFetch(`/api/invoices/${id}`, { method: 'DELETE' });
-    if (!response.ok) throw new Error(`Failed to delete invoice: ${response.status}`);
+    try {
+      await api.delete(`/api/invoices/${id}`);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw new Error(`${error.message}: ${error.status}`);
+      }
+      throw error;
+    }
   },
 };

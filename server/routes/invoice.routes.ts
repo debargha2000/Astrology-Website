@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 
+import { asyncHandler } from '../middleware/asyncHandler.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
 import { invoiceRepository } from '../repositories/index.js';
@@ -23,37 +24,41 @@ const invoiceBatchDeleteSchema = z.object({
   ids: z.array(z.string().min(1)).min(1),
 });
 
-router.get('/', authenticateToken, async (_req: Request, res: Response): Promise<void> => {
-  const invoices = await invoiceRepository.findAll();
-  res.json(invoices);
-});
+router.get(
+  '/',
+  authenticateToken,
+  asyncHandler(async (_req: Request, res: Response): Promise<void> => {
+    const invoices = await invoiceRepository.findAll();
+    res.json(invoices);
+  })
+);
 
 router.post(
   '/',
   authenticateToken,
   validate(invoiceCreateSchema),
-  async (req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const invoice = await invoiceRepository.create(req.body);
     res.status(201).json(invoice);
-  }
+  })
 );
 
 router.post(
   '/batch',
   authenticateToken,
   validate(invoiceBatchCreateSchema),
-  async (req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { items } = req.body;
     const created = await invoiceRepository.bulkCreate(items);
     res.status(201).json({ count: created.length, items: created });
-  }
+  })
 );
 
 router.put(
   '/:id',
   authenticateToken,
   validate(invoiceUpdateSchema),
-  async (req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json({ error: 'Missing invoice ID.' });
@@ -65,32 +70,36 @@ router.put(
     } else {
       res.status(404).json({ error: 'Invoice not found.' });
     }
-  }
+  })
 );
 
-router.delete('/:id', authenticateToken, async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;
-  if (!id) {
-    res.status(400).json({ error: 'Missing invoice ID.' });
-    return;
-  }
-  const success = await invoiceRepository.delete(id);
-  if (success) {
-    res.json({ message: 'Invoice successfully pruned.' });
-  } else {
-    res.status(404).json({ error: 'Invoice not found.' });
-  }
-});
+router.delete(
+  '/:id',
+  authenticateToken,
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: 'Missing invoice ID.' });
+      return;
+    }
+    const success = await invoiceRepository.delete(id);
+    if (success) {
+      res.json({ message: 'Invoice successfully pruned.' });
+    } else {
+      res.status(404).json({ error: 'Invoice not found.' });
+    }
+  })
+);
 
 router.delete(
   '/batch',
   authenticateToken,
   validate(invoiceBatchDeleteSchema),
-  async (req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { ids } = req.body;
     const deleted = await invoiceRepository.bulkDelete(ids);
     res.json({ deleted, total: ids.length });
-  }
+  })
 );
 
 export default router;

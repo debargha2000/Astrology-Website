@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 
+import { asyncHandler } from '../middleware/asyncHandler.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
 import { taskRepository } from '../repositories/index.js';
@@ -20,26 +21,30 @@ const taskStatusUpdateSchema = z.object({
   status: z.enum(['Backlog', 'Water Cleanse', 'Moon Bath Bathing', 'Sealed / Composed']),
 });
 
-router.get('/', authenticateToken, async (_req: Request, res: Response): Promise<void> => {
-  const tasks = await taskRepository.findAll();
-  res.json(tasks);
-});
+router.get(
+  '/',
+  authenticateToken,
+  asyncHandler(async (_req: Request, res: Response): Promise<void> => {
+    const tasks = await taskRepository.findAll();
+    res.json(tasks);
+  })
+);
 
 router.post(
   '/',
   authenticateToken,
   validate(taskCreateSchema),
-  async (req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const task = await taskRepository.create(req.body);
     res.status(201).json(task);
-  }
+  })
 );
 
 router.put(
   '/:id',
   authenticateToken,
   validate(taskUpdateSchema),
-  async (req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json({ error: 'Missing task ID.' });
@@ -51,14 +56,14 @@ router.put(
     } else {
       res.status(404).json({ error: 'Task not found.' });
     }
-  }
+  })
 );
 
 router.put(
   '/:id/status',
   authenticateToken,
   validate(taskStatusUpdateSchema),
-  async (req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json({ error: 'Missing task ID.' });
@@ -70,21 +75,25 @@ router.put(
     } else {
       res.status(404).json({ error: 'Task not found.' });
     }
-  }
+  })
 );
 
-router.delete('/:id', authenticateToken, async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;
-  if (!id) {
-    res.status(400).json({ error: 'Missing task ID.' });
-    return;
-  }
-  const success = await taskRepository.delete(id);
-  if (success) {
-    res.json({ message: 'Task resolved/archived.' });
-  } else {
-    res.status(404).json({ error: 'Task not found.' });
-  }
-});
+router.delete(
+  '/:id',
+  authenticateToken,
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: 'Missing task ID.' });
+      return;
+    }
+    const success = await taskRepository.delete(id);
+    if (success) {
+      res.json({ message: 'Task resolved/archived.' });
+    } else {
+      res.status(404).json({ error: 'Task not found.' });
+    }
+  })
+);
 
 export default router;

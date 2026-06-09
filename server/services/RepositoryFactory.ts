@@ -3,6 +3,7 @@ import { logger } from '../middleware/logging.js';
 import { getFirestoreDB, isFirebaseActive } from './FirestoreService.js';
 import { localFileService } from './LocalFileService.js';
 
+export { getFirestoreDB, isFirebaseActive };
 export type StorageBackend = 'firestore' | 'local';
 
 let currentBackend: StorageBackend = 'local';

@@ -14,7 +14,7 @@ export function LogsTab({ state }: Props) {
   const filtered = useMemo(() => {
     if (!search.trim()) return terminalLog;
     const q = search.toLowerCase();
-    return terminalLog.filter((line) => line.toLowerCase().includes(q));
+    return terminalLog.filter((line) => line.message.toLowerCase().includes(q));
   }, [terminalLog, search]);
 
   return (
@@ -74,19 +74,15 @@ export function LogsTab({ state }: Props) {
           ) : (
             <div className="divide-y divide-cream">
               {filtered.map((line, idx) => {
-                const timestampMatch = line.match(/^\[(.+?)\]\s*(.*)$/);
-                const timestamp = timestampMatch ? timestampMatch[1] : '';
-                const message = timestampMatch ? timestampMatch[2] : line;
-
                 return (
                   <div
                     key={idx}
                     className="px-5 py-3.5 hover:bg-cream/20 transition-colors flex items-start gap-3 font-mono text-xs"
                   >
                     <span className="text-gold-muted shrink-0 w-36 text-[10px] leading-relaxed">
-                      {timestamp}
+                      {line.timestamp}
                     </span>
-                    <span className="text-ink leading-relaxed break-words">{message}</span>
+                    <span className="text-ink leading-relaxed break-words">{line.message}</span>
                   </div>
                 );
               })}

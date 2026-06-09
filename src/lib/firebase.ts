@@ -10,14 +10,21 @@ import {
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
+function getRequiredEnv(key: string): string {
+  const value = import.meta.env[key];
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+  return value;
+}
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyC_66UiN2PZIlbGB3N_aL1QkXFbbse8mg8',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'aura-and-stone.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'aura-and-stone',
-  storageBucket:
-    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'aura-and-stone.firebasestorage.app',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '1044154610844',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:1044154610844:web:f1e257ede905c15ad0e959',
+  apiKey: getRequiredEnv('VITE_FIREBASE_API_KEY'),
+  authDomain: getRequiredEnv('VITE_FIREBASE_AUTH_DOMAIN'),
+  projectId: getRequiredEnv('VITE_FIREBASE_PROJECT_ID'),
+  storageBucket: getRequiredEnv('VITE_FIREBASE_STORAGE_BUCKET'),
+  messagingSenderId: getRequiredEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
+  appId: getRequiredEnv('VITE_FIREBASE_APP_ID'),
 };
 
 const app: FirebaseApp = initializeApp(firebaseConfig);
@@ -39,11 +46,7 @@ if (appCheckSiteKey) {
     console.warn('Firebase App Check failed to initialize. Continuing without attestation.', e);
   }
 } else if (import.meta.env.PROD) {
-  // eslint-disable-next-line no-console
-  console.warn(
-    'VITE_FIREBASE_APPCHECK_SITE_KEY is unset. ' +
-      'Firebase services will run without App Check attestation in production.'
-  );
+  throw new Error('VITE_FIREBASE_APPCHECK_SITE_KEY is required in production');
 }
 
 export const appCheck = appCheckInstance;

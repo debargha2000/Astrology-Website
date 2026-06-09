@@ -1,17 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
-import { api } from '../lib/api';
+import { api, ApiError } from '../lib/api';
 import {
   googleLoginSchema,
   authResponseSchema,
   type GoogleLogin,
   type AuthResponse,
 } from '../schemas';
-
-const AUTH_KEY = ['auth'] as const;
+import { useAuthStore } from '../store/authStore';
 
 export function useGoogleLogin() {
-  const queryClient = useQueryClient();
+  const login = useAuthStore((state) => state.login);
   return useMutation({
     mutationFn: async (credentials: GoogleLogin) => {
       const validated = googleLoginSchema.parse(credentials);
@@ -19,36 +18,27 @@ export function useGoogleLogin() {
       return authResponseSchema.parse(data) as AuthResponse;
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(AUTH_KEY, data);
-      localStorage.setItem('auth_token', data.token);
+      login(data.token, { email: data.username, role: data.role });
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        throw new Error(error.data?.error || error.message);
+      }
+      throw error;
     },
   });
 }
 
 export function useLogout() {
-  const queryClient = useQueryClient();
+  const logout = useAuthStore((state) => state.logout);
   return useMutation({
     mutationFn: async () => {
-      localStorage.removeItem('auth_token');
-    },
-    onSuccess: () => {
-      queryClient.setQueryData(AUTH_KEY, null);
-      queryClient.clear();
+      logout();
     },
   });
 }
 
 export function useAuth() {
-  return useQuery({
-    queryKey: AUTH_KEY,
-    queryFn: () => {
-      const token = localStorage.getItem('auth_token');
-      return token ? { token } : null;
-    },
-    initialData: () => {
-      const token = localStorage.getItem('auth_token');
-      return token ? { token } : null;
-    },
-    staleTime: Infinity,
-  });
+  const { token, user, isAuthenticated } = useAuthStore();
+  return { token, user, isAuthenticated };
 }

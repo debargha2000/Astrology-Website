@@ -16,7 +16,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect } from 'react';
 
-import { apiFetch } from '../services/apiFetch';
+import { api } from '../lib/api';
 import { CartItem } from '../types';
 
 interface CheckoutViewProps {
@@ -106,22 +106,17 @@ export default function CheckoutView({
       }
 
       // 2. Transmit order parameters to create order tunnel on Backend
-      const orderResponse = await apiFetch('/api/payments/razorpay/order', {
-        method: 'POST',
-        body: {
-          amount: subtotal,
-          currency: 'INR',
-          receiptEmail: email || 'operations@aurastone.in',
-          clientName: name || 'Universal Voyager',
-          cartItems: itemsDescription,
-        },
+      const orderData = await api.post<{
+        id: string;
+        amount: number;
+        currency: string;
+      }>('/api/payments/razorpay/order', {
+        amount: subtotal,
+        currency: 'INR',
+        receiptEmail: email || 'operations@aurastone.in',
+        clientName: name || 'Universal Voyager',
+        cartItems: itemsDescription,
       });
-
-      if (!orderResponse.ok) {
-        throw new Error('Order initialization failed.');
-      }
-
-      const orderData = await orderResponse.json();
 
       // 3. Setup standard options block for triggering local systems dialog
       const options = {
@@ -150,7 +145,7 @@ export default function CheckoutView({
         handler: async function (response: Record<string, string>) {
           try {
             // Reconcile and secure signature capture details with backend databases
-            const syncResponse = await apiFetch('/api/payments/razorpay/webhook', {
+            await api.raw('/api/payments/razorpay/webhook', {
               method: 'POST',
               skipCsrf: true,
               headers: {
@@ -179,14 +174,7 @@ export default function CheckoutView({
               },
             });
 
-            if (syncResponse.ok) {
-              setStep('success');
-            } else {
-              alert(
-                '✓ Payment captured by bank, but backend ledger sync failed. Hand-sealing scheduled manually.'
-              );
-              setStep('success');
-            }
+            setStep('success');
           } catch (err) {
             // eslint-disable-next-line no-console
             console.error('Ledger sync failover:', err);
@@ -215,7 +203,7 @@ export default function CheckoutView({
       // Failover elegant simulator logic (useful in sandbox/iframe restrictions or if offline)
       setTimeout(async () => {
         try {
-          await apiFetch('/api/payments/razorpay/webhook', {
+          await api.raw('/api/payments/razorpay/webhook', {
             method: 'POST',
             skipCsrf: true,
             headers: {

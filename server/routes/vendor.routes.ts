@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 
+import { asyncHandler } from '../middleware/asyncHandler.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
 import { vendorRepository } from '../repositories/index.js';
@@ -25,37 +26,41 @@ const vendorBatchCreateSchema = z.object({
   items: z.array(vendorCreateSchema).min(1),
 });
 
-router.get('/', authenticateToken, async (_req: Request, res: Response): Promise<void> => {
-  const vendors = await vendorRepository.findAll();
-  res.json(vendors);
-});
+router.get(
+  '/',
+  authenticateToken,
+  asyncHandler(async (_req: Request, res: Response): Promise<void> => {
+    const vendors = await vendorRepository.findAll();
+    res.json(vendors);
+  })
+);
 
 router.post(
   '/',
   authenticateToken,
   validate(vendorCreateSchema),
-  async (req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const vendor = await vendorRepository.create(req.body);
     res.status(201).json(vendor);
-  }
+  })
 );
 
 router.post(
   '/batch',
   authenticateToken,
   validate(vendorBatchCreateSchema),
-  async (req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { items } = req.body;
     const created = await vendorRepository.bulkCreate(items);
     res.status(201).json({ count: created.length, items: created });
-  }
+  })
 );
 
 router.put(
   '/:id',
   authenticateToken,
   validate(vendorUpdateSchema),
-  async (req: Request, res: Response): Promise<void> => {
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json({ error: 'Missing vendor ID.' });
@@ -67,21 +72,25 @@ router.put(
     } else {
       res.status(404).json({ error: 'Vendor not found.' });
     }
-  }
+  })
 );
 
-router.delete('/:id', authenticateToken, async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;
-  if (!id) {
-    res.status(400).json({ error: 'Missing vendor ID.' });
-    return;
-  }
-  const success = await vendorRepository.delete(id);
-  if (success) {
-    res.json({ message: 'Vendor registration successfully suspended.' });
-  } else {
-    res.status(404).json({ error: 'Vendor not found.' });
-  }
-});
+router.delete(
+  '/:id',
+  authenticateToken,
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: 'Missing vendor ID.' });
+      return;
+    }
+    const success = await vendorRepository.delete(id);
+    if (success) {
+      res.json({ message: 'Vendor registration successfully suspended.' });
+    } else {
+      res.status(404).json({ error: 'Vendor not found.' });
+    }
+  })
+);
 
 export default router;
