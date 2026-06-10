@@ -220,7 +220,11 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   if (message.startsWith('FATAL:')) {
     return res.status(500).json({ error: message });
   }
-  return res.status(500).json({ error: 'Internal server error.' });
+  const stack = err instanceof Error ? err.stack : undefined;
+  return res.status(500).json({
+    error: `Internal server error: ${message}`,
+    stack,
+  });
 });
 
 export default app;

@@ -4558,7 +4558,11 @@ app.use((err, _req, res, _next) => {
   if (message.startsWith("FATAL:")) {
     return res.status(500).json({ error: message });
   }
-  return res.status(500).json({ error: "Internal server error." });
+  const stack = err instanceof Error ? err.stack : void 0;
+  return res.status(500).json({
+    error: `Internal server error: ${message}`,
+    stack
+  });
 });
 var app_default = app;
 
