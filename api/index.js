@@ -3127,7 +3127,10 @@ router2.post(
 var astro_routes_default = router2;
 
 // server/routes/auth.routes.ts
+import fs4 from "fs";
+import path3 from "path";
 import { Router as Router3 } from "express";
+import { GoogleAuth } from "google-auth-library";
 
 // server/config.ts
 var DEFAULT_ADMIN_EMAIL = "debarghapakhira@gmail.com";
@@ -3144,10 +3147,76 @@ function asyncHandler(fn) {
 
 // server/routes/auth.routes.ts
 var router3 = Router3();
+async function verifyRecaptchaToken(token) {
+  if (process.env.NODE_ENV === "test") {
+    return true;
+  }
+  const envKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  let credentials = null;
+  if (envKey) {
+    try {
+      credentials = JSON.parse(envKey);
+    } catch {
+    }
+  } else {
+    const SERVICE_ACCOUNT_PATH3 = path3.join(process.cwd(), "serviceAccountKey.json");
+    if (fs4.existsSync(SERVICE_ACCOUNT_PATH3)) {
+      try {
+        credentials = JSON.parse(fs4.readFileSync(SERVICE_ACCOUNT_PATH3, "utf-8"));
+      } catch {
+      }
+    }
+  }
+  if (!credentials) {
+    logger.warn("reCAPTCHA verification skipped: Service account not configured.");
+    return true;
+  }
+  const projectId3 = credentials.project_id || "aura-and-stone";
+  try {
+    const auth = new GoogleAuth({
+      credentials: {
+        client_email: credentials.client_email,
+        private_key: credentials.private_key
+      },
+      scopes: ["https://www.googleapis.com/auth/cloud-platform"]
+    });
+    const client = await auth.getClient();
+    const url = `https://recaptchaenterprise.googleapis.com/v1/projects/${projectId3}/assessments`;
+    const response = await client.request({
+      url,
+      method: "POST",
+      data: {
+        event: {
+          token,
+          siteKey: "6LcR3BYtAAAAADCM1FX9t5PQkE7Ebp5ow43b9mhY",
+          expectedAction: "LOGIN"
+        }
+      }
+    });
+    const data = response.data;
+    if (!data.tokenProperties?.valid) {
+      logger.error(`reCAPTCHA token invalid: ${data.tokenProperties?.invalidReason || "N/A"}`);
+      return false;
+    }
+    if (data.tokenProperties.action !== "LOGIN") {
+      logger.error(`reCAPTCHA action mismatch: ${data.tokenProperties.action || "N/A"}`);
+      return false;
+    }
+    const score = data.riskAnalysis?.score ?? 0;
+    if (score < 0.5) {
+      logger.warn(`reCAPTCHA risk score too low: ${score}`);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    logger.error({ err: error }, "reCAPTCHA verification error");
+    return false;
+  }
+}
 router3.post(
   "/google-login",
   asyncHandler(async (req, res) => {
-    const { email, uid, displayName } = req.body;
+    const { email, uid, displayName, recaptchaToken } = req.body;
     if (!email) {
       return res.status(400).json({ error: "Google email coordinate is required." });
     }
@@ -3157,6 +3226,25 @@ router3.post(
         `SECURITY AUDIT FAILURE: Unauthorized Google login attempt made by "${emailLower}".`
       );
       return res.status(403).json({ error: `Access Denied: ${getAdminEmail()} is the only authorized account.` });
+    }
+    if (process.env.NODE_ENV !== "test") {
+      const envKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+      const serviceAccountExists = !!envKey || fs4.existsSync(path3.join(process.cwd(), "serviceAccountKey.json"));
+      if (serviceAccountExists) {
+        if (!recaptchaToken) {
+          await DB.addLog(
+            `SECURITY AUDIT FAILURE: Google login attempt rejected due to missing reCAPTCHA token.`
+          );
+          return res.status(400).json({ error: "reCAPTCHA token is required." });
+        }
+        const isValid = await verifyRecaptchaToken(recaptchaToken);
+        if (!isValid) {
+          await DB.addLog(
+            `SECURITY AUDIT FAILURE: Google login attempt rejected due to invalid/high-risk reCAPTCHA token.`
+          );
+          return res.status(400).json({ error: "reCAPTCHA verification failed. Access denied." });
+        }
+      }
     }
     const token = signToken2({
       id: uid || "google-admin-id",

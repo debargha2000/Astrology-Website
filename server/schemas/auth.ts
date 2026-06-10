@@ -4,6 +4,7 @@ export const googleLoginSchema = z.object({
   email: z.string().email(),
   uid: z.string().min(1),
   displayName: z.string().min(1).max(200),
+  recaptchaToken: z.string().optional(),
 });
 
 export const authResponseSchema = z.object({

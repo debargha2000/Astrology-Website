@@ -31,6 +31,53 @@ import {
   type AstroContent,
 } from './types';
 
+interface RecaptchaExecuteOptions {
+  action: string;
+}
+
+interface RecaptchaEnterprise {
+  ready: (callback: () => void | Promise<void>) => void;
+  execute: (siteKey: string, options: RecaptchaExecuteOptions) => Promise<string>;
+}
+
+interface RecaptchaWindow extends Window {
+  grecaptcha?: {
+    enterprise: RecaptchaEnterprise;
+  };
+}
+
+async function getRecaptchaToken(): Promise<string> {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+  const w = window as unknown as RecaptchaWindow;
+  if (!w.grecaptcha?.enterprise) {
+    return '';
+  }
+  return new Promise<string>((resolve, reject) => {
+    const innerW = window as unknown as RecaptchaWindow;
+    if (!innerW.grecaptcha?.enterprise) {
+      resolve('');
+      return;
+    }
+    innerW.grecaptcha.enterprise.ready(async () => {
+      try {
+        if (!innerW.grecaptcha?.enterprise) {
+          resolve('');
+          return;
+        }
+        const execToken = await innerW.grecaptcha.enterprise.execute(
+          '6LcR3BYtAAAAADCM1FX9t5PQkE7Ebp5ow43b9mhY',
+          { action: 'LOGIN' }
+        );
+        resolve(execToken);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  });
+}
+
 export function useCmsAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!getAdminToken());
   const [authError, setAuthError] = useState<string>('');
@@ -39,12 +86,16 @@ export function useCmsAuth() {
   const [googleToken, setGoogleToken] = useState<string | null>(null);
 
   const exchangeForJwt = useCallback(
-    async (user: { email: string | null; uid: string; displayName: string | null }) => {
+    async (
+      user: { email: string | null; uid: string; displayName: string | null },
+      recaptchaToken?: string
+    ) => {
       try {
         const data = await api.post<{ token: string; error?: string }>('/api/auth/google-login', {
           email: user.email,
           uid: user.uid,
           displayName: user.displayName,
+          recaptchaToken,
         });
         if (!data.token) {
           throw new Error(data.error || 'Server validation failed. Access denied.');
@@ -68,11 +119,16 @@ export function useCmsAuth() {
         setGoogleToken(token);
         if (user.email?.toLowerCase() === ADMIN_EMAIL && !getAdminToken()) {
           try {
-            await exchangeForJwt({
-              email: user.email,
-              uid: user.uid,
-              displayName: user.displayName,
-            });
+            const recaptchaToken = await getRecaptchaToken();
+
+            await exchangeForJwt(
+              {
+                email: user.email,
+                uid: user.uid,
+                displayName: user.displayName,
+              },
+              recaptchaToken
+            );
             setIsAuthenticated(true);
           } catch (e) {
             // eslint-disable-next-line no-console
@@ -107,7 +163,13 @@ export function useCmsAuth() {
         await firebaseLogout();
         return;
       }
-      await exchangeForJwt({ email: user.email, uid: user.uid, displayName: user.displayName });
+
+      const recaptchaToken = await getRecaptchaToken();
+
+      await exchangeForJwt(
+        { email: user.email, uid: user.uid, displayName: user.displayName },
+        recaptchaToken
+      );
       setIsAuthenticated(true);
       setGoogleUser(user);
     } catch (err: unknown) {
@@ -186,6 +248,10 @@ export function useCmsData() {
 
   const setupFirestoreListeners = useCallback(() => {
     cleanupFirestoreListeners();
+
+    if (!firestoreDb) {
+      return;
+    }
 
     const unsub1 = onSnapshot(
       collection(firestoreDb, 'invoices'),
