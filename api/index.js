@@ -4401,7 +4401,7 @@ function getCookieSecret() {
   if (!cookieSecret) {
     if (process.env.NODE_ENV === "production") {
       throw new Error(
-        "COOKIE_SECRET or JWT_SECRET must be set in production. Refusing to start with a default cookie secret."
+        "FATAL: COOKIE_SECRET or JWT_SECRET must be set in production. Refusing to start with a default cookie secret."
       );
     }
     logger.warn(
@@ -4466,6 +4466,9 @@ app.use((err, _req, res, _next) => {
     return res.status(403).json({ error: "CSRF validation failed." });
   }
   logger.error({ err }, "Unhandled server error");
+  if (message.startsWith("FATAL:")) {
+    return res.status(500).json({ error: message });
+  }
   return res.status(500).json({ error: "Internal server error." });
 });
 var app_default = app;
