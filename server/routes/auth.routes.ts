@@ -30,9 +30,14 @@ interface RecaptchaAssessmentResponse {
   };
 }
 
-async function verifyRecaptchaToken(token: string): Promise<boolean> {
+interface VerificationResult {
+  isValid: boolean;
+  reason?: string;
+}
+
+async function verifyRecaptchaToken(token: string): Promise<VerificationResult> {
   if (process.env.NODE_ENV === 'test') {
-    return true; // Bypass in tests
+    return { isValid: true };
   }
 
   // Get project ID & Service Account info
@@ -53,7 +58,7 @@ async function verifyRecaptchaToken(token: string): Promise<boolean> {
 
   if (!credentials) {
     logger.warn('reCAPTCHA verification skipped: Service account not configured.');
-    return true;
+    return { isValid: true };
   }
 
   const projectId = credentials.project_id || 'aura-and-stone';
@@ -84,25 +89,29 @@ async function verifyRecaptchaToken(token: string): Promise<boolean> {
 
     const data = response.data;
     if (!data.tokenProperties?.valid) {
-      logger.error(`reCAPTCHA token invalid: ${data.tokenProperties?.invalidReason || 'N/A'}`);
-      return false;
+      const msg = `reCAPTCHA token invalid: ${data.tokenProperties?.invalidReason || 'Unknown reason'}`;
+      logger.error(msg);
+      return { isValid: false, reason: msg };
     }
 
     if (data.tokenProperties.action !== 'LOGIN') {
-      logger.error(`reCAPTCHA action mismatch: ${data.tokenProperties.action || 'N/A'}`);
-      return false;
+      const msg = `reCAPTCHA action mismatch: expected LOGIN, got ${data.tokenProperties.action || 'none'}`;
+      logger.error(msg);
+      return { isValid: false, reason: msg };
     }
 
     const score = data.riskAnalysis?.score ?? 0;
     if (score < 0.5) {
-      logger.warn(`reCAPTCHA risk score too low: ${score}`);
-      return false;
+      const msg = `reCAPTCHA risk score too low: ${score}`;
+      logger.warn(msg);
+      return { isValid: false, reason: msg };
     }
 
-    return true;
-  } catch (error) {
+    return { isValid: true };
+  } catch (error: unknown) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
     logger.error({ err: error }, 'reCAPTCHA verification error');
-    return false;
+    return { isValid: false, reason: `GCP API Error: ${errorMsg}` };
   }
 }
 
@@ -144,12 +153,14 @@ router.post(
           );
           return res.status(400).json({ error: 'reCAPTCHA token is required.' });
         }
-        const isValid = await verifyRecaptchaToken(recaptchaToken);
-        if (!isValid) {
+        const result = await verifyRecaptchaToken(recaptchaToken);
+        if (!result.isValid) {
           await DB.addLog(
-            `SECURITY AUDIT FAILURE: Google login attempt rejected due to invalid/high-risk reCAPTCHA token.`
+            `SECURITY AUDIT FAILURE: Google login attempt rejected due to invalid/high-risk reCAPTCHA token. Reason: ${result.reason || ''}`
           );
-          return res.status(400).json({ error: 'reCAPTCHA verification failed. Access denied.' });
+          return res
+            .status(400)
+            .json({ error: `reCAPTCHA verification failed. ${result.reason || ''}` });
         }
       }
     }

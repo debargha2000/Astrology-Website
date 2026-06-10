@@ -175,9 +175,8 @@ export function useCmsAuth() {
     } catch (err: unknown) {
       // eslint-disable-next-line no-console
       console.error('Google alignment login failure:', err);
-      setAuthError(
-        'Connection anomaly or authentication error occurred during Google verification.'
-      );
+      const errMsg = err instanceof Error ? err.message : String(err);
+      setAuthError(errMsg);
     } finally {
       setIsAuthLoading(false);
     }
