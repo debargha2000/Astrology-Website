@@ -1,6 +1,6 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, RequestHandler } from 'express';
 import helmet from 'helmet';
 
 import { isFirebaseActive } from './db.js';
@@ -128,38 +128,32 @@ function getCookieSecret(): string {
   return cookieSecret;
 }
 
-// Initialize cookie parser lazily - secrets will be available after dotenv.config()
-// (Don't call at module load time)
-let cookieParserInitialized = false;
-function ensureCookieParser() {
-  if (!cookieParserInitialized) {
-    const finalCookieSecret = getCookieSecret();
-    app.use(cookieParser(finalCookieSecret));
-    cookieParserInitialized = true;
-  }
-}
-
 // CSRF exempt paths (defined before use)
 const CSRF_EXEMPT_PATHS = new Set<string>(['/api/payments/razorpay/webhook']);
 
-// Initialize CSRF protection lazily so secrets are available
-let csrfProtectionInitialized = false;
-function ensureCsrfProtection() {
-  if (!csrfProtectionInitialized) {
-    const csrfProtection = createCsrfProtection({
-      cookieSecret: getCookieSecret(),
-      exemptPaths: CSRF_EXEMPT_PATHS,
-    });
-    app.use(csrfProtection);
-    csrfProtectionInitialized = true;
-  }
-}
+let cookieParserInstance: RequestHandler | null = null;
+let csrfProtectionInstance: RequestHandler | null = null;
 
-// Middleware to ensure cookie parser and CSRF are initialized before any route
+// Middleware to ensure cookie parser and CSRF are initialized and executed for the current request
 app.use((req, res, next) => {
-  ensureCookieParser();
-  ensureCsrfProtection();
-  next();
+  try {
+    if (!cookieParserInstance) {
+      cookieParserInstance = cookieParser(getCookieSecret());
+    }
+    if (!csrfProtectionInstance) {
+      csrfProtectionInstance = createCsrfProtection({
+        cookieSecret: getCookieSecret(),
+        exemptPaths: CSRF_EXEMPT_PATHS,
+      });
+    }
+
+    cookieParserInstance(req, res, (err) => {
+      if (err) return next(err);
+      csrfProtectionInstance!(req, res, next);
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // ==========================================

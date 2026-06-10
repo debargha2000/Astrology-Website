@@ -4411,30 +4411,27 @@ function getCookieSecret() {
   }
   return cookieSecret;
 }
-var cookieParserInitialized = false;
-function ensureCookieParser() {
-  if (!cookieParserInitialized) {
-    const finalCookieSecret = getCookieSecret();
-    app.use(cookieParser(finalCookieSecret));
-    cookieParserInitialized = true;
-  }
-}
 var CSRF_EXEMPT_PATHS = /* @__PURE__ */ new Set(["/api/payments/razorpay/webhook"]);
-var csrfProtectionInitialized = false;
-function ensureCsrfProtection() {
-  if (!csrfProtectionInitialized) {
-    const csrfProtection = createCsrfProtection({
-      cookieSecret: getCookieSecret(),
-      exemptPaths: CSRF_EXEMPT_PATHS
-    });
-    app.use(csrfProtection);
-    csrfProtectionInitialized = true;
-  }
-}
+var cookieParserInstance = null;
+var csrfProtectionInstance = null;
 app.use((req, res, next) => {
-  ensureCookieParser();
-  ensureCsrfProtection();
-  next();
+  try {
+    if (!cookieParserInstance) {
+      cookieParserInstance = cookieParser(getCookieSecret());
+    }
+    if (!csrfProtectionInstance) {
+      csrfProtectionInstance = createCsrfProtection({
+        cookieSecret: getCookieSecret(),
+        exemptPaths: CSRF_EXEMPT_PATHS
+      });
+    }
+    cookieParserInstance(req, res, (err) => {
+      if (err) return next(err);
+      csrfProtectionInstance(req, res, next);
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 initRedisRateLimiter();
 if (isFirebaseActive()) {
