@@ -1,5 +1,5 @@
 import { logger } from '../../middleware/logging.js';
-import type { Vendor } from '../../schemas/vendor.js';
+import type { Vendor } from '../../schemas/index.js';
 import { getRepository } from '../RepositoryFactory.js';
 
 const COLLECTION = 'vendors';

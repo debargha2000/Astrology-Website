@@ -1,5 +1,5 @@
 import { logger } from '../../middleware/logging.js';
-import type { AstroContent } from '../../schemas/astroContent.js';
+import type { AstroContent } from '../../schemas/index.js';
 import { getRepository } from '../RepositoryFactory.js';
 
 const COLLECTION = 'astroContent';

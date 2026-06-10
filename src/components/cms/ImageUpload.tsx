@@ -28,6 +28,11 @@ export function ImageUpload({ value, onChange, folder = 'uploads', label = 'Imag
       return;
     }
 
+    if (!storage) {
+      setError('Firebase storage is not configured.');
+      return;
+    }
+
     setError(null);
     setUploading(true);
     setProgress(0);

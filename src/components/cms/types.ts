@@ -8,7 +8,8 @@ export type CmsSubTab =
   | 'products'
   | 'site'
   | 'logs'
-  | 'astro';
+  | 'astro'
+  | 'scorecard';
 
 export interface Invoice {
   id: string;

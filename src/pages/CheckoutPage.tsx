@@ -9,7 +9,14 @@ import { useNavigationStore } from '../store/navigationStore';
 import { useUIStore } from '../store/uiStore';
 
 export default function CheckoutPage() {
-  const { items: cartItems, clearCart } = useCartStore();
+  const {
+    items: cartItems,
+    clearCart,
+    removeItem,
+    updateQuantity,
+    updateSize,
+    updatePersonalization,
+  } = useCartStore();
   const { isCartOpen, openCart, closeCart, openReviewModal } = useUIStore();
   const { currentPage, setCurrentPage } = useNavigationStore();
 
@@ -42,11 +49,11 @@ export default function CheckoutPage() {
         isOpen={isCartOpen}
         onClose={closeCart}
         cartItems={cartItems}
-        onUpdateQuantity={() => {}}
-        onRemoveItem={() => {}}
-        onUpdateSize={() => {}}
-        onUpdatePersonalization={() => {}}
-        onCheckout={() => {}}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeItem}
+        onUpdateSize={updateSize}
+        onUpdatePersonalization={updatePersonalization}
+        onCheckout={closeCart}
       />
     </motion.div>
   );

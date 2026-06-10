@@ -230,13 +230,14 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
       };
 
       if (useFirestoreSource) {
-        if (!requireGoogle()) return;
+        if (!requireGoogle() || !firestoreDb) return;
+        const db = firestoreDb;
         try {
-          await setDoc(doc(firestoreDb, 'invoices', customId), payload).catch((err) =>
+          await setDoc(doc(db, 'invoices', customId), payload).catch((err) =>
             handleFirestoreError(err, OperationType.CREATE, `invoices/${customId}`)
           );
           const logId = `log-${Date.now()}`;
-          await setDoc(doc(firestoreDb, 'logs', logId), {
+          await setDoc(doc(db, 'logs', logId), {
             id: logId,
             timestamp: new Date().toLocaleTimeString([], {
               hour: '2-digit',
@@ -309,11 +310,11 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         rating: 5,
         status: 'Approved',
       };
-
       if (useFirestoreSource) {
-        if (!requireGoogle()) return;
+        if (!requireGoogle() || !firestoreDb) return;
+        const db = firestoreDb;
         try {
-          await setDoc(doc(firestoreDb, 'vendors', customId), payload).catch((err) =>
+          await setDoc(doc(db, 'vendors', customId), payload).catch((err) =>
             handleFirestoreError(err, OperationType.CREATE, `vendors/${customId}`)
           );
           notify(`Vendor "${payload.name}" onboarded.`);
@@ -373,9 +374,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
       };
 
       if (useFirestoreSource) {
-        if (!requireGoogle()) return;
+        if (!requireGoogle() || !firestoreDb) return;
+        const db = firestoreDb;
         try {
-          await setDoc(doc(firestoreDb, 'expenses', customId), payload).catch((err) =>
+          await setDoc(doc(db, 'expenses', customId), payload).catch((err) =>
             handleFirestoreError(err, OperationType.CREATE, `expenses/${customId}`)
           );
           notify(`Expense "${payload.title}" logged.`);
@@ -440,9 +442,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
       };
 
       if (useFirestoreSource) {
-        if (!requireGoogle()) return;
+        if (!requireGoogle() || !firestoreDb) return;
+        const db = firestoreDb;
         try {
-          await setDoc(doc(firestoreDb, 'tasks', customId), payload).catch((err) =>
+          await setDoc(doc(db, 'tasks', customId), payload).catch((err) =>
             handleFirestoreError(err, OperationType.CREATE, `tasks/${customId}`)
           );
           notify(`Task created for ${payload.assignee}.`);
@@ -505,9 +508,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
       const nextStatus = statuses[nextIdx];
 
       if (useFirestoreSource) {
-        if (!requireGoogle()) return;
+        if (!requireGoogle() || !firestoreDb) return;
+        const db = firestoreDb;
         try {
-          await updateDoc(doc(firestoreDb, 'tasks', taskId), { status: nextStatus }).catch((err) =>
+          await updateDoc(doc(db, 'tasks', taskId), { status: nextStatus }).catch((err) =>
             handleFirestoreError(err, OperationType.UPDATE, `tasks/${taskId}`)
           );
           await loadData();
@@ -550,9 +554,10 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   const deleteExpense = useCallback(
     async (id: string) => {
       if (useFirestoreSource) {
-        if (!requireGoogle()) return;
+        if (!requireGoogle() || !firestoreDb) return;
+        const db = firestoreDb;
         try {
-          await deleteDoc(doc(firestoreDb, 'expenses', id)).catch((err) =>
+          await deleteDoc(doc(db, 'expenses', id)).catch((err) =>
             handleFirestoreError(err, OperationType.DELETE, `expenses/${id}`)
           );
           notify('Expense removed.');
@@ -579,7 +584,8 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
   );
 
   const syncLocalToFirestore = useCallback(async () => {
-    if (!googleUser) return;
+    if (!googleUser || !firestoreDb) return;
+    const db = firestoreDb;
     try {
       setIsLoading(true);
       const [dataInvoices, dataVendors, dataExpenses, dataTasks] = await Promise.all([
@@ -589,27 +595,27 @@ export function useCmsHandlers(state: CmsState, toast?: ToastFn) {
         authedFetch<typeof state.tasks>('/api/tasks'),
       ]);
       for (const inv of dataInvoices) {
-        await setDoc(doc(firestoreDb, 'invoices', inv.id), inv).catch((err) =>
+        await setDoc(doc(db, 'invoices', inv.id), inv).catch((err) =>
           handleFirestoreError(err, OperationType.CREATE, `invoices/${inv.id}`)
         );
       }
       for (const ven of dataVendors) {
-        await setDoc(doc(firestoreDb, 'vendors', ven.id), ven).catch((err) =>
+        await setDoc(doc(db, 'vendors', ven.id), ven).catch((err) =>
           handleFirestoreError(err, OperationType.CREATE, `vendors/${ven.id}`)
         );
       }
       for (const exp of dataExpenses) {
-        await setDoc(doc(firestoreDb, 'expenses', exp.id), exp).catch((err) =>
+        await setDoc(doc(db, 'expenses', exp.id), exp).catch((err) =>
           handleFirestoreError(err, OperationType.CREATE, `expenses/${exp.id}`)
         );
       }
       for (const tsk of dataTasks) {
-        await setDoc(doc(firestoreDb, 'tasks', tsk.id), tsk).catch((err) =>
+        await setDoc(doc(db, 'tasks', tsk.id), tsk).catch((err) =>
           handleFirestoreError(err, OperationType.CREATE, `tasks/${tsk.id}`)
         );
       }
       const logId = `log-${Date.now()}`;
-      await setDoc(doc(firestoreDb, 'logs', logId), {
+      await setDoc(doc(db, 'logs', logId), {
         id: logId,
         timestamp: new Date().toLocaleTimeString([], {
           hour: '2-digit',

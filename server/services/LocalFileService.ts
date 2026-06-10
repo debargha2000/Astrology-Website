@@ -3,14 +3,16 @@ import path from 'path';
 
 import { PRODUCTS, DEFAULT_WEBSITE_CONTENT } from '../../src/data/index.js';
 import { logger } from '../middleware/logging.js';
-import type { AstroContent } from '../schemas/astroContent.js';
-import type { Checkpoint } from '../schemas/checkpoint.js';
-import type { Expense } from '../schemas/expense.js';
-import type { Invoice } from '../schemas/invoice.js';
-import type { Product } from '../schemas/product.js';
-import type { Task } from '../schemas/task.js';
-import type { Vendor } from '../schemas/vendor.js';
-import type { WebsiteContent } from '../schemas/websiteContent.js';
+import type {
+  AstroContent,
+  Checkpoint,
+  Expense,
+  Invoice,
+  Product,
+  Task,
+  Vendor,
+  WebsiteContent,
+} from '../schemas/index.js';
 
 const DB_FILE = path.join(process.cwd(), 'database.json');
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';

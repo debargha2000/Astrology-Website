@@ -1,6 +1,6 @@
 import { DEFAULT_WEBSITE_CONTENT } from '../../../src/data/index.js';
 import { logger } from '../../middleware/logging.js';
-import type { WebsiteContent } from '../../schemas/websiteContent.js';
+import type { WebsiteContent } from '../../schemas/index.js';
 import { getRepository, getFirestoreDB } from '../RepositoryFactory.js';
 
 const COLLECTION = 'websiteContent';

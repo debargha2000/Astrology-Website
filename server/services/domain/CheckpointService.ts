@@ -1,6 +1,5 @@
 import { logger } from '../../middleware/logging.js';
-import type { Product } from '../../schemas/product.js';
-import type { WebsiteContent } from '../../schemas/websiteContent.js';
+import type { Product, WebsiteContent } from '../../schemas/index.js';
 import { getRepository } from '../RepositoryFactory.js';
 
 import { productService } from './ProductService.js';

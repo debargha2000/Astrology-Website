@@ -10,7 +10,14 @@ import { useUIStore } from '../store/uiStore';
 import { Product } from '../types';
 
 export default function ZodiacCalculatorPage() {
-  const { items: cartItems, addItem } = useCartStore();
+  const {
+    items: cartItems,
+    addItem,
+    removeItem,
+    updateQuantity,
+    updateSize,
+    updatePersonalization,
+  } = useCartStore();
   const { isCartOpen, openCart, closeCart, setSelectedProduct } = useUIStore();
   const { currentPage, setCurrentPage } = useNavigationStore();
 
@@ -46,10 +53,10 @@ export default function ZodiacCalculatorPage() {
         isOpen={isCartOpen}
         onClose={closeCart}
         cartItems={cartItems}
-        onUpdateQuantity={() => {}}
-        onRemoveItem={() => {}}
-        onUpdateSize={() => {}}
-        onUpdatePersonalization={() => {}}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeItem}
+        onUpdateSize={updateSize}
+        onUpdatePersonalization={updatePersonalization}
         onCheckout={() => setCurrentPage('checkout')}
       />
     </motion.div>

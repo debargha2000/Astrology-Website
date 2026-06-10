@@ -19,6 +19,7 @@ import { useCmsHandlers } from './cms/useCmsHandlers';
 import { useCmsAuth, useCmsData } from './cms/useCmsState';
 import { useToast } from './cms/useToast';
 import { VendorsTab } from './cms/VendorsTab';
+import CodebaseRatingDashboard from './CodebaseRatingDashboard';
 
 interface BusinessOperationsCMSProps {
   onDataChange?: () => void;
@@ -73,6 +74,7 @@ export default function BusinessOperationsCMS(_props: BusinessOperationsCMSProps
       {activeTab === 'site' && <SiteTab state={{ ...auth, ...data }} handlers={handlers} />}
       {activeTab === 'logs' && <LogsTab state={{ ...auth, ...data }} />}
       {activeTab === 'astro' && <AstroTab state={{ ...auth, ...data }} handlers={handlers} />}
+      {activeTab === 'scorecard' && <CodebaseRatingDashboard />}
     </div>
   );
 }

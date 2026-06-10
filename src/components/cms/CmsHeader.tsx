@@ -10,6 +10,7 @@ import {
   Box,
   Sparkles,
   Terminal,
+  Award,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 
@@ -30,6 +31,7 @@ const TABS: { key: CmsSubTab; label: string; icon: ReactNode }[] = [
   },
   { key: 'logs', label: 'Logs', icon: <Terminal className="h-3.5 w-3.5" /> },
   { key: 'astro', label: 'Astrology', icon: <Sparkles className="h-3.5 w-3.5 text-[#C5A880]" /> },
+  { key: 'scorecard', label: 'Scorecard', icon: <Award className="h-3.5 w-3.5 text-gold" /> },
 ];
 
 interface Props {

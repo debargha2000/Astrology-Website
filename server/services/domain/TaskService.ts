@@ -1,5 +1,5 @@
 import { logger } from '../../middleware/logging.js';
-import type { Task } from '../../schemas/task.js';
+import type { Task } from '../../schemas/index.js';
 import { getRepository } from '../RepositoryFactory.js';
 
 const COLLECTION = 'tasks';

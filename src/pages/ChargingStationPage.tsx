@@ -10,11 +10,19 @@ import { useUIStore } from '../store/uiStore';
 import { Product } from '../types';
 
 export default function ChargingStationPage() {
-  const { items: cartItems } = useCartStore();
+  const {
+    items: cartItems,
+    addItem,
+    removeItem,
+    updateQuantity,
+    updateSize,
+    updatePersonalization,
+  } = useCartStore();
   const { isCartOpen, openCart, closeCart } = useUIStore();
   const { currentPage, setCurrentPage } = useNavigationStore();
 
-  const handleAddToCart = (_product: Product) => {
+  const handleAddToCart = (product: Product) => {
+    addItem(product);
     openCart();
   };
 
@@ -42,10 +50,10 @@ export default function ChargingStationPage() {
         isOpen={isCartOpen}
         onClose={closeCart}
         cartItems={cartItems}
-        onUpdateQuantity={(_idx, _q) => {}}
-        onRemoveItem={(_idx) => {}}
-        onUpdateSize={(_idx, _s) => {}}
-        onUpdatePersonalization={(_idx, _val, _details) => {}}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeItem}
+        onUpdateSize={updateSize}
+        onUpdatePersonalization={updatePersonalization}
         onCheckout={() => setCurrentPage('checkout')}
       />
     </motion.div>

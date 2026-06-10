@@ -9,7 +9,13 @@ import { useNavigationStore } from '../store/navigationStore';
 import { useUIStore } from '../store/uiStore';
 
 export default function EncyclopediaPage() {
-  const { items: cartItems } = useCartStore();
+  const {
+    items: cartItems,
+    removeItem,
+    updateQuantity,
+    updateSize,
+    updatePersonalization,
+  } = useCartStore();
   const { isCartOpen, openCart, closeCart } = useUIStore();
   const { currentPage, setCurrentPage } = useNavigationStore();
 
@@ -34,10 +40,10 @@ export default function EncyclopediaPage() {
         isOpen={isCartOpen}
         onClose={closeCart}
         cartItems={cartItems}
-        onUpdateQuantity={() => {}}
-        onRemoveItem={() => {}}
-        onUpdateSize={() => {}}
-        onUpdatePersonalization={() => {}}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeItem}
+        onUpdateSize={updateSize}
+        onUpdatePersonalization={updatePersonalization}
         onCheckout={() => setCurrentPage('checkout')}
       />
     </motion.div>

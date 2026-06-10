@@ -251,29 +251,30 @@ export function useCmsData() {
     if (!firestoreDb) {
       return;
     }
+    const db = firestoreDb;
 
     const unsub1 = onSnapshot(
-      collection(firestoreDb, 'invoices'),
+      collection(db, 'invoices'),
       (snap) => setInvoices(snap.docs.map((d) => d.data() as Invoice)),
       (err) => handleFirestoreError(err, OperationType.GET, 'invoices')
     );
     const unsub2 = onSnapshot(
-      collection(firestoreDb, 'vendors'),
+      collection(db, 'vendors'),
       (snap) => setVendors(snap.docs.map((d) => d.data() as Vendor)),
       (err) => handleFirestoreError(err, OperationType.GET, 'vendors')
     );
     const unsub3 = onSnapshot(
-      collection(firestoreDb, 'expenses'),
+      collection(db, 'expenses'),
       (snap) => setExpenses(snap.docs.map((d) => d.data() as Expense)),
       (err) => handleFirestoreError(err, OperationType.GET, 'expenses')
     );
     const unsub4 = onSnapshot(
-      collection(firestoreDb, 'tasks'),
+      collection(db, 'tasks'),
       (snap) => setTasks(snap.docs.map((d) => d.data() as Task)),
       (err) => handleFirestoreError(err, OperationType.GET, 'tasks')
     );
     const unsub5 = onSnapshot(
-      query(collection(firestoreDb, 'logs'), orderBy('id', 'desc'), limit(10)),
+      query(collection(db, 'logs'), orderBy('id', 'desc'), limit(10)),
       (snap) => {
         const dataLogs = snap.docs.map((d) => d.data() as { timestamp: string; message: string });
         setTerminalLog(dataLogs);
@@ -281,12 +282,12 @@ export function useCmsData() {
       (err) => handleFirestoreError(err, OperationType.GET, 'logs')
     );
     const unsub6 = onSnapshot(
-      collection(firestoreDb, 'email_records'),
+      collection(db, 'email_records'),
       () => {},
       (err) => handleFirestoreError(err, OperationType.GET, 'email_records')
     );
     const unsub7 = onSnapshot(
-      collection(firestoreDb, 'astro_content'),
+      collection(db, 'astro_content'),
       (snap) => setAstroContent(snap.docs.map((d) => d.data() as AstroContent)),
       (err) => handleFirestoreError(err, OperationType.GET, 'astro_content')
     );

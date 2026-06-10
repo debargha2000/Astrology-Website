@@ -1,6 +1,6 @@
 import { PRODUCTS } from '../../../src/data/index.js';
 import { logger } from '../../middleware/logging.js';
-import type { Product } from '../../schemas/product.js';
+import type { Product } from '../../schemas/index.js';
 import { getRepository, getFirestoreDB } from '../RepositoryFactory.js';
 
 const COLLECTION = 'products';
