@@ -10,32 +10,62 @@ import {
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-function getRequiredEnv(key: string): string {
-  const value = import.meta.env[key];
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${key}`);
-  }
-  return value;
+function getEnv(key: string): string | undefined {
+  return import.meta.env[key] as string | undefined;
 }
 
-const firebaseConfig = {
-  apiKey: getRequiredEnv('VITE_FIREBASE_API_KEY'),
-  authDomain: getRequiredEnv('VITE_FIREBASE_AUTH_DOMAIN'),
-  projectId: getRequiredEnv('VITE_FIREBASE_PROJECT_ID'),
-  storageBucket: getRequiredEnv('VITE_FIREBASE_STORAGE_BUCKET'),
-  messagingSenderId: getRequiredEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
-  appId: getRequiredEnv('VITE_FIREBASE_APP_ID'),
-};
+const apiKey = getEnv('VITE_FIREBASE_API_KEY');
+const authDomain = getEnv('VITE_FIREBASE_AUTH_DOMAIN');
+const projectId = getEnv('VITE_FIREBASE_PROJECT_ID');
+const storageBucket = getEnv('VITE_FIREBASE_STORAGE_BUCKET');
+const messagingSenderId = getEnv('VITE_FIREBASE_MESSAGING_SENDER_ID');
+const appId = getEnv('VITE_FIREBASE_APP_ID');
 
-const app: FirebaseApp = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-export const auth = getAuth(app);
+const isConfigComplete = !!(
+  apiKey &&
+  authDomain &&
+  projectId &&
+  storageBucket &&
+  messagingSenderId &&
+  appId
+);
+
+let app: FirebaseApp | null = null;
+let db: ReturnType<typeof getFirestore> | null = null;
+let storage: ReturnType<typeof getStorage> | null = null;
+let auth: ReturnType<typeof getAuth> | null = null;
+
+if (isConfigComplete) {
+  try {
+    app = initializeApp({
+      apiKey,
+      authDomain,
+      projectId,
+      storageBucket,
+      messagingSenderId,
+      appId,
+    });
+    db = getFirestore(app);
+    storage = getStorage(app);
+    auth = getAuth(app);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to initialize Firebase SDK:', error);
+  }
+} else {
+  // eslint-disable-next-line no-console
+  console.warn(
+    'Firebase environment variables are missing or incomplete. ' +
+      'Some features (like real-time DB and Google Auth) will be disabled.'
+  );
+}
+
+export { db, storage, auth };
 
 let appCheckInstance: AppCheck | null = null;
 const appCheckSiteKey = import.meta.env.VITE_FIREBASE_APPCHECK_SITE_KEY as string | undefined;
 
-if (appCheckSiteKey) {
+if (app && appCheckSiteKey) {
   try {
     appCheckInstance = initializeAppCheck(app, {
       provider: new ReCaptchaEnterpriseProvider(appCheckSiteKey),
@@ -46,7 +76,10 @@ if (appCheckSiteKey) {
     console.warn('Firebase App Check failed to initialize. Continuing without attestation.', e);
   }
 } else if (import.meta.env.PROD) {
-  throw new Error('VITE_FIREBASE_APPCHECK_SITE_KEY is required in production');
+  // eslint-disable-next-line no-console
+  console.warn(
+    'VITE_FIREBASE_APPCHECK_SITE_KEY is missing in production. Firebase App Check is disabled.'
+  );
 }
 
 export const appCheck = appCheckInstance;
@@ -58,6 +91,12 @@ export const initAuth = (
   onAuthSuccess?: (user: User, token: string) => void,
   onAuthFailure?: () => void
 ) => {
+  if (!auth) {
+    if (onAuthFailure) {
+      setTimeout(onAuthFailure, 0);
+    }
+    return () => {};
+  }
   return onAuthStateChanged(auth, async (user: User | null) => {
     if (user) {
       if (cachedAccessToken) {
@@ -84,6 +123,11 @@ function buildProvider(scopes: string[] = []): GoogleAuthProvider {
 export async function googleSignIn(
   scopes: string[] = []
 ): Promise<{ user: User; accessToken: string } | null> {
+  if (!auth) {
+    throw new Error(
+      'Firebase Auth is not initialized. Please configure your Firebase environment variables.'
+    );
+  }
   try {
     isSigningIn = true;
     const provider = buildProvider(scopes);
@@ -112,7 +156,9 @@ export const signInForGmail = (): Promise<{ user: User; accessToken: string } | 
 export const getAccessToken = async (): Promise<string | null> => cachedAccessToken;
 
 export const logout = async () => {
-  await auth.signOut();
+  if (auth) {
+    await auth.signOut();
+  }
   cachedAccessToken = null;
 };
 
@@ -150,13 +196,13 @@ export function handleFirestoreError(
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-      isAnonymous: auth.currentUser?.isAnonymous,
-      tenantId: auth.currentUser?.tenantId,
+      userId: auth?.currentUser?.uid,
+      email: auth?.currentUser?.email,
+      emailVerified: auth?.currentUser?.emailVerified,
+      isAnonymous: auth?.currentUser?.isAnonymous,
+      tenantId: auth?.currentUser?.tenantId,
       providerInfo:
-        auth.currentUser?.providerData?.map((provider) => ({
+        auth?.currentUser?.providerData?.map((provider) => ({
           providerId: provider.providerId,
           email: provider.email,
         })) || [],
